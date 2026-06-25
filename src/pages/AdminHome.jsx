@@ -12,10 +12,17 @@ import ImageUploader from '@/components/admin/ImageUploader';
 
 const SECTION_TYPES = [
   { value: 'products', label: 'Product Carousel' },
+  { value: 'featured', label: 'Featured Section' },
   { value: 'cta_cards', label: 'CTA Cards' },
   { value: 'editorial', label: 'Editorial Row' },
   { value: 'ad_banner', label: 'Ad Banner' },
   { value: 'articles', label: 'Recent Articles' },
+];
+
+const AD_DISPLAY_TYPES = [
+  { value: 'full', label: 'Full Banner Ad' },
+  { value: 'simple', label: 'Simple Banner Ad' },
+  { value: 'square', label: 'Square Ad' },
 ];
 
 const PAGE_TYPES = [
@@ -306,21 +313,24 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', description: '', image_url: '', section_type: 'products', category: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
+      { key: 'description', label: 'Description', type: 'textarea', rows: 2, fullWidth: true },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
-      { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...' },
+      { key: 'category', label: 'Category (for products/featured)', placeholder: 'e.g. Women, Men...' },
       { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '8' },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
   category_tags: {
     labelSingular: 'Tag',
-    defaultForm: { label: '', value: '', sort_order: 0, is_active: true },
+    defaultForm: { label: '', value: '', image_url: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'label', label: 'Label', required: true, placeholder: 'Women' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Women' },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
@@ -362,8 +372,9 @@ const entityConfig = {
   },
   ad_banners: {
     labelSingular: 'Ad Banner',
-    defaultForm: { type: 'image', title: '', subtitle: '', image_url: '', link: '', button_text: '', bg_color: '#000000', script_content: '', sort_order: 0, is_active: true },
+    defaultForm: { type: 'image', display_type: 'full', title: '', subtitle: '', image_url: '', link: '', button_text: '', bg_color: '#000000', script_content: '', sort_order: 0, is_active: true },
     fields: [
+      { key: 'display_type', label: 'Display Type', type: 'select', options: AD_DISPLAY_TYPES, fullWidth: true },
       { key: 'title', label: 'Title', placeholder: 'Special Offer' },
       { key: 'subtitle', label: 'Subtitle', fullWidth: true },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },

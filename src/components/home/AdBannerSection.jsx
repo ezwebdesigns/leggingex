@@ -3,16 +3,38 @@ import { Link } from 'react-router-dom';
 
 export default function AdBannerSection({ banners }) {
   if (!banners || banners.length === 0) return null;
+
+  const fullBanners = banners.filter((b) => b.display_type === 'simple' || !b.display_type || b.display_type === 'full');
+  const simpleBanners = banners.filter((b) => b.display_type === 'simple');
+  const squareBanners = banners.filter((b) => b.display_type === 'square');
+
   return (
     <section className="px-4 md:px-6 mb-10 space-y-4">
-      {banners.map((banner) => (
-        <AdBanner key={banner.id} banner={banner} />
+      {fullBanners.map((banner) => (
+        <FullBanner key={banner.id} banner={banner} />
       ))}
+      {simpleBanners.length > 0 && (
+        <div className="space-y-3">
+          {simpleBanners.map((banner) => (
+            <SimpleBanner key={banner.id} banner={banner} />
+          ))}
+        </div>
+      )}
+      {squareBanners.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {squareBanners.map((banner) => (
+            <SquareBanner key={banner.id} banner={banner} />
+          ))}
+        </div>
+      )}
+      {!banners.some((b) => b.type === 'script') && banners.some((b) => b.display_type === 'simple' || b.display_type === 'square') && (
+        <p className="text-center text-xs text-muted-foreground mt-2">Sponsored</p>
+      )}
     </section>
   );
 }
 
-function AdBanner({ banner }) {
+function FullBanner({ banner }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -56,5 +78,38 @@ function AdBanner({ banner }) {
         <p className="text-white/40 text-xs mt-4">Sponsored</p>
       </div>
     </div>
+  );
+}
+
+function SimpleBanner({ banner }) {
+  return (
+    <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden">
+      <img src={banner.image_url} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 p-4 md:p-6">
+        {banner.title && <h3 className="text-white font-bold text-lg md:text-xl">{banner.title}</h3>}
+        {banner.subtitle && <p className="text-white/80 text-sm mt-1">{banner.subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+function SquareBanner({ banner }) {
+  return (
+    <a href={banner.link} target="_blank" rel="noopener noreferrer" className="group block">
+      <div className="aspect-square rounded-2xl overflow-hidden bg-muted relative">
+        {banner.image_url ? (
+          <img src={banner.image_url} alt={banner.title || ''} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full bg-secondary" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        {banner.title && (
+          <div className="absolute bottom-0 left-0 p-3">
+            <p className="text-white font-semibold text-sm">{banner.title}</p>
+          </div>
+        )}
+      </div>
+    </a>
   );
 }

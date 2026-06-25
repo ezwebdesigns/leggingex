@@ -133,8 +133,8 @@ export default function Home() {
         setAdBanners(adData || []);
         setArticles(articleData || []);
 
-        // Fetch products only for product-type sections
-        const productSections = (sectionData || []).filter((s) => !s.section_type || s.section_type === 'products');
+        // Fetch products for product-type and featured sections
+        const productSections = (sectionData || []).filter((s) => !s.section_type || s.section_type === 'products' || s.section_type === 'featured');
         const productPromises = productSections.map((section) =>
           section.category
             ? fetchSection(section.category, section.limit || 8, marketplace)
@@ -164,8 +164,11 @@ export default function Home() {
           <Link
             key={tag.id}
             to={`/catalogue?category=${encodeURIComponent(tag.value)}`}
-            className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-secondary border border-border/50 text-foreground hover:bg-accent hover:text-accent-foreground hover:border-primary/30 transition-all whitespace-nowrap"
+            className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-secondary border border-border/50 text-foreground hover:bg-accent hover:text-accent-foreground hover:border-primary/30 transition-all whitespace-nowrap inline-flex items-center gap-1.5"
           >
+            {tag.image_url && (
+              <img src={tag.image_url} alt="" className="w-5 h-5 rounded-full object-cover" />
+            )}
             {tag.label}
           </Link>
         ))}
@@ -181,7 +184,7 @@ export default function Home() {
       {sections.map((section) => {
         const type = section.section_type || 'products';
 
-        if (type === 'products') {
+        if (type === 'products' || type === 'featured') {
           const products = sectionProducts[section.id] || [];
           const viewAllLink = section.category
             ? `/catalogue?category=${encodeURIComponent(section.category)}`

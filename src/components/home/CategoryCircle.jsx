@@ -16,7 +16,7 @@ export default function CategoryCircle({ label, value, imageUrl }) {
 
   return (
     <Link to={`/catalogue?category=${encodeURIComponent(value)}`} className="flex flex-col items-center gap-2 group">
-      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-secondary border border-border/50 group-hover:ring-2 group-hover:ring-primary/30 transition-all">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-secondary border border-border/50 group-hover:ring-2 group-hover:ring-primary/30 transition-all">
         {img ? (
           <img src={img} alt={label} className="w-full h-full object-cover" loading="lazy" />
         ) : (
