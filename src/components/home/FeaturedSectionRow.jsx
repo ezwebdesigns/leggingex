@@ -43,7 +43,7 @@ function FeaturedProduct({ section }) {
       {products.length > 0 ? (
         <div className="flex gap-2">
           {products.slice(0, 4).map((p) => (
-            <div key={p.id} className="flex-1 min-w-[110px] rounded-2xl border border-border overflow-hidden">
+            <div key={p.id} className="flex-1 min-w-[110px] rounded-2xl border border-border">
               <MiniProductCard product={p} featured />
             </div>
           ))}
@@ -51,7 +51,7 @@ function FeaturedProduct({ section }) {
       ) : (
         <div className="flex gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex-1 min-w-[110px] rounded-2xl border border-border overflow-hidden animate-pulse">
+            <div key={i} className="flex-1 min-w-[110px] rounded-2xl border border-border animate-pulse">
               <div className="aspect-[3/4] bg-muted" />
               <div className="p-1.5">
                 <div className="h-2 bg-muted rounded w-3/4" />
