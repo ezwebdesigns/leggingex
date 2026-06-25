@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 const SECTION_TYPES = [
   { value: 'products', label: 'Product Carousel' },
@@ -32,7 +33,7 @@ const homeTabs = [
   { id: 'ad_banners', label: 'Ad Banners', table: 'ad_banners' },
 ];
 
-function EntityForm({ entity, fields, initial, onSave, onCancel, saving }) {
+function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFolder }) {
   const [form, setForm] = useState(initial);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -50,10 +51,19 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {fields.map((f) => (
           <div key={f.key} className={f.fullWidth ? 'sm:col-span-2' : ''}>
-            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              {f.label} {f.required ? '*' : ''}
-            </Label>
-            {f.type === 'textarea' ? (
+            {f.type === 'image' ? (
+              <ImageUploader
+                value={form[f.key] || ''}
+                onChange={(url) => set(f.key, url)}
+                folder={imageFolder || 'general'}
+                label={f.label}
+              />
+            ) : (
+              <>
+                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  {f.label} {f.required ? '*' : ''}
+                </Label>
+                {f.type === 'textarea' ? (
               <Textarea
                 value={form[f.key] || ''}
                 onChange={(e) => set(f.key, e.target.value)}
@@ -93,6 +103,8 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving }) {
                 placeholder={f.placeholder}
                 type={f.type === 'url' ? 'url' : 'text'}
               />
+            )}
+              </>
             )}
           </div>
         ))}
@@ -265,7 +277,7 @@ const entityConfig = {
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Summer Sale' },
       { key: 'subtitle', label: 'Subtitle', placeholder: 'Up to 50% off on all leggings' },
-      { key: 'image_url', label: 'Image URL', type: 'url', required: true, placeholder: 'https://...', fullWidth: true },
+      { key: 'image_url', label: 'Image', type: 'image', required: true, fullWidth: true },
       { key: 'link', label: 'Link URL', type: 'url', required: true, placeholder: 'https://...', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
@@ -296,7 +308,7 @@ const entityConfig = {
     fields: [
       { key: 'label', label: 'Label', required: true, placeholder: 'Yoga' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Yoga' },
-      { key: 'image_url', label: 'Image URL', type: 'url', placeholder: 'https://...', fullWidth: true },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
@@ -305,7 +317,7 @@ const entityConfig = {
     defaultForm: { title: '', image_url: '', link: '', bg_color: '#f3f4f6', text_color: '#000000', sort_order: 0, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Shop Now' },
-      { key: 'image_url', label: 'Image URL', type: 'url', fullWidth: true },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'link', label: 'Link URL', type: 'url', required: true, placeholder: 'https://...', fullWidth: true },
       { key: 'bg_color', label: 'Background Color', placeholder: '#f3f4f6' },
       { key: 'text_color', label: 'Text Color', placeholder: '#000000' },
@@ -318,7 +330,7 @@ const entityConfig = {
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Spring Collection' },
       { key: 'description', label: 'Description', type: 'textarea', rows: 2, fullWidth: true },
-      { key: 'image_url', label: 'Image URL', type: 'url', fullWidth: true },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'button_text', label: 'Button Text', placeholder: 'Shop Now' },
       { key: 'button_link', label: 'Button Link', placeholder: 'https://...' },
       { key: 'secondary_text', label: 'Secondary Text', placeholder: 'Learn more' },
@@ -332,7 +344,7 @@ const entityConfig = {
     fields: [
       { key: 'title', label: 'Title', placeholder: 'Special Offer' },
       { key: 'subtitle', label: 'Subtitle', fullWidth: true },
-      { key: 'image_url', label: 'Image URL', type: 'url', fullWidth: true },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'link', label: 'Link URL', type: 'url', fullWidth: true },
       { key: 'button_text', label: 'Button Text', placeholder: 'Shop Now' },
       { key: 'bg_color', label: 'Background Color', placeholder: '#000000' },
@@ -340,6 +352,16 @@ const entityConfig = {
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
+};
+
+const entityFolders = {
+  hero_banners: 'hero-banners',
+  home_sections: 'home-sections',
+  category_tags: 'category-tags',
+  home_categories: 'home-categories',
+  cta_cards: 'cta-cards',
+  editorial_cards: 'editorial-cards',
+  ad_banners: 'ad-banners',
 };
 
 export default function AdminHome() {
@@ -357,7 +379,7 @@ export default function AdminHome() {
       </div>
 
       {homeTabs.map((t) => tab === t.id && (
-        <EntityManager key={t.id} {...entityConfig[t.id]} />
+        <EntityManager key={t.id} {...entityConfig[t.id]} imageFolder={entityFolders[t.id]} />
       ))}
     </div>
   );

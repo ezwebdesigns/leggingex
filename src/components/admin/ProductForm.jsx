@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 const CATEGORIES = ['Women', 'Men', 'Kids', 'Sports', 'Plus Size', 'Fashion'];
 
@@ -49,8 +50,7 @@ export default function ProductForm({ initial = EMPTY_FORM, onSave, onCancel, sa
           </Select>
         </div>
         <div className="sm:col-span-2">
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Image URL</Label>
-          <Input value={form.image_url} onChange={(e) => set('image_url', e.target.value)} className="mt-1 rounded-xl" placeholder="https://..." type="url" />
+          <ImageUploader value={form.image_url} onChange={(url) => set('image_url', url)} folder="products" label="Product Image" />
         </div>
         <div>
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Indicative Price</Label>
