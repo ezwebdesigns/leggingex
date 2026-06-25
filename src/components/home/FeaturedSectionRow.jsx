@@ -13,7 +13,7 @@ export default function FeaturedSectionRow({ sections }) {
         {sections.map((section) => (
           <div
             key={section.id}
-            className="rounded-2xl border border-border bg-card p-4 md:p-5 overflow-hidden"
+            className="rounded-2xl border border-border bg-card p-4 md:p-5"
             style={{ height: CONTAINER_HEIGHT + 40 }}
           >
             {section.format === 'text' ? (
