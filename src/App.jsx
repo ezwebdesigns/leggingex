@@ -20,6 +20,8 @@ import ProductDetail from '@/pages/ProductDetail';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AdminProducts from '@/pages/AdminProducts';
 import AdminImport from '@/pages/AdminImport';
+import AdminHome from '@/pages/AdminHome';
+import AdminPages from '@/pages/AdminPages';
 import Catalogue from '@/pages/Catalogue';
 import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
@@ -81,6 +83,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<AdminProducts />} />
             <Route path="/admin/import" element={<AdminImport />} />
+            <Route path="/admin/home" element={<AdminHome />} />
+            <Route path="/admin/pages" element={<AdminPages />} />
           </Route>
         </Route>
         <Route path="/catalogue" element={<Catalogue />} />

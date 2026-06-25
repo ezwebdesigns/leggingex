@@ -1,10 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Upload, LogOut, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, Package, Upload, Home, FileText, LogOut, ShoppingBag } from 'lucide-react';
 
 const adminNavItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Package, label: 'Products', path: '/admin/products' },
   { icon: Upload, label: 'Import CSV', path: '/admin/import' },
+  { icon: Home, label: 'Home', path: '/admin/home' },
+  { icon: FileText, label: 'Pages', path: '/admin/pages' },
 ];
 
 export default function AdminLayout() {
