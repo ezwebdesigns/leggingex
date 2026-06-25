@@ -18,7 +18,7 @@ export default function MiniProductCard({ product, compact }) {
   return (
     <Link
       to={`/produit/${id}`}
-      className={`group flex-shrink-0 block ${compact ? 'flex-1 min-w-0' : 'w-36 sm:w-44'}`}
+      className={`group flex-shrink-0 block ${compact ? 'w-[120px]' : 'w-36 sm:w-44'}`}
     >
       <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted mb-2">
         {image_url ? (
