@@ -7,9 +7,9 @@ export default function FeaturedSectionRow({ sections }) {
 
   return (
     <section className="px-4 md:px-6 mb-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => (
-          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5">
+          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5 h-[420px] overflow-hidden flex flex-col">
             {section.format === 'text' ? (
               <FeaturedText section={section} />
             ) : section.format === 'banner' ? (
@@ -66,12 +66,12 @@ function FeaturedBanner({ section }) {
   if (!hasImage && !hasScript) return null;
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center h-full overflow-hidden rounded-xl">
       {hasScript ? (
         <div className="w-full max-w-[970px]" dangerouslySetInnerHTML={{ __html: section.script_content }} />
       ) : (
-        <a href={section.link || '#'} target="_blank" rel="noopener noreferrer" className="block w-full">
-          <img src={section.image_url} alt={section.title} className="w-full h-full object-cover rounded-xl" />
+        <a href={section.link || '#'} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+          <img src={section.image_url} alt={section.title} className="w-full h-full object-cover" />
         </a>
       )}
     </div>
