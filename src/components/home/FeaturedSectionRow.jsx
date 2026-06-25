@@ -8,7 +8,7 @@ export default function FeaturedSectionRow({ sections }) {
     <section className="px-4 md:px-6 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => (
-          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5 h-[380px]">
+          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5">
             {section.format === 'text' ? (
               <FeaturedText section={section} />
             ) : section.format === 'banner' ? (
@@ -38,13 +38,13 @@ function FeaturedProduct({ section }) {
         </Link>
       </div>
       {products.length > 0 ? (
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide min-h-0">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
           {products.slice(0, 4).map((p) => (
             <MiniProductCard key={p.id} product={p} />
           ))}
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide min-h-0">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="w-36 sm:w-44 animate-pulse flex-shrink-0">
               <div className="aspect-[3/4] bg-muted rounded-2xl" />
@@ -83,7 +83,7 @@ function FeaturedText({ section }) {
   return (
     <div className="flex flex-col h-full">
       <h3 className="text-base md:text-lg font-bold text-foreground mb-3 flex-shrink-0">{section.title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line min-h-0 overflow-y-auto">
+      <p className="text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line">
         {section.content}
       </p>
     </div>
