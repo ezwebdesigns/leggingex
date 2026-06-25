@@ -126,6 +126,7 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
   const [editItem, setEditItem] = useState(null);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState(null);
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
@@ -140,27 +141,36 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
 
   const handleSave = async (payload) => {
     setSaving(true);
+    setError(null);
     try {
       if (editItem) {
-        await supabase.from(table).update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editItem.id);
+        const { error: err } = await supabase.from(table).update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editItem.id);
+        if (err) throw err;
       } else {
-        await supabase.from(table).insert(payload);
+        const { error: err } = await supabase.from(table).insert(payload);
+        if (err) throw err;
       }
       setShowForm(false);
       setEditItem(null);
       fetchItems();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      setError(err.message);
+    }
     finally { setSaving(false); }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm(`Delete this ${labelSingular}?`)) return;
-    await supabase.from(table).delete().eq('id', id);
+    setError(null);
+    const { error: err } = await supabase.from(table).delete().eq('id', id);
+    if (err) setError(err.message);
     fetchItems();
   };
 
   const toggleActive = async (item) => {
-    await supabase.from(table).update({ is_active: !item.is_active, updated_at: new Date().toISOString() }).eq('id', item.id);
+    setError(null);
+    const { error: err } = await supabase.from(table).update({ is_active: !item.is_active, updated_at: new Date().toISOString() }).eq('id', item.id);
+    if (err) setError(err.message);
     fetchItems();
   };
 
@@ -193,6 +203,12 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
           <p className="font-medium">No {labelSingular.toLowerCase()}s yet.</p>
         </div>
       ) : (
+        <>
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-xl">
+              {error}
+            </div>
+          )}
         <div className="rounded-2xl border border-border overflow-hidden overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted border-b border-border">
@@ -239,6 +255,7 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {showForm && (
@@ -254,6 +271,11 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
               </button>
             </div>
             <div className="p-6">
+              {error && (
+                <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-xl">
+                  {error}
+                </div>
+              )}
               <EntityForm
                 entity={editItem}
                 fields={fields}
@@ -379,7 +401,7 @@ export default function AdminHome() {
       </div>
 
       {homeTabs.map((t) => tab === t.id && (
-        <EntityManager key={t.id} {...entityConfig[t.id]} imageFolder={entityFolders[t.id]} />
+        <EntityManager key={t.id} table={t.table} {...entityConfig[t.id]} imageFolder={entityFolders[t.id]} />
       ))}
     </div>
   );
