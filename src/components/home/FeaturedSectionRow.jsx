@@ -10,7 +10,7 @@ export default function FeaturedSectionRow({ sections }) {
         {sections.map((section) => (
           <div
             key={section.id}
-            className="rounded-2xl border border-border bg-card p-4 md:p-5 h-[340px] overflow-hidden"
+            className="rounded-2xl border border-border bg-card p-4 md:p-5 h-[340px]"
           >
             {section.format === 'text' ? (
               <FeaturedText section={section} />
@@ -41,17 +41,17 @@ function FeaturedProduct({ section }) {
         </Link>
       </div>
       {products.length > 0 ? (
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {products.slice(0, 4).map((p) => (
-            <div key={p.id} className="flex-1 min-w-[110px] rounded-2xl border border-border">
+            <div key={p.id} className="w-[115px] flex-shrink-0 rounded-2xl border border-border">
               <MiniProductCard product={p} featured />
             </div>
           ))}
         </div>
       ) : (
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex-1 min-w-[110px] rounded-2xl border border-border animate-pulse">
+            <div key={i} className="w-[115px] flex-shrink-0 rounded-2xl border border-border animate-pulse">
               <div className="aspect-[3/4] bg-muted" />
               <div className="p-1.5">
                 <div className="h-2 bg-muted rounded w-3/4" />
