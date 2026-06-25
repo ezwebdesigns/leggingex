@@ -144,8 +144,8 @@ export default function Home() {
           .filter((s) => s.format === 'product')
           .map((s) =>
             s.category
-              ? fetchSection(s.category, s.product_limit || 4, marketplace)
-              : fetchTopProducts(s.product_limit || 4, marketplace)
+              ? fetchSection(s.category, s.product_limit || 3, marketplace)
+              : fetchTopProducts(s.product_limit || 3, marketplace)
           );
         const productFetchResults = await Promise.all(productFetchPromises);
         productFormatIds.forEach((id, i) => {

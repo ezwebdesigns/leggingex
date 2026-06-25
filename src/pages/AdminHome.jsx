@@ -425,7 +425,7 @@ const entityConfig = {
   },
   featured_sections: {
     labelSingular: 'Featured Section',
-    defaultForm: { title: '', format: 'product', category: '', product_limit: 4, content: '', image_url: '', script_content: '', sort_order: 0, is_active: true },
+    defaultForm: { title: '', format: 'product', category: '', product_limit: 3, content: '', image_url: '', script_content: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Favorites for a reason' },
       { key: 'format', label: 'Format', type: 'select', options: FEATURED_FORMAT_TYPES, fullWidth: true },
