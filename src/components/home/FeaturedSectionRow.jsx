@@ -2,20 +2,14 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import MiniProductCard from '@/components/products/MiniProductCard';
 
-const CONTAINER_HEIGHT = 288;
-
 export default function FeaturedSectionRow({ sections }) {
   if (!sections || sections.length === 0) return null;
 
   return (
     <section className="px-4 md:px-6 mb-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
         {sections.map((section) => (
-          <div
-            key={section.id}
-            className="rounded-2xl border border-border bg-card p-4 md:p-5"
-            style={{ height: CONTAINER_HEIGHT + 40 }}
-          >
+          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5">
             {section.format === 'text' ? (
               <FeaturedText section={section} />
             ) : section.format === 'banner' ? (
@@ -37,7 +31,7 @@ function FeaturedProduct({ section }) {
     : '/catalogue';
 
   return (
-    <div className="flex flex-col h-full">
+    <>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-base md:text-lg font-bold text-foreground">{section.title}</h3>
         <Link to={viewAllLink} className="flex items-center gap-1 text-xs text-primary font-medium hover:underline whitespace-nowrap">
@@ -45,23 +39,23 @@ function FeaturedProduct({ section }) {
         </Link>
       </div>
       {products.length > 0 ? (
-        <div className="flex gap-2 flex-1 min-h-0">
+        <div className="flex gap-3">
           {products.slice(0, 3).map((p) => (
-            <MiniProductCard key={p.id} product={p} compact imageHeight={CONTAINER_HEIGHT} />
+            <MiniProductCard key={p.id} product={p} compact />
           ))}
         </div>
       ) : (
-        <div className="flex gap-2 flex-1 min-h-0">
+        <div className="flex gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex-1 animate-pulse flex flex-col">
-              <div className="flex-1 bg-muted rounded-2xl" />
+            <div key={i} className="flex-1 animate-pulse">
+              <div className="aspect-[3/4] bg-muted rounded-2xl" />
               <div className="h-3 bg-muted rounded mt-2 w-3/4" />
               <div className="h-3 bg-muted rounded mt-1 w-1/2" />
             </div>
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -77,7 +71,7 @@ function FeaturedBanner({ section }) {
         <div className="w-full max-w-[970px]" dangerouslySetInnerHTML={{ __html: section.script_content }} />
       ) : (
         <a href={section.link || '#'} target="_blank" rel="noopener noreferrer" className="block w-full">
-          <img src={section.image_url} alt={section.title} className="w-full h-full object-cover rounded-xl" style={{ maxHeight: CONTAINER_HEIGHT }} />
+          <img src={section.image_url} alt={section.title} className="w-full h-full object-cover rounded-xl" />
         </a>
       )}
     </div>
@@ -88,11 +82,11 @@ function FeaturedText({ section }) {
   if (!section.content) return null;
 
   return (
-    <div className="flex flex-col h-full">
+    <>
       <h3 className="text-base md:text-lg font-bold text-foreground mb-3">{section.title}</h3>
       <p className="text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line">
         {section.content}
       </p>
-    </div>
+    </>
   );
 }
