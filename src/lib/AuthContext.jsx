@@ -1,6 +1,8 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'socialmediascanada@gmail.com';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -9,6 +11,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [authError, setAuthError] = useState(null);
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -43,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       user,
       session,
       isAuthenticated,
+      isAdmin,
       isLoadingAuth,
       authError,
       logout,

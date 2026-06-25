@@ -7,10 +7,19 @@ const DefaultFallback = () => (
   </div>
 );
 
-export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthenticatedElement }) {
+export function ProtectedRoute({ fallback = <DefaultFallback />, unauthenticatedElement }) {
   const { isAuthenticated, isLoadingAuth } = useAuth();
 
   if (isLoadingAuth) return fallback;
   if (!isAuthenticated) return unauthenticatedElement;
+  return <Outlet />;
+}
+
+export function AdminRoute({ fallback = <DefaultFallback />, forbiddenElement }) {
+  const { isAuthenticated, isAdmin, isLoadingAuth } = useAuth();
+
+  if (isLoadingAuth) return fallback;
+  if (!isAuthenticated) return forbiddenElement;
+  if (!isAdmin) return forbiddenElement;
   return <Outlet />;
 }

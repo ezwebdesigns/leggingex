@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { CountryProvider } from '@/contexts/CountryContext';
+import { ProtectedRoute, AdminRoute } from '@/components/ProtectedRoute';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import AppLayout from '@/components/layout/AppLayout';
@@ -20,6 +21,10 @@ import Catalogue from '@/pages/Catalogue';
 import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
 import DynamicPage from '@/pages/DynamicPage';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -44,15 +49,35 @@ const AuthenticatedApp = () => {
     }
   }
 
+  const Forbidden = () => {
+    const navigateToLogin = () => window.location.href = '/login';
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
+        <span className="text-6xl block mb-4">🔒</span>
+        <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
+        <p className="text-muted-foreground mb-6">You don't have permission to access this area.</p>
+        <button onClick={navigateToLogin} className="px-6 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">
+          Go to Login
+        </button>
+      </div>
+    );
+  };
+
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route element={<AdminRoute forbiddenElement={<Forbidden />} />}>
+          <Route path="/admin" element={<Admin />} />
+        </Route>
         <Route path="/catalogue" element={<Catalogue />} />
         <Route path="/produit/:id" element={<ProduitDetail />} />
         <Route path="/blog" element={<Blog />} />
