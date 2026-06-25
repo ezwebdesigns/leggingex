@@ -12,6 +12,7 @@ import ImageUploader from '@/components/admin/ImageUploader';
 
 const SECTION_TYPES = [
   { value: 'products', label: 'Product Carousel' },
+  { value: 'featured', label: 'Featured Section' },
   { value: 'cta_cards', label: 'CTA Cards' },
   { value: 'editorial', label: 'Editorial Row' },
   { value: 'ad_banner', label: 'Ad Banner' },
@@ -42,7 +43,17 @@ const homeTabs = [
 
 function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFolder }) {
   const [form, setForm] = useState(initial);
+  const [dynamicOptions, setDynamicOptions] = useState({});
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    fields.forEach(async (f) => {
+      if (typeof f.options === 'function' && (!f.condition || (form[f.condition.field] === f.condition.value))) {
+        const opts = await f.options();
+        setDynamicOptions((prev) => ({ ...prev, [f.key]: opts }));
+      }
+    });
+  }, [fields, form]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,21 +67,24 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {fields.map((f) => (
-          <div key={f.key} className={f.fullWidth ? 'sm:col-span-2' : ''}>
-            {f.type === 'image' ? (
-              <ImageUploader
-                value={form[f.key] || ''}
-                onChange={(url) => set(f.key, url)}
-                folder={imageFolder || 'general'}
-                label={f.label}
-              />
-            ) : (
-              <>
-                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  {f.label} {f.required ? '*' : ''}
-                </Label>
-                {f.type === 'textarea' ? (
+        {fields.map((f) => {
+          if (f.condition && form[f.condition.field] !== f.condition.value) return null;
+          const options = typeof f.options === 'function' ? (dynamicOptions[f.key] || []) : (f.options || []);
+          return (
+            <div key={f.key} className={f.fullWidth ? 'sm:col-span-2' : ''}>
+              {f.type === 'image' ? (
+                <ImageUploader
+                  value={form[f.key] || ''}
+                  onChange={(url) => set(f.key, url)}
+                  folder={imageFolder || 'general'}
+                  label={f.label}
+                />
+              ) : (
+                <>
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    {f.label} {f.required ? '*' : ''}
+                  </Label>
+                  {f.type === 'textarea' ? (
               <Textarea
                 value={form[f.key] || ''}
                 onChange={(e) => set(f.key, e.target.value)}
@@ -83,7 +97,7 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
               <Select value={form[f.key] || ''} onValueChange={(v) => set(f.key, v)}>
                 <SelectTrigger className="mt-1 rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent className="rounded-xl">
-                  {f.options.map((o) => (
+                  {options.map((o) => (
                     <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -114,7 +128,8 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
               </>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl">Cancel</Button>
@@ -313,11 +328,18 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
       { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...' },
+      { key: 'featured_section_id', label: 'Featured Section', type: 'select', fullWidth: true,
+        condition: { field: 'section_type', value: 'featured' },
+        options: async () => {
+          const { data } = await supabase.from('featured_sections').select('id, title').eq('is_active', true).order('sort_order');
+          return (data || []).map((s) => ({ value: s.id, label: s.title }));
+        },
+      },
       { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '8' },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],

@@ -195,41 +195,53 @@ export default function Home() {
 
       <CategoryGrid categories={categories} />
 
-      <FeaturedSectionRow sections={featuredSections} />
-
       {/* Sections rendered based on section_type */}
-      {sections.map((section) => {
-        const type = section.section_type || 'products';
+      {(() => {
+        const rendered = [];
+        let i = 0;
+        while (i < sections.length) {
+          const section = sections[i];
+          const type = section.section_type || 'products';
 
-        if (type === 'products') {
-          const products = sectionProducts[section.id] || [];
-          const viewAllLink = section.category
-            ? `/catalogue?category=${encodeURIComponent(section.category)}`
-            : '/catalogue';
-          return (
-            <ProductCarousel
-              key={section.id}
-              title={section.title}
-              products={products}
-              viewAllLink={viewAllLink}
-              loading={loading}
-            />
-          );
+          if (type === 'featured') {
+            const featuredGroup = [];
+            while (i < sections.length && (sections[i].section_type || 'products') === 'featured') {
+              const fs = featuredSections.find((f) => f.id === sections[i].featured_section_id);
+              if (fs) featuredGroup.push(fs);
+              i++;
+            }
+            if (featuredGroup.length > 0) {
+              rendered.push(<FeaturedSectionRow key={`featured-group-${section.id}`} sections={featuredGroup} />);
+            }
+          } else {
+            if (type === 'products') {
+              const products = sectionProducts[section.id] || [];
+              const viewAllLink = section.category
+                ? `/catalogue?category=${encodeURIComponent(section.category)}`
+                : '/catalogue';
+              rendered.push(
+                <ProductCarousel
+                  key={section.id}
+                  title={section.title}
+                  products={products}
+                  viewAllLink={viewAllLink}
+                  loading={loading}
+                />
+              );
+            } else if (type === 'cta_cards') {
+              rendered.push(<CTACardGrid key={section.id} cards={ctaCards} title={section.title} />);
+            } else if (type === 'editorial') {
+              rendered.push(<EditorialRow key={section.id} cards={editorialCards} title={section.title} />);
+            } else if (type === 'ad_banner') {
+              rendered.push(<AdBannerSection key={section.id} banners={adBanners} />);
+            } else if (type === 'articles') {
+              rendered.push(<RecentArticles key={section.id} articles={articles} title={section.title} />);
+            }
+            i++;
+          }
         }
-        if (type === 'cta_cards') {
-          return <CTACardGrid key={section.id} cards={ctaCards} title={section.title} />;
-        }
-        if (type === 'editorial') {
-          return <EditorialRow key={section.id} cards={editorialCards} title={section.title} />;
-        }
-        if (type === 'ad_banner') {
-          return <AdBannerSection key={section.id} banners={adBanners} />;
-        }
-        if (type === 'articles') {
-          return <RecentArticles key={section.id} articles={articles} title={section.title} />;
-        }
-        return null;
-      })}
+        return rendered;
+      })()}
     </div>
   );
 }
