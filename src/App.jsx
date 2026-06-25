@@ -5,10 +5,11 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { CountryProvider } from '@/contexts/CountryContext';
-import { ProtectedRoute, AdminRoute } from '@/components/ProtectedRoute';
+import { AdminRoute } from '@/components/ProtectedRoute';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import AppLayout from '@/components/layout/AppLayout';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 // Page imports
 import Home from '@/pages/Home';
@@ -16,7 +17,9 @@ import Categories from '@/pages/Categories';
 import SearchPage from '@/pages/SearchPage';
 import Favorites from '@/pages/Favorites';
 import ProductDetail from '@/pages/ProductDetail';
-import Admin from '@/pages/Admin';
+import AdminDashboard from '@/pages/AdminDashboard';
+import AdminProducts from '@/pages/AdminProducts';
+import AdminImport from '@/pages/AdminImport';
 import Catalogue from '@/pages/Catalogue';
 import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
@@ -74,7 +77,11 @@ const AuthenticatedApp = () => {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route element={<AdminRoute forbiddenElement={<Forbidden />} />}>
-          <Route path="/admin" element={<Admin />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/import" element={<AdminImport />} />
+          </Route>
         </Route>
         <Route path="/catalogue" element={<Catalogue />} />
         <Route path="/produit/:id" element={<ProduitDetail />} />
