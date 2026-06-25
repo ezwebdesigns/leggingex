@@ -9,7 +9,7 @@ export default function FeaturedSectionRow({ sections }) {
     <section className="px-4 md:px-6 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => (
-          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5">
+          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5 flex flex-col">
             {section.format === 'text' ? (
               <FeaturedText section={section} />
             ) : section.format === 'banner' ? (
@@ -31,7 +31,7 @@ function FeaturedProduct({ section }) {
     : '/catalogue';
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base md:text-lg font-bold text-foreground">{section.title}</h3>
         <Link to={viewAllLink} className="flex items-center gap-1 text-xs text-primary font-medium hover:underline whitespace-nowrap">
@@ -39,23 +39,23 @@ function FeaturedProduct({ section }) {
         </Link>
       </div>
       {products.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2">
-          {products.map((p) => (
-            <MiniProductCard key={p.id} product={p} />
+        <div className="flex gap-2 flex-1 items-stretch">
+          {products.slice(0, 4).map((p) => (
+            <MiniProductCard key={p.id} product={p} compact />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex gap-2 flex-1 items-stretch">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="aspect-[3/4] bg-muted rounded-2xl" />
+            <div key={i} className="flex-1 animate-pulse flex flex-col">
+              <div className="flex-1 bg-muted rounded-2xl" />
               <div className="h-3 bg-muted rounded mt-2 w-3/4" />
               <div className="h-3 bg-muted rounded mt-1 w-1/2" />
             </div>
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -66,7 +66,7 @@ function FeaturedBanner({ section }) {
   if (!hasImage && !hasScript) return null;
 
   return (
-    <div className="flex justify-center">
+    <div className="flex items-center justify-center flex-1">
       {hasScript ? (
         <div className="w-full max-w-[970px]" dangerouslySetInnerHTML={{ __html: section.script_content }} />
       ) : (
@@ -82,11 +82,11 @@ function FeaturedText({ section }) {
   if (!section.content) return null;
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <h3 className="text-base md:text-lg font-bold text-foreground mb-3">{section.title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line">
+      <p className="text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line flex-1">
         {section.content}
       </p>
-    </>
+    </div>
   );
 }
