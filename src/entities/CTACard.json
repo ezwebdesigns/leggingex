@@ -1,0 +1,71 @@
+{
+  "name": "CTACard",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image",
+      "format": "uri",
+      "ui:widget": "image"
+    },
+    "link": {
+      "type": "string",
+      "title": "Link (route)"
+    },
+    "bg_color": {
+      "type": "string",
+      "title": "Background Color (hex, for solid color cards)"
+    },
+    "text_color": {
+      "type": "string",
+      "title": "Text Color (hex, for solid color cards)"
+    },
+    "sort_order": {
+      "type": "integer",
+      "title": "Sort Order",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "link"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.is_active": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

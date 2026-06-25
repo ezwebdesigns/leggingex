@@ -1,0 +1,117 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Product Name"
+    },
+    "brand": {
+      "type": "string",
+      "title": "Brand"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Femmes",
+        "Hommes",
+        "Enfants",
+        "Sport",
+        "Plus Size",
+        "Fashion"
+      ]
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image",
+      "format": "uri",
+      "ui:widget": "image"
+    },
+    "price": {
+      "type": "number",
+      "title": "Price (EUR)"
+    },
+    "rating": {
+      "type": "number",
+      "title": "Rating (0-5)",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "reviews_count": {
+      "type": "integer",
+      "title": "Reviews Count"
+    },
+    "best_seller_rank": {
+      "type": "integer",
+      "title": "Best Seller Rank"
+    },
+    "affiliate_url": {
+      "type": "string",
+      "title": "Affiliate Link",
+      "format": "uri"
+    },
+    "affiliate_site": {
+      "type": "string",
+      "title": "Affiliate Site",
+      "default": "Amazon"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "material": {
+      "type": "string",
+      "title": "Material"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "archived"
+      ],
+      "default": "active"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "title": "Featured",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "brand",
+    "category",
+    "affiliate_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.status": "active"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

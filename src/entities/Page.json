@@ -1,0 +1,83 @@
+{
+  "name": "Page",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "title": "Slug (URL)"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "content": {
+      "type": "string",
+      "title": "Content",
+      "format": "text"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type",
+      "enum": [
+        "static_page",
+        "blog_post"
+      ],
+      "default": "static_page"
+    },
+    "excerpt": {
+      "type": "string",
+      "title": "Excerpt (blog preview)"
+    },
+    "cover_image": {
+      "type": "string",
+      "title": "Cover Image",
+      "format": "uri",
+      "ui:widget": "image"
+    },
+    "published": {
+      "type": "boolean",
+      "title": "Published",
+      "default": false
+    },
+    "published_at": {
+      "type": "string",
+      "title": "Publication Date",
+      "format": "date"
+    }
+  },
+  "required": [
+    "slug",
+    "title",
+    "content",
+    "type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.published": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

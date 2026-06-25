@@ -1,0 +1,89 @@
+{
+  "name": "AdBanner",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "title": "Type",
+      "enum": [
+        "image",
+        "script"
+      ],
+      "default": "image"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "subtitle": {
+      "type": "string",
+      "title": "Subtitle"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Image",
+      "format": "uri",
+      "ui:widget": "image"
+    },
+    "link": {
+      "type": "string",
+      "title": "Link"
+    },
+    "button_text": {
+      "type": "string",
+      "title": "Button Text"
+    },
+    "bg_color": {
+      "type": "string",
+      "title": "Background Color (hex)",
+      "default": "#000000"
+    },
+    "script_content": {
+      "type": "string",
+      "title": "Script / HTML Content",
+      "format": "text"
+    },
+    "sort_order": {
+      "type": "integer",
+      "title": "Sort Order",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.is_active": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

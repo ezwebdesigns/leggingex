@@ -1,0 +1,318 @@
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Star, Loader2, SlidersHorizontal, X, ChevronDown, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { fetchCatalog, fetchFilterOptions } from '@/lib/supabaseApi';
+import { useCountry } from '@/contexts/CountryContext';
+import { supabase } from '@/lib/supabaseClient';
+
+const SORT_OPTIONS = [
+  { label: 'Top Rated', value: 'rating.desc.nullslast,ratings_count.desc.nullslast' },
+  { label: 'Most Reviews', value: 'ratings_count.desc.nullslast' },
+  { label: 'Price: Low to High', value: 'price.asc.nullslast' },
+  { label: 'Price: High to Low', value: 'price.desc.nullslast' },
+  { label: 'Best Seller', value: 'best_seller_rank.asc.nullslast' },
+];
+
+function Stars({ rating }) {
+  return (
+    <span className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star key={i} strokeWidth={0} className={`w-3 h-3 ${i <= Math.round(rating) ? 'fill-yellow-400' : 'fill-gray-200'}`} />
+      ))}
+    </span>
+  );
+}
+
+function ProductCard({ product }) {
+  const { currencyPrefix } = useCountry();
+  const { id, title, image_url, price, rating, ratings_count, brand } = product;
+  const [fav, setFav] = useState(false);
+
+  useEffect(() => {
+    try {
+      const favs = JSON.parse(localStorage.getItem('leggings_favorites') || '[]');
+      setFav(favs.includes(id));
+    } catch { /* ignore */ }
+  }, [id]);
+
+  const toggleFav = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const favs = JSON.parse(localStorage.getItem('leggings_favorites') || '[]');
+      const next = favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id];
+      localStorage.setItem('leggings_favorites', JSON.stringify(next));
+      setFav(!fav);
+    } catch { /* ignore */ }
+  };
+
+  return (
+    <Link to={`/produit/${id}`} className="group block rounded-xl overflow-hidden bg-card border border-border/50 hover:shadow-md transition-all duration-300">
+      <div className="relative aspect-square bg-muted overflow-hidden">
+        {image_url ? (
+          <img src={image_url} alt={title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-5xl">👖</div>
+        )}
+        <button
+          onClick={toggleFav}
+          className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+        >
+          <Heart className={`w-4 h-4 ${fav ? 'fill-red-500 text-red-500' : 'text-foreground'}`} />
+        </button>
+      </div>
+      <div className="p-3 space-y-1">
+        {brand && <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground truncate">{brand}</p>}
+        <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{title}</p>
+        {rating && (
+          <div className="flex items-center gap-1">
+            <Stars rating={rating} />
+            <span className="text-xs text-muted-foreground">{rating.toFixed(1)}</span>
+            {ratings_count && <span className="text-xs text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
+          </div>
+        )}
+        {price != null && <p className="text-sm font-semibold text-foreground">{currencyPrefix}{price.toFixed(2)}</p>}
+      </div>
+    </Link>
+  );
+}
+
+export default function Catalogue() {
+  const { marketplace } = useCountry();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [products, setProducts] = useState([]);
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [brands, setBrands] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
+
+  const [filters, setFilters] = useState({
+    category: searchParams.get('category') || '',
+    brand: searchParams.get('brand') || '',
+    minRating: parseFloat(searchParams.get('minRating') || '0'),
+    sort: searchParams.get('sort') || DEFAULT_SORT,
+    search: searchParams.get('search') || '',
+  });
+
+  useEffect(() => {
+    supabase.from('category_tags').select('*').eq('is_active', true).order('sort_order').limit(50)
+      .then(({ data }) => setSubcategories(data || []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetchFilterOptions(marketplace).then(({ brands }) => setBrands(brands)).catch(() => {});
+  }, [marketplace]);
+
+  useEffect(() => {
+    const newFilters = {
+      category: searchParams.get('category') || '',
+      brand: searchParams.get('brand') || '',
+      minRating: parseFloat(searchParams.get('minRating') || '0'),
+      sort: searchParams.get('sort') || DEFAULT_SORT,
+      search: searchParams.get('search') || '',
+    };
+    setFilters(newFilters);
+  }, [searchParams.toString()]);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setOffset(0);
+      const data = await fetchCatalog({ ...filters, offset: 0, marketplace });
+      setProducts(data);
+      setHasMore(data.length === 20);
+      setOffset(20);
+      setLoading(false);
+    };
+    load();
+  }, [filters.category, filters.brand, filters.minRating, filters.sort, filters.search, marketplace]);
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    const data = await fetchCatalog({ ...filters, offset, marketplace });
+    setProducts((prev) => [...prev, ...data]);
+    setHasMore(data.length === 20);
+    setOffset((o) => o + 20);
+    setLoadingMore(false);
+  };
+
+  const updateFilter = (key, value) => {
+    const next = { ...filters, [key]: value };
+    setFilters(next);
+    const params = {};
+    if (next.category) params.category = next.category;
+    if (next.brand) params.brand = next.brand;
+    if (next.minRating > 0) params.minRating = next.minRating;
+    if (next.sort !== DEFAULT_SORT) params.sort = next.sort;
+    if (next.search) params.search = next.search;
+    setSearchParams(params);
+  };
+
+  const clearFilters = () => {
+    setFilters({ category: '', brand: '', minRating: 0, sort: DEFAULT_SORT, search: '' });
+    setSearchParams({});
+  };
+
+  const activeFilterCount = [filters.category, filters.brand, filters.minRating > 0].filter(Boolean).length;
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-4 md:px-6 pt-2 pb-2">
+          <button
+            onClick={() => updateFilter('category', '')}
+            className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${!filters.category ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border/50 text-foreground hover:bg-muted'}`}
+          >
+            All
+          </button>
+          {subcategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => updateFilter('category', cat.value)}
+              className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${filters.category === cat.value ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border/50 text-foreground hover:bg-muted'}`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 px-4 md:px-6 pb-3">
+          <div className="relative">
+            <select
+              value={filters.sort}
+              onChange={(e) => updateFilter('sort', e.target.value)}
+              className="appearance-none pl-3 pr-8 h-8 rounded-xl text-xs font-medium bg-background border border-border text-foreground outline-none cursor-pointer hover:border-primary/50 transition-colors"
+            >
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+          </div>
+
+          <button
+            onClick={() => setShowFilters(true)}
+            className={`flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-medium border transition-all ${activeFilterCount > 0 ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-border text-foreground hover:border-primary/50'}`}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="bg-primary-foreground text-primary w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center">{activeFilterCount}</span>
+            )}
+          </button>
+
+          {activeFilterCount > 0 && (
+            <button onClick={clearFilters} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+              <X className="w-3.5 h-3.5" /> Clear
+            </button>
+          )}
+
+          <div className="ml-auto text-xs text-muted-foreground font-medium hidden sm:block">
+            {!loading && `${products.length}+ results`}
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 md:px-6 py-5">
+        {/* Centered header with breadcrumbs (shop.app inspired) */}
+        {filters.category && (
+          <div className="text-center mb-6">
+            <nav className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-2">
+              <Link to="/catalogue" className="hover:text-foreground transition-colors">All categories</Link>
+              <span className="text-border">/</span>
+              <span className="text-foreground font-medium">{filters.category}</span>
+            </nav>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">{filters.category}</h1>
+          </div>
+        )}
+        {filters.search && (
+          <div className="text-center mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">"{filters.search}"</h1>
+            <p className="text-sm text-muted-foreground mt-1">Search results</p>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
+                <div className="aspect-[3/4] bg-muted" />
+                <div className="p-3 space-y-2">
+                  <div className="h-3 bg-muted rounded w-3/4" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <span className="text-5xl mb-4">👖</span>
+            <p className="text-lg font-medium text-muted-foreground">No products found</p>
+            <button onClick={clearFilters} className="mt-4 text-sm text-primary hover:underline">Reset filters</button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+              {products.map((p) => <ProductCard key={p.id} product={p} />)}
+            </div>
+            {hasMore && (
+              <div className="flex justify-center mt-8">
+                <Button onClick={loadMore} disabled={loadingMore} variant="outline" className="rounded-xl px-8">
+                  {loadingMore ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Loading...</> : 'Load more'}
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {showFilters && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setShowFilters(false)}>
+          <div className="w-full max-w-md bg-background rounded-t-3xl md:rounded-2xl border border-border shadow-xl p-6 animate-fade-in max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-base font-bold">Filters</h3>
+              <button onClick={() => setShowFilters(false)} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-muted">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {brands.length > 0 && (
+              <div className="mb-5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 block">Brand</label>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => updateFilter('brand', '')} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${!filters.brand ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground hover:bg-muted'}`}>All</button>
+                  {brands.slice(0, 20).map((b) => (
+                    <button key={b} onClick={() => updateFilter('brand', b)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${filters.brand === b ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground hover:bg-muted'}`}>{b}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mb-6">
+              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 block">Minimum Rating</label>
+              <div className="flex gap-2">
+                {[0, 3, 3.5, 4, 4.5].map((r) => (
+                  <button key={r} onClick={() => updateFilter('minRating', r)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${filters.minRating === r ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground hover:bg-muted'}`}>
+                    {r === 0 ? 'All' : `${r}★+`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Button className="w-full rounded-xl" onClick={() => setShowFilters(false)}>
+              Apply
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
