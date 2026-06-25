@@ -10,6 +10,7 @@ import CTACardGrid from '@/components/home/CTACardGrid';
 import EditorialRow from '@/components/home/EditorialRow';
 import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
+import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 
 function ProductCarousel({ title, products, viewAllLink, loading }) {
   const scrollRef = useRef(null);
@@ -97,6 +98,7 @@ export default function Home() {
   const [editorialCards, setEditorialCards] = useState([]);
   const [adBanners, setAdBanners] = useState([]);
   const [articles, setArticles] = useState([]);
+  const [featuredSections, setFeaturedSections] = useState([]);
   const [sectionProducts, setSectionProducts] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -113,6 +115,7 @@ export default function Home() {
           { data: editorialData },
           { data: adData },
           { data: articleData },
+          { data: featuredData },
         ] = await Promise.all([
           supabase.from('hero_banners').select('*').eq('is_active', true).order('sort_order').limit(50),
           supabase.from('home_sections').select('*').eq('is_active', true).order('sort_order').limit(50),
@@ -122,6 +125,7 @@ export default function Home() {
           supabase.from('editorial_cards').select('*').eq('is_active', true).order('sort_order').limit(50),
           supabase.from('ad_banners').select('*').eq('is_active', true).order('sort_order').limit(50),
           supabase.from('pages').select('*').eq('type', 'blog_post').eq('published', true).order('published_at', { ascending: false }).limit(3),
+          supabase.from('featured_sections').select('*').eq('is_active', true).order('sort_order').limit(20),
         ]);
 
         setBanners(bannerData || []);
@@ -133,8 +137,19 @@ export default function Home() {
         setAdBanners(adData || []);
         setArticles(articleData || []);
 
-        // Fetch products for product-type and featured sections
-        const productSections = (sectionData || []).filter((s) => !s.section_type || s.section_type === 'products' || s.section_type === 'featured');
+        // Fetch products for featured sections
+        const featuredList = (featuredData || []).map((s) => ({ ...s, _products: [] }));
+        const featuredPromises = featuredList.map((s) =>
+          s.category
+            ? fetchSection(s.category, s.product_limit || 6, marketplace)
+            : fetchTopProducts(s.product_limit || 6, marketplace)
+        );
+        const featuredResults = await Promise.all(featuredPromises);
+        featuredList.forEach((s, i) => { s._products = featuredResults[i] || []; });
+        setFeaturedSections(featuredList);
+
+        // Fetch products for product-type sections
+        const productSections = (sectionData || []).filter((s) => !s.section_type || s.section_type === 'products');
         const productPromises = productSections.map((section) =>
           section.category
             ? fetchSection(section.category, section.limit || 8, marketplace)
@@ -180,11 +195,13 @@ export default function Home() {
 
       <CategoryGrid categories={categories} />
 
+      <FeaturedSectionRow sections={featuredSections} />
+
       {/* Sections rendered based on section_type */}
       {sections.map((section) => {
         const type = section.section_type || 'products';
 
-        if (type === 'products' || type === 'featured') {
+        if (type === 'products') {
           const products = sectionProducts[section.id] || [];
           const viewAllLink = section.category
             ? `/catalogue?category=${encodeURIComponent(section.category)}`

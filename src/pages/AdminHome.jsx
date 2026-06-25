@@ -12,7 +12,6 @@ import ImageUploader from '@/components/admin/ImageUploader';
 
 const SECTION_TYPES = [
   { value: 'products', label: 'Product Carousel' },
-  { value: 'featured', label: 'Featured Section' },
   { value: 'cta_cards', label: 'CTA Cards' },
   { value: 'editorial', label: 'Editorial Row' },
   { value: 'ad_banner', label: 'Ad Banner' },
@@ -38,6 +37,7 @@ const homeTabs = [
   { id: 'cta_cards', label: 'CTA Cards', table: 'cta_cards' },
   { id: 'editorial_cards', label: 'Editorial', table: 'editorial_cards' },
   { id: 'ad_banners', label: 'Ad Banners', table: 'ad_banners' },
+  { id: 'featured_sections', label: 'Featured Sections', table: 'featured_sections' },
 ];
 
 function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFolder }) {
@@ -313,13 +313,11 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', description: '', image_url: '', section_type: 'products', category: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', section_type: 'products', category: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
-      { key: 'description', label: 'Description', type: 'textarea', rows: 2, fullWidth: true },
-      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
-      { key: 'category', label: 'Category (for products/featured)', placeholder: 'e.g. Women, Men...' },
+      { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...' },
       { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '8' },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
@@ -385,6 +383,16 @@ const entityConfig = {
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
+  featured_sections: {
+    labelSingular: 'Featured Section',
+    defaultForm: { title: '', category: '', product_limit: 6, sort_order: 0, is_active: true },
+    fields: [
+      { key: 'title', label: 'Title', required: true, placeholder: 'Favorites for a reason' },
+      { key: 'category', label: 'Category', required: true, placeholder: 'e.g. Biker Shorts, Yoga Pants...' },
+      { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '6' },
+      { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
+    ],
+  },
 };
 
 const entityFolders = {
@@ -395,6 +403,7 @@ const entityFolders = {
   cta_cards: 'cta-cards',
   editorial_cards: 'editorial-cards',
   ad_banners: 'ad-banners',
+  featured_sections: 'featured-sections',
 };
 
 export default function AdminHome() {
