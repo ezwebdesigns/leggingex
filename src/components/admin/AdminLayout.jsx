@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Package, Upload, Home, FileText, LogOut, ShoppingBag } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
 
 const adminNavItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
@@ -12,6 +13,11 @@ const adminNavItems = [
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -46,53 +52,32 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        <Link
-          to="/"
-          title="Back to site"
-          className="flex flex-col items-center justify-center w-10 h-10 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
+        <button
+          onClick={handleLogout}
+          title="Logout"
+          className="flex flex-col items-center justify-center w-12 h-12 rounded-2xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
         >
-          <LogOut className="w-4 h-4" strokeWidth={1.8} />
-        </Link>
+          <LogOut className="w-5 h-5" strokeWidth={1.8} />
+        </button>
       </aside>
 
       <main className="flex-1 md:pl-16 min-h-screen flex flex-col">
-        <div className="border-b border-border bg-background px-4 md:px-8 py-4 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">Back-office</h1>
-          </div>
+        <div className="border-b border-border bg-background px-4 md:px-8 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-foreground">Back-office</h1>
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Back to site
-            </button>
+            </Link>
             <span className="text-xs text-muted-foreground bg-secondary px-3 py-1.5 rounded-full font-medium">
               Admin
             </span>
+            <button
+              onClick={handleLogout}
+              className="md:hidden text-sm text-destructive hover:text-destructive/80 transition-colors font-medium"
+            >
+              Logout
+            </button>
           </div>
-        </div>
-
-        <div className="flex gap-1 px-4 md:px-8 pt-4 pb-2 border-b border-border">
-          {adminNavItems.map(({ icon: Icon, label, path }) => {
-            const active = path === '/admin'
-              ? location.pathname === '/admin'
-              : location.pathname.startsWith(path);
-            return (
-              <Link
-                key={path}
-                to={path}
-                className={`px-4 py-2 text-sm font-medium rounded-xl transition-all flex items-center gap-2 ${
-                  active
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </Link>
-            );
-          })}
         </div>
 
         <div className="flex-1 px-4 md:px-8 py-6">
