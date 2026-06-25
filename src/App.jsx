@@ -22,7 +22,6 @@ import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
 import DynamicPage from '@/pages/DynamicPage';
 import Login from '@/pages/Login';
-import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 
@@ -66,7 +65,6 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<AppLayout />}>
