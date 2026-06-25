@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,12 @@ const AD_DISPLAY_TYPES = [
   { value: 'square', label: 'Square Ad' },
 ];
 
+const FEATURED_FORMAT_TYPES = [
+  { value: 'product', label: 'Product' },
+  { value: 'banner', label: 'Banner' },
+  { value: 'text', label: 'Text' },
+];
+
 const PAGE_TYPES = [
   { value: 'static_page', label: 'Static Page' },
   { value: 'blog_post', label: 'Blog Post' },
@@ -44,13 +50,18 @@ const homeTabs = [
 function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFolder }) {
   const [form, setForm] = useState(initial);
   const [dynamicOptions, setDynamicOptions] = useState({});
+  const loadedRef = useRef(new Set());
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   useEffect(() => {
     fields.forEach(async (f) => {
-      if (typeof f.options === 'function' && (!f.condition || (form[f.condition.field] === f.condition.value))) {
-        const opts = await f.options();
-        setDynamicOptions((prev) => ({ ...prev, [f.key]: opts }));
+      if (typeof f.options === 'function') {
+        if (loadedRef.current.has(f.key)) return;
+        if (!f.condition || (form[f.condition.field] === f.condition.value)) {
+          loadedRef.current.add(f.key);
+          const opts = await f.options();
+          setDynamicOptions((prev) => ({ ...prev, [f.key]: opts }));
+        }
       }
     });
   }, [fields, form]);
@@ -328,12 +339,19 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', featured_section_id_2: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
       { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...' },
-      { key: 'featured_section_id', label: 'Featured Section', type: 'select', fullWidth: true,
+      { key: 'featured_section_id', label: 'Featured Section (Left)', type: 'select', fullWidth: true,
+        condition: { field: 'section_type', value: 'featured' },
+        options: async () => {
+          const { data } = await supabase.from('featured_sections').select('id, title').eq('is_active', true).order('sort_order');
+          return (data || []).map((s) => ({ value: s.id, label: s.title }));
+        },
+      },
+      { key: 'featured_section_id_2', label: 'Featured Section (Right)', type: 'select', fullWidth: true,
         condition: { field: 'section_type', value: 'featured' },
         options: async () => {
           const { data } = await supabase.from('featured_sections').select('id, title').eq('is_active', true).order('sort_order');
@@ -407,11 +425,15 @@ const entityConfig = {
   },
   featured_sections: {
     labelSingular: 'Featured Section',
-    defaultForm: { title: '', category: '', product_limit: 6, sort_order: 0, is_active: true },
+    defaultForm: { title: '', format: 'product', category: '', product_limit: 4, content: '', image_url: '', script_content: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Favorites for a reason' },
-      { key: 'category', label: 'Category', required: true, placeholder: 'e.g. Biker Shorts, Yoga Pants...' },
-      { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '6' },
+      { key: 'format', label: 'Format', type: 'select', options: FEATURED_FORMAT_TYPES, fullWidth: true },
+      { key: 'category', label: 'Category', condition: { field: 'format', value: 'product' }, required: true, placeholder: 'e.g. Biker Shorts, Yoga Pants...' },
+      { key: 'product_limit', label: 'Product Limit', type: 'number', condition: { field: 'format', value: 'product' }, placeholder: '4' },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true, condition: { field: 'format', value: 'banner' } },
+      { key: 'script_content', label: 'Ad Script (HTML)', type: 'textarea', rows: 2, fullWidth: true, condition: { field: 'format', value: 'banner' } },
+      { key: 'content', label: 'Content (paragraph)', type: 'textarea', rows: 3, fullWidth: true, condition: { field: 'format', value: 'text' } },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },

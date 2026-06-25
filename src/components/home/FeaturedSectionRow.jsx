@@ -1,6 +1,5 @@
-import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import MiniProductCard from '@/components/products/MiniProductCard';
 
 export default function FeaturedSectionRow({ sections }) {
@@ -10,69 +9,84 @@ export default function FeaturedSectionRow({ sections }) {
     <section className="px-4 md:px-6 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => (
-          <FeaturedSection key={section.id} section={section} />
+          <div key={section.id} className="rounded-2xl border border-border bg-card p-4 md:p-5">
+            {section.format === 'text' ? (
+              <FeaturedText section={section} />
+            ) : section.format === 'banner' ? (
+              <FeaturedBanner section={section} />
+            ) : (
+              <FeaturedProduct section={section} />
+            )}
+          </div>
         ))}
       </div>
     </section>
   );
 }
 
-function FeaturedSection({ section }) {
-  const scrollRef = useRef(null);
-
-  const scroll = (dir) => {
-    if (!scrollRef.current) return;
-    const amount = scrollRef.current.offsetWidth * 0.7;
-    scrollRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
-  };
-
+function FeaturedProduct({ section }) {
+  const products = section._products || [];
   const viewAllLink = section.category
     ? `/catalogue?category=${encodeURIComponent(section.category)}`
     : '/catalogue';
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 md:p-5">
+    <>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base md:text-lg font-bold text-foreground">{section.title}</h3>
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => scroll('left')}
-            className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-          <Link
-            to={viewAllLink}
-            className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors ml-1"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+        <Link to={viewAllLink} className="flex items-center gap-1 text-xs text-primary font-medium hover:underline whitespace-nowrap">
+          View all <ChevronRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
-      <div
-        ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scrollbar-hide pb-1"
-      >
-        {section._products && section._products.length > 0 ? (
-          section._products.map((p) => (
+      {products.length > 0 ? (
+        <div className="grid grid-cols-2 gap-2">
+          {products.map((p) => (
             <MiniProductCard key={p.id} product={p} />
-          ))
-        ) : (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-36 sm:w-44 animate-pulse">
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="animate-pulse">
               <div className="aspect-[3/4] bg-muted rounded-2xl" />
               <div className="h-3 bg-muted rounded mt-2 w-3/4" />
               <div className="h-3 bg-muted rounded mt-1 w-1/2" />
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function FeaturedBanner({ section }) {
+  const hasImage = section.image_url;
+  const hasScript = section.script_content;
+
+  if (!hasImage && !hasScript) return null;
+
+  return (
+    <div className="flex justify-center">
+      {hasScript ? (
+        <div className="w-full max-w-[970px]" dangerouslySetInnerHTML={{ __html: section.script_content }} />
+      ) : (
+        <a href={section.link || '#'} target="_blank" rel="noopener noreferrer" className="block w-full max-w-[970px]">
+          <img src={section.image_url} alt={section.title} className="w-full h-auto rounded-xl" />
+        </a>
+      )}
     </div>
+  );
+}
+
+function FeaturedText({ section }) {
+  if (!section.content) return null;
+
+  return (
+    <>
+      <h3 className="text-base md:text-lg font-bold text-foreground mb-3">{section.title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line">
+        {section.content}
+      </p>
+    </>
   );
 }

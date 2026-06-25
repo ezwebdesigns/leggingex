@@ -137,15 +137,21 @@ export default function Home() {
         setAdBanners(adData || []);
         setArticles(articleData || []);
 
-        // Fetch products for featured sections
+        // Fetch products for product-format featured sections
         const featuredList = (featuredData || []).map((s) => ({ ...s, _products: [] }));
-        const featuredPromises = featuredList.map((s) =>
-          s.category
-            ? fetchSection(s.category, s.product_limit || 6, marketplace)
-            : fetchTopProducts(s.product_limit || 6, marketplace)
-        );
-        const featuredResults = await Promise.all(featuredPromises);
-        featuredList.forEach((s, i) => { s._products = featuredResults[i] || []; });
+        const productFormatIds = featuredList.filter((s) => s.format === 'product').map((s) => s.id);
+        const productFetchPromises = featuredList
+          .filter((s) => s.format === 'product')
+          .map((s) =>
+            s.category
+              ? fetchSection(s.category, s.product_limit || 4, marketplace)
+              : fetchTopProducts(s.product_limit || 4, marketplace)
+          );
+        const productFetchResults = await Promise.all(productFetchPromises);
+        productFormatIds.forEach((id, i) => {
+          const fs = featuredList.find((s) => s.id === id);
+          if (fs) fs._products = productFetchResults[i] || [];
+        });
         setFeaturedSections(featuredList);
 
         // Fetch products for product-type sections
@@ -204,15 +210,13 @@ export default function Home() {
           const type = section.section_type || 'products';
 
           if (type === 'featured') {
-            const featuredGroup = [];
-            while (i < sections.length && (sections[i].section_type || 'products') === 'featured') {
-              const fs = featuredSections.find((f) => f.id === sections[i].featured_section_id);
-              if (fs) featuredGroup.push(fs);
-              i++;
+            const fs1 = featuredSections.find((f) => f.id === section.featured_section_id);
+            const fs2 = featuredSections.find((f) => f.id === section.featured_section_id_2);
+            const pair = [fs1, fs2].filter(Boolean);
+            if (pair.length > 0) {
+              rendered.push(<FeaturedSectionRow key={`featured-${section.id}`} sections={pair} />);
             }
-            if (featuredGroup.length > 0) {
-              rendered.push(<FeaturedSectionRow key={`featured-group-${section.id}`} sections={featuredGroup} />);
-            }
+            i++;
           } else {
             if (type === 'products') {
               const products = sectionProducts[section.id] || [];
