@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
 import MiniProductCard from '@/components/products/MiniProductCard';
 
 export default function FeaturedSectionRow({ sections }) {
@@ -38,22 +37,26 @@ function FeaturedProduct({ section }) {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm md:text-base font-bold text-foreground truncate">{section.title}</h3>
         <Link to={viewAllLink} className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors flex-shrink-0 ml-2">
-          <ChevronRight className="w-3.5 h-3.5" />
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
         </Link>
       </div>
       {products.length > 0 ? (
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2">
           {products.slice(0, 4).map((p) => (
-            <MiniProductCard key={p.id} product={p} compact />
+            <div key={p.id} className="flex-1 min-w-[110px] rounded-2xl border border-border overflow-hidden">
+              <MiniProductCard product={p} featured />
+            </div>
           ))}
         </div>
       ) : (
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="w-[120px] animate-pulse flex-shrink-0">
-              <div className="aspect-[3/4] bg-muted rounded-2xl" />
-              <div className="h-3 bg-muted rounded mt-2 w-3/4" />
-              <div className="h-3 bg-muted rounded mt-1 w-1/2" />
+            <div key={i} className="flex-1 min-w-[110px] rounded-2xl border border-border overflow-hidden animate-pulse">
+              <div className="aspect-[3/4] bg-muted" />
+              <div className="p-1.5">
+                <div className="h-2 bg-muted rounded w-3/4" />
+                <div className="h-2 bg-muted rounded mt-1 w-1/2" />
+              </div>
             </div>
           ))}
         </div>
@@ -69,13 +72,22 @@ function FeaturedBanner({ section }) {
   if (!hasImage && !hasScript) return null;
 
   return (
-    <div className="h-full flex">
+    <div className="h-full relative rounded-2xl overflow-hidden">
       {hasScript ? (
-        <div className="w-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: section.script_content }} />
+        <div className="w-full h-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: section.script_content }} />
       ) : (
-        <a href={section.link || '#'} target="_blank" rel="noopener noreferrer" className="block w-full">
-          <img src={section.image_url} alt={section.title} className="w-full h-full object-cover rounded-xl" />
-        </a>
+        <>
+          <img src={section.image_url} alt={section.title} className="w-full h-full object-cover" />
+          {(section.title || section.subtitle) && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          )}
+          {(section.title || section.subtitle) && (
+            <div className="absolute bottom-0 left-0 p-4">
+              {section.title && <p className="text-white font-bold text-sm md:text-base">{section.title}</p>}
+              {section.subtitle && <p className="text-white/80 text-xs mt-0.5">{section.subtitle}</p>}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

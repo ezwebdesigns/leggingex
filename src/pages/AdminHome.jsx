@@ -425,13 +425,15 @@ const entityConfig = {
   },
   featured_sections: {
     labelSingular: 'Featured Section',
-    defaultForm: { title: '', format: 'product', category: '', product_limit: 3, content: '', image_url: '', script_content: '', sort_order: 0, is_active: true },
+    defaultForm: { title: '', format: 'product', category: '', product_limit: 3, content: '', image_url: '', subtitle: '', link: '', script_content: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Favorites for a reason' },
       { key: 'format', label: 'Format', type: 'select', options: FEATURED_FORMAT_TYPES, fullWidth: true },
       { key: 'category', label: 'Category', condition: { field: 'format', value: 'product' }, required: true, placeholder: 'e.g. Biker Shorts, Yoga Pants...' },
       { key: 'product_limit', label: 'Product Limit', type: 'number', condition: { field: 'format', value: 'product' }, placeholder: '4' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true, condition: { field: 'format', value: 'banner' } },
+      { key: 'subtitle', label: 'Description', fullWidth: true, condition: { field: 'format', value: 'banner' } },
+      { key: 'link', label: 'Link URL', type: 'url', fullWidth: true, condition: { field: 'format', value: 'banner' } },
       { key: 'script_content', label: 'Ad Script (HTML)', type: 'textarea', rows: 2, fullWidth: true, condition: { field: 'format', value: 'banner' } },
       { key: 'content', label: 'Content (paragraph)', type: 'textarea', rows: 3, fullWidth: true, condition: { field: 'format', value: 'text' } },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },

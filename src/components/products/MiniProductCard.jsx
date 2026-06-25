@@ -12,15 +12,15 @@ function Stars({ rating }) {
   );
 }
 
-export default function MiniProductCard({ product, compact }) {
+export default function MiniProductCard({ product, compact, featured }) {
   const { currencyPrefix } = useCountry();
   const { id, title, image_url, price, rating, ratings_count, brand } = product;
   return (
     <Link
       to={`/produit/${id}`}
-      className={`group flex-shrink-0 block ${compact ? 'w-[120px]' : 'w-36 sm:w-44'}`}
+      className={`group flex-shrink-0 block ${featured ? 'w-full' : compact ? 'w-[120px]' : 'w-36 sm:w-44'}`}
     >
-      <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-muted mb-2">
+      <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted mb-1.5">
         {image_url ? (
           <img
             src={image_url}
