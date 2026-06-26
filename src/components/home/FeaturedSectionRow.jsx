@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+
 import MiniProductCard from '@/components/products/MiniProductCard';
 
 export default function FeaturedSectionRow({ sections }) {
@@ -10,7 +11,7 @@ export default function FeaturedSectionRow({ sections }) {
         {sections.map((section) => (
           <div
             key={section.id}
-            className="rounded-2xl border border-border bg-card p-4 md:p-5 h-[340px]"
+            className="rounded-2xl border border-border bg-card p-4 md:p-5 h-[340px] flex flex-col justify-between overflow-hidden"
           >
             {section.format === 'text' ? (
               <FeaturedText section={section} />
@@ -33,35 +34,42 @@ function FeaturedProduct({ section }) {
     : '/catalogue';
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-3">
+    <div className="flex flex-col h-full w-full justify-between overflow-hidden">
+      {/* En-tête de la section */}
+      <div className="flex items-center justify-between mb-2 shrink-0">
         <h3 className="text-sm md:text-base font-bold text-foreground truncate">{section.title}</h3>
         <Link to={viewAllLink} className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors flex-shrink-0 ml-2">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </Link>
       </div>
-      {products.length > 0 ? (
-        <div className="flex gap-2">
-          {products.slice(0, 4).map((p) => (
-            <div key={p.id} className="flex-1 min-w-0">
-              <MiniProductCard product={p} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex gap-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex-1 min-w-0 rounded-2xl border border-border animate-pulse">
-              <div className="aspect-[1/1] bg-muted" />
-              <div className="p-1.5">
-                <div className="h-2 bg-muted rounded w-3/4" />
-                <div className="h-2 bg-muted rounded mt-1 w-1/2" />
+
+      {/* Grid d'affichage occupant l'exact espace restant */}
+      <div className="flex-1 min-h-0 w-full">
+        {products.length > 0 ? (
+          <div className="grid grid-cols-4 gap-2 h-full w-full">
+            {products.slice(0, 4).map((p) => (
+              <div key={p.id} className="h-full min-w-0">
+                <MiniProductCard product={p} />
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-4 gap-2 h-full w-full">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-full min-w-0 rounded-xl border border-border animate-pulse flex flex-col">
+                <div className="flex-1 bg-muted rounded-t-xl" />
+                <div className="p-2 space-y-1.5 shrink-0">
+                  <div className="h-2 bg-muted rounded w-3/4" />
+                  <div className="h-2 bg-muted rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -72,7 +80,7 @@ function FeaturedBanner({ section }) {
   if (!hasImage && !hasScript) return null;
 
   return (
-    <div className="h-full relative rounded-2xl overflow-hidden">
+    <div className="h-full w-full relative rounded-2xl overflow-hidden">
       {hasScript ? (
         <div className="w-full h-full flex items-center justify-center" dangerouslySetInnerHTML={{ __html: section.script_content }} />
       ) : (
@@ -97,11 +105,11 @@ function FeaturedText({ section }) {
   if (!section.content) return null;
 
   return (
-    <>
-      <h3 className="text-sm md:text-base font-bold text-foreground mb-3">{section.title}</h3>
-      <p className="text-xs md:text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line line-clamp-[10]">
+    <div className="flex flex-col h-full justify-start overflow-hidden">
+      <h3 className="text-sm md:text-base font-bold text-foreground mb-3 shrink-0">{section.title}</h3>
+      <p className="text-xs md:text-sm text-muted-foreground leading-relaxed text-justify whitespace-pre-line line-clamp-[11] overflow-hidden">
         {section.content}
       </p>
-    </>
+    </div>
   );
 }
