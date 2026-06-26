@@ -6,6 +6,26 @@ import { getSettings } from '@/lib/settings';
 
 const SOCIAL_ICONS = { Instagram, Twitter, Youtube };
 
+function Column({ title, items }) {
+  if (!title) return <div />;
+  return (
+    <div>
+      <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{title}</h4>
+      <ul className="space-y-2.5">
+        {(items || []).map((item, ii) => (
+          <li key={ii}>
+            {item.url?.startsWith('/') ? (
+              <Link to={item.url} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</Link>
+            ) : (
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Footer() {
   const [staticPages, setStaticPages] = useState([]);
   const [menuFooter, setMenuFooter] = useState(null);
@@ -34,15 +54,13 @@ export default function Footer() {
     { label: 'Blog', url: '/blog' },
   ];
 
-  const allColumns = columns.map((c) => {
-    if (c.title?.toLowerCase() === 'information' && (!c.items || c.items.length === 0)) {
-      return { ...c, items: infoItems };
-    }
-    return c;
-  });
+  const hasInfo = columns.some((c) => c.title?.toLowerCase() === 'information');
+  const settingsCols = columns
+    .map((c) => c.title?.toLowerCase() === 'information' && (!c.items || c.items.length === 0) ? { ...c, items: infoItems } : c)
+    .slice(0, 3);
 
-  if (!columns.some((c) => c.title?.toLowerCase() === 'information') && infoItems.length > 0) {
-    allColumns.push({ title: 'Information', items: infoItems });
+  if (!hasInfo && infoItems.length > 0) {
+    settingsCols.push({ title: 'Information', items: infoItems });
   }
 
   return (
@@ -75,23 +93,9 @@ export default function Footer() {
               </div>
             )}
           </div>
-
-          {allColumns.map((col, ci) => (
-            <div key={ci}>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{col.title}</h4>
-              <ul className="space-y-2.5">
-                {(col.items || []).map((item, ii) => (
-                  <li key={ii}>
-                    {item.url?.startsWith('/') ? (
-                      <Link to={item.url} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</Link>
-                    ) : (
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <Column title={settingsCols[0]?.title} items={settingsCols[0]?.items} />
+          <Column title={settingsCols[1]?.title} items={settingsCols[1]?.items} />
+          <Column title={settingsCols[2]?.title} items={settingsCols[2]?.items} />
         </div>
 
         <div className="border-t border-border pt-6 mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
