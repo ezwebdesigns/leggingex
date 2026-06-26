@@ -82,15 +82,27 @@ function FullBanner({ banner }) {
 }
 
 function SimpleBanner({ banner }) {
-  return (
-    <div className="relative h-32 sm:h-36 md:h-40 rounded-2xl overflow-hidden">
+  const isInternal = banner.link && banner.link.startsWith('/');
+  const linkProps = isInternal
+    ? { to: banner.link }
+    : { href: banner.link, target: '_blank', rel: 'noopener noreferrer' };
+  const LinkComp = isInternal ? Link : 'a';
+  const content = (
+    <>
       <img src={banner.image_url} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 p-4 md:p-6">
         {banner.title && <h3 className="text-white font-bold text-lg md:text-xl">{banner.title}</h3>}
         {banner.subtitle && <p className="text-white/80 text-sm mt-1">{banner.subtitle}</p>}
       </div>
-    </div>
+    </>
+  );
+  return banner.link ? (
+    <LinkComp {...linkProps} className="relative block h-32 sm:h-36 md:h-40 rounded-2xl overflow-hidden group">
+      {content}
+    </LinkComp>
+  ) : (
+    <div className="relative h-32 sm:h-36 md:h-40 rounded-2xl overflow-hidden">{content}</div>
   );
 }
 
