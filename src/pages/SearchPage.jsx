@@ -16,27 +16,34 @@ function Stars({ rating }) {
 
 function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
-  const { id, title, image_url, price, rating, ratings_count, brand } = product;
+  const { id, title, image_url, price, original_price, rating, ratings_count, brand } = product;
   return (
-    <Link to={`/produit/${id}`} className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-border hover:shadow-md transition-all duration-300">
-      <div className="aspect-[1/1] bg-muted overflow-hidden">
+    <Link to={`/produit/${id}`} className="group flex flex-col w-full rounded-2xl overflow-hidden bg-card transition-all duration-300">
+      <div className="w-full aspect-square overflow-hidden bg-[#F5F5F5] relative rounded-2xl border border-border/50">
         {image_url ? (
           <img src={image_url} alt={title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl">👖</div>
+          <div className="w-full h-full flex items-center justify-center text-4xl">👖</div>
         )}
       </div>
-      <div className="p-2 space-y-0.5">
-        {brand && <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground truncate">{brand}</p>}
-        <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{title}</p>
+      <div className="pt-2 pb-1 px-1 space-y-0.5 bg-card">
+        {brand && <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">{brand}</p>}
+        <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">{title}</p>
         {rating && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 leading-none">
             <Stars rating={rating} />
-            <span className="text-xs text-muted-foreground">{rating.toFixed(1)}</span>
-            {ratings_count && <span className="text-xs text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
+            <span className="text-[10px] font-medium text-muted-foreground">{rating.toFixed(1)}</span>
+            {ratings_count && <span className="text-[10px] font-medium text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
           </div>
         )}
-        {price != null && <p className="text-sm font-semibold">{currencyPrefix}{price.toFixed(2)}</p>}
+        {price != null && (
+          <div className="flex items-baseline gap-1.5 pt-0.5 leading-none">
+            <span className="text-xs font-bold text-foreground">{price.toFixed(2)} {currencyPrefix}</span>
+            {original_price && original_price > price && (
+              <span className="text-[10px] text-muted-foreground line-through">{original_price.toFixed(2)} {currencyPrefix}</span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );
@@ -105,7 +112,7 @@ export default function SearchPage() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
-                    <div className="aspect-[1/1] bg-muted" />
+                    <div className="aspect-[1/1] bg-muted rounded-2xl border border-border/50" />
                     <div className="p-3 space-y-2"><div className="h-3 bg-muted rounded w-3/4" /><div className="h-3 bg-muted rounded w-1/2" /></div>
                   </div>
                 ))}

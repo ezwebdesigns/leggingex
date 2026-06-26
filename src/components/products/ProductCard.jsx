@@ -18,14 +18,14 @@ function StarRating({ rating }) {
 
 export default function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
-  const { id, title, brand, rating, ratings_count, image_url, price } = product;
+  const { id, title, brand, rating, ratings_count, image_url, price, original_price } = product;
 
   return (
     <Link
       to={`/produit/${id}`}
-      className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-border hover:shadow-md transition-all duration-300 animate-fade-in"
+      className="group flex flex-col w-full rounded-2xl overflow-hidden bg-card transition-all duration-300"
     >
-      <div className="relative aspect-[1/1] overflow-hidden bg-muted">
+      <div className="w-full aspect-square overflow-hidden bg-[#F5F5F5] relative rounded-2xl border border-border/50">
         {image_url ? (
           <img
             src={image_url}
@@ -34,35 +34,41 @@ export default function ProductCard({ product }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-muted">
-            <span className="text-4xl">👖</span>
-          </div>
+          <div className="w-full h-full flex items-center justify-center text-4xl">👖</div>
         )}
       </div>
 
-      <div className="p-2 space-y-0.5">
-        <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">{brand}</p>
-        <h3 className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{title}</h3>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            {rating ? (
-              <>
-                <StarRating rating={rating} />
-                {ratings_count && (
-                  <span className="text-[11px] text-muted-foreground">
-                    ({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})
-                  </span>
-                )}
-              </>
-            ) : (
-              <span className="text-[11px] text-muted-foreground">Not rated yet</span>
+      <div className="pt-2 pb-1 px-1 space-y-0.5 bg-card">
+        {brand && (
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">
+            {brand}
+          </p>
+        )}
+        <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">
+          {title}
+        </p>
+        {rating && (
+          <div className="flex items-center gap-1 leading-none">
+            <StarRating rating={rating} />
+            {ratings_count && (
+              <span className="text-[10px] font-medium text-muted-foreground">
+                ({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})
+              </span>
             )}
           </div>
-          {price && (
-            <span className="text-sm font-semibold text-foreground">{currencyPrefix}{price.toFixed(2)}</span>
-          )}
-        </div>
+        )}
+        {price != null && (
+          <div className="flex items-baseline gap-1.5 pt-0.5 leading-none">
+            <span className="text-xs font-bold text-foreground">
+              {price.toFixed(2)} {currencyPrefix}
+            </span>
+            {original_price && original_price > price && (
+              <span className="text-[10px] text-muted-foreground line-through">
+                {original_price.toFixed(2)} {currencyPrefix}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );

@@ -28,7 +28,7 @@ function ProductCarousel({ title, products, viewAllLink, loading }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
-                <div className="aspect-[1/1] bg-muted rounded-2xl" />
+                <div className="aspect-[1/1] bg-muted rounded-2xl border border-border/50" />
                 <div className="h-3 bg-muted rounded mt-2 w-3/4" />
                 <div className="h-3 bg-muted rounded mt-1 w-1/2" />
               </div>
