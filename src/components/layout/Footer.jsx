@@ -29,11 +29,24 @@ export default function Footer() {
   const social = menuFooter?.social || [];
   const columns = menuFooter?.columns || [];
 
+  const allColumns = [...columns];
+
+  const hasInformation = allColumns.some((c) => c.title?.toLowerCase() === 'information');
+  if (!hasInformation && staticPages.length > 0) {
+    allColumns.push({
+      title: 'Information',
+      items: [
+        ...staticPages.map((p) => ({ label: p.title, url: `/${p.slug}` })),
+        { label: 'Blog', url: '/blog' },
+      ],
+    });
+  }
+
   return (
     <footer className="border-t border-border bg-background mt-16">
       <div className="w-full px-14 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-          <div className="col-span-2 md:col-span-1">
+        <div className="flex flex-wrap gap-8 mb-10">
+          <div className="w-full md:w-auto md:min-w-[200px] md:max-w-[250px]">
             <Link to="/" className="flex items-center gap-2 mb-3">
               {logo ? (
                 <img src={logo} alt={logoText} className="h-7 w-auto" />
@@ -60,32 +73,26 @@ export default function Footer() {
             )}
           </div>
 
-          {columns.map((col, ci) => (
-            <div key={ci}>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{col.title}</h4>
-              <ul className="space-y-2.5">
-                {(col.items || []).map((item, ii) => (
-                  <li key={ii}>
-                    <Link to={item.url} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">Information</h4>
-            <ul className="space-y-2.5">
-              {staticPages.map((page) => (
-                <li key={page.id}>
-                  <Link to={`/${page.slug}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{page.title}</Link>
-                </li>
+          {allColumns.length > 0 && (
+            <div className="flex flex-wrap gap-8 flex-1">
+              {allColumns.map((col, ci) => (
+                <div key={ci} className="min-w-[140px]">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{col.title}</h4>
+                  <ul className="space-y-2.5">
+                    {(col.items || []).map((item, ii) => (
+                      <li key={ii}>
+                        {item.url?.startsWith('/') ? (
+                          <Link to={item.url} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</Link>
+                        ) : (
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item.label}</a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-              <li>
-                <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link>
-              </li>
-            </ul>
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
