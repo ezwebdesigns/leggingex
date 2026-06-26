@@ -232,6 +232,8 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
     setSaving(true);
     setError(null);
     try {
+      if (payload.featured_section_id === '') payload.featured_section_id = null;
+      if (payload.featured_section_id_2 === '') payload.featured_section_id_2 = null;
       if (editItem) {
         const { error: err } = await supabase.from(table).update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editItem.id);
         if (err) throw err;
@@ -395,7 +397,7 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', featured_section_id_2: '', selected_ids: [], ad_display_type: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: null, featured_section_id_2: null, selected_ids: [], ad_display_type: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
