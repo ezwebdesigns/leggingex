@@ -60,9 +60,9 @@ export default function AdminSettings() {
       if (!file) return;
       const ext = file.name.split('.').pop();
       const path = `settings/${subKey}_${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from('images').upload(path, file);
+      const { error: uploadError } = await supabase.storage.from('admin-uploads').upload(path, file);
       if (uploadError) { toast.error('Upload failed: ' + uploadError.message); return; }
-      const { data: urlData } = supabase.storage.from('images').getPublicUrl(path);
+      const { data: urlData } = supabase.storage.from('admin-uploads').getPublicUrl(path);
       const url = urlData.publicUrl;
       const current = settings[key] || {};
       update(key, { ...current, [subKey]: url });

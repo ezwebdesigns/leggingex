@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -10,6 +11,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import AppLayout from '@/components/layout/AppLayout';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { getSettings } from '@/lib/settings';
 
 // Page imports
 import Home from '@/pages/Home';
@@ -53,6 +55,35 @@ const AuthenticatedApp = () => {
       return null;
     }
   }
+
+  useEffect(() => {
+    getSettings().then((s) => {
+      const seo = s.seo || {};
+      const general = s.general || {};
+      const favicon = general.favicon;
+      const siteTitle = general.site_title || 'Leggings — Find your perfect pair';
+      const metaTitle = seo.meta_title || siteTitle;
+      const metaDesc = seo.meta_description || 'Discover the best leggings for women, men, kids, sports and fashion.';
+
+      document.title = metaTitle;
+      let link = document.querySelector('link[rel="icon"]');
+      if (favicon) {
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+        link.href = favicon;
+      }
+      let desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.content = metaDesc;
+      let ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.content = metaTitle;
+      let ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.content = metaDesc;
+      if (seo.og_image) {
+        let ogImg = document.querySelector('meta[property="og:image"]');
+        if (!ogImg) { ogImg = document.createElement('meta'); ogImg.setAttribute('property', 'og:image'); document.head.appendChild(ogImg); }
+        ogImg.content = seo.og_image;
+      }
+    }).catch(() => {});
+  }, []);
 
   const Forbidden = () => {
     const navigateToLogin = () => window.location.href = '/login';
