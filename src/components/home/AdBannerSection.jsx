@@ -14,7 +14,7 @@ export default function AdBannerSection({ banners }) {
         <FullBanner key={banner.id} banner={banner} />
       ))}
       {simpleBanners.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {simpleBanners.map((banner) => (
             <SimpleBanner key={banner.id} banner={banner} />
           ))}
