@@ -156,8 +156,8 @@ export default function Home() {
         const productSections = (sectionData || []).filter((s) => !s.section_type || s.section_type === 'products');
         const productPromises = productSections.map((section) =>
           section.category
-            ? fetchSection(section.category, section.limit || 8, marketplace)
-            : fetchTopProducts(section.limit || 12, marketplace)
+            ? fetchSection(section.category, section.product_limit || 8, marketplace)
+            : fetchTopProducts(section.product_limit || 12, marketplace)
         );
         const productResults = await Promise.all(productPromises);
 
@@ -231,13 +231,17 @@ export default function Home() {
                 />
               );
             } else if (type === 'cta_cards') {
-              rendered.push(<CTACardGrid key={section.id} cards={ctaCards} title={section.title} />);
+              const filtered = section.selected_ids?.length > 0 ? ctaCards.filter((c) => section.selected_ids.includes(c.id)) : ctaCards;
+              rendered.push(<CTACardGrid key={section.id} cards={filtered} title={section.title} />);
             } else if (type === 'editorial') {
-              rendered.push(<EditorialRow key={section.id} cards={editorialCards} title={section.title} />);
+              const filtered = section.selected_ids?.length > 0 ? editorialCards.filter((c) => section.selected_ids.includes(c.id)) : editorialCards;
+              rendered.push(<EditorialRow key={section.id} cards={filtered} title={section.title} />);
             } else if (type === 'ad_banner') {
-              rendered.push(<AdBannerSection key={section.id} banners={adBanners} />);
+              const filtered = section.selected_ids?.length > 0 ? adBanners.filter((b) => section.selected_ids.includes(b.id)) : adBanners;
+              rendered.push(<AdBannerSection key={section.id} banners={filtered} />);
             } else if (type === 'articles') {
-              rendered.push(<RecentArticles key={section.id} articles={articles} title={section.title} />);
+              const filtered = section.selected_ids?.length > 0 ? articles.filter((a) => section.selected_ids.includes(a.id)) : articles;
+              rendered.push(<RecentArticles key={section.id} articles={filtered} title={section.title} />);
             }
             i++;
           }

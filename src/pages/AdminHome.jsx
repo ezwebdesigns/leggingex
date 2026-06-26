@@ -53,6 +53,12 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
   const loadedRef = useRef(new Set());
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
+  const toggleSelected = (key, id) => {
+    const current = form[key] || [];
+    const next = current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
+    set(key, next);
+  };
+
   useEffect(() => {
     fields.forEach(async (f) => {
       if (typeof f.options === 'function') {
@@ -90,6 +96,40 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
                   folder={imageFolder || 'general'}
                   label={f.label}
                 />
+              ) : f.type === 'multi-select' ? (
+                <div>
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                    {f.label} {f.required ? '*' : ''}
+                  </Label>
+                  {(!options || options.length === 0) ? (
+                    <p className="text-sm text-muted-foreground">No items available. Create them first in the {f.label} tab.</p>
+                  ) : (
+                    <div className="space-y-1.5 max-h-60 overflow-y-auto border border-border rounded-xl p-2">
+                      {options.map((opt) => {
+                        const checked = (form[f.key] || []).includes(opt.value);
+                        return (
+                          <label
+                            key={opt.value}
+                            className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                              checked ? 'bg-primary/5 border border-primary/20' : 'hover:bg-muted border border-transparent'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleSelected(f.key, opt.value)}
+                              className="rounded accent-primary"
+                            />
+                            {opt.image && (
+                              <img src={opt.image} alt="" className="w-8 h-8 rounded object-cover border border-border/50" />
+                            )}
+                            <span className="text-sm font-medium text-foreground">{opt.label}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -339,11 +379,12 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', featured_section_id_2: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', featured_section_id_2: '', selected_ids: [], sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
-      { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...' },
+      { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...',
+        condition: { field: 'section_type', value: 'products' } },
       { key: 'featured_section_id', label: 'Featured Section (Left)', type: 'select', fullWidth: true,
         condition: { field: 'section_type', value: 'featured' },
         options: async () => {
@@ -358,7 +399,36 @@ const entityConfig = {
           return (data || []).map((s) => ({ value: s.id, label: s.title }));
         },
       },
-      { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '8' },
+      { key: 'selected_ids', label: 'Select Items', type: 'multi-select', fullWidth: true,
+        condition: { field: 'section_type', value: 'cta_cards' },
+        options: async () => {
+          const { data } = await supabase.from('cta_cards').select('id, title, image_url').eq('is_active', true).order('sort_order');
+          return (data || []).map((s) => ({ value: s.id, label: s.title, image: s.image_url }));
+        },
+      },
+      { key: 'selected_ids', label: 'Select Editorial Cards', type: 'multi-select', fullWidth: true,
+        condition: { field: 'section_type', value: 'editorial' },
+        options: async () => {
+          const { data } = await supabase.from('editorial_cards').select('id, title, image_url').eq('is_active', true).order('sort_order');
+          return (data || []).map((s) => ({ value: s.id, label: s.title, image: s.image_url }));
+        },
+      },
+      { key: 'selected_ids', label: 'Select Ad Banners', type: 'multi-select', fullWidth: true,
+        condition: { field: 'section_type', value: 'ad_banner' },
+        options: async () => {
+          const { data } = await supabase.from('ad_banners').select('id, title, image_url').eq('is_active', true).order('sort_order');
+          return (data || []).map((s) => ({ value: s.id, label: s.title || s.display_type || s.id.slice(0, 8), image: s.image_url }));
+        },
+      },
+      { key: 'selected_ids', label: 'Select Articles', type: 'multi-select', fullWidth: true,
+        condition: { field: 'section_type', value: 'articles' },
+        options: async () => {
+          const { data } = await supabase.from('pages').select('id, title, cover_image').eq('type', 'blog_post').eq('published', true).order('published_at', { ascending: false });
+          return (data || []).map((s) => ({ value: s.id, label: s.title, image: s.cover_image }));
+        },
+      },
+      { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '8',
+        condition: { field: 'section_type', value: 'products' } },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
