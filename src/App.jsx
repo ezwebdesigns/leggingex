@@ -22,6 +22,7 @@ import AdminProducts from '@/pages/AdminProducts';
 import AdminImport from '@/pages/AdminImport';
 import AdminHome from '@/pages/AdminHome';
 import AdminPages from '@/pages/AdminPages';
+import AdminSettings from '@/pages/AdminSettings';
 import Catalogue from '@/pages/Catalogue';
 import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
@@ -85,6 +86,7 @@ const AuthenticatedApp = () => {
             <Route path="/admin/import" element={<AdminImport />} />
             <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/pages" element={<AdminPages />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
         </Route>
         <Route path="/catalogue" element={<Catalogue />} />

@@ -364,10 +364,11 @@ const entityConfig = {
   },
   category_tags: {
     labelSingular: 'Tag',
-    defaultForm: { label: '', value: '', image_url: '', sort_order: 0, is_active: true },
+    defaultForm: { label: '', value: '', image_url: '', link: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'label', label: 'Label', required: true, placeholder: 'Women' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Women' },
+      { key: 'link', label: 'Custom Link (optional)', type: 'url', placeholder: '/catalogue?category=...' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],

@@ -182,7 +182,7 @@ export default function Home() {
         {tags.map((tag) => (
           <Link
             key={tag.id}
-            to={`/catalogue?category=${encodeURIComponent(tag.value)}`}
+            to={tag.link || `/catalogue?category=${encodeURIComponent(tag.value)}`}
             className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-secondary border border-border/50 text-foreground hover:bg-accent hover:text-accent-foreground hover:border-primary/30 transition-all whitespace-nowrap inline-flex items-center gap-1.5"
           >
             {tag.image_url && (
