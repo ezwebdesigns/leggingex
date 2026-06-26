@@ -51,6 +51,7 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
   const [form, setForm] = useState(initial);
   const [dynamicOptions, setDynamicOptions] = useState({});
   const loadedRef = useRef(new Set());
+  const lastDeps = useRef({});
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const toggleSelected = (key, id) => {
@@ -62,15 +63,30 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
   useEffect(() => {
     fields.forEach(async (f) => {
       if (typeof f.options === 'function') {
-        if (loadedRef.current.has(f.key)) return;
         if (!f.condition || (form[f.condition.field] === f.condition.value)) {
+          if (f.deps) {
+            const depsKey = f.deps.map((d) => `${d}:${form[d] ?? ''}`).join('|');
+            if (depsKey !== lastDeps.current[f.key]) {
+              lastDeps.current[f.key] = depsKey;
+              loadedRef.current.delete(f.key);
+            }
+          }
+          if (loadedRef.current.has(f.key)) return;
           loadedRef.current.add(f.key);
-          const opts = await f.options();
+          const opts = await f.options(form);
           setDynamicOptions((prev) => ({ ...prev, [f.key]: opts }));
         }
       }
     });
   }, [fields, form]);
+
+  const prevAdType = useRef(form.ad_display_type);
+  useEffect(() => {
+    if (form.ad_display_type && form.ad_display_type !== prevAdType.current) {
+      prevAdType.current = form.ad_display_type;
+      setForm((f) => ({ ...f, selected_ids: [] }));
+    }
+  }, [form.ad_display_type]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -379,10 +395,14 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', featured_section_id_2: '', selected_ids: [], sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: '', featured_section_id_2: '', selected_ids: [], ad_display_type: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
+      { key: 'ad_display_type', label: 'Ad Display Type', type: 'select', fullWidth: true,
+        condition: { field: 'section_type', value: 'ad_banner' },
+        options: AD_DISPLAY_TYPES,
+      },
       { key: 'category', label: 'Category (for products)', placeholder: 'e.g. Women, Men...',
         condition: { field: 'section_type', value: 'products' } },
       { key: 'featured_section_id', label: 'Featured Section (Left)', type: 'select', fullWidth: true,
@@ -415,8 +435,12 @@ const entityConfig = {
       },
       { key: 'selected_ids', label: 'Select Ad Banners', type: 'multi-select', fullWidth: true,
         condition: { field: 'section_type', value: 'ad_banner' },
-        options: async () => {
-          const { data } = await supabase.from('ad_banners').select('id, title, image_url').eq('is_active', true).order('sort_order');
+        deps: ['ad_display_type'],
+        options: async (form) => {
+          const displayType = form?.ad_display_type;
+          let query = supabase.from('ad_banners').select('id, title, image_url, display_type').eq('is_active', true);
+          if (displayType) query = query.eq('display_type', displayType);
+          const { data } = await query.order('sort_order');
           return (data || []).map((s) => ({ value: s.id, label: s.title || s.display_type || s.id.slice(0, 8), image: s.image_url }));
         },
       },
