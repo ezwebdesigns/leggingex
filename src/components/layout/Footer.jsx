@@ -34,10 +34,16 @@ export default function Footer() {
     { label: 'Blog', url: '/blog' },
   ];
 
-  const hasInfo = columns.some((c) => c.title?.toLowerCase() === 'information');
-  const allColumns = hasInfo
-    ? columns.map((c) => c.title?.toLowerCase() === 'information' && c.items?.length === 0 ? { ...c, items: infoItems } : c)
-    : [...columns, ...(infoItems.length > 0 ? [{ title: 'Information', items: infoItems }] : [])];
+  const allColumns = columns.map((c) => {
+    if (c.title?.toLowerCase() === 'information' && (!c.items || c.items.length === 0)) {
+      return { ...c, items: infoItems };
+    }
+    return c;
+  });
+
+  if (!columns.some((c) => c.title?.toLowerCase() === 'information') && infoItems.length > 0) {
+    allColumns.push({ title: 'Information', items: infoItems });
+  }
 
   return (
     <footer className="border-t border-border bg-background mt-16 w-full">
@@ -70,7 +76,7 @@ export default function Footer() {
             )}
           </div>
 
-          {allColumns.slice(0, 3).map((col, ci) => (
+          {allColumns.map((col, ci) => (
             <div key={ci}>
               <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{col.title}</h4>
               <ul className="space-y-2.5">
