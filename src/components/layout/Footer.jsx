@@ -34,22 +34,15 @@ export default function Footer() {
     { label: 'Blog', url: '/blog' },
   ];
 
-  const allColumns = columns.map((col) => {
-    if (col.title?.toLowerCase() === 'information') {
-      return { ...col, items: col.items?.length > 0 ? col.items : infoItems };
-    }
-    return col;
-  });
-
-  const hasInformation = allColumns.some((c) => c.title?.toLowerCase() === 'information');
-  if (!hasInformation && infoItems.length > 0) {
-    allColumns.push({ title: 'Information', items: infoItems });
-  }
+  const hasInfo = columns.some((c) => c.title?.toLowerCase() === 'information');
+  const allColumns = hasInfo
+    ? columns.map((c) => c.title?.toLowerCase() === 'information' && c.items?.length === 0 ? { ...c, items: infoItems } : c)
+    : [...columns, ...(infoItems.length > 0 ? [{ title: 'Information', items: infoItems }] : [])];
 
   return (
-    <footer className="border-t border-border bg-background mt-16">
+    <footer className="border-t border-border bg-background mt-16 w-full">
       <div className="px-14 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-3">
               {logo ? (
@@ -77,7 +70,7 @@ export default function Footer() {
             )}
           </div>
 
-          {allColumns.map((col, ci) => (
+          {allColumns.slice(0, 3).map((col, ci) => (
             <div key={ci}>
               <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{col.title}</h4>
               <ul className="space-y-2.5">
@@ -95,13 +88,9 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} {siteTitle}. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            This site contains affiliate links. We earn a commission on qualifying purchases.
-          </p>
+        <div className="border-t border-border pt-6 mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} {siteTitle}. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground">This site contains affiliate links. We earn a commission on qualifying purchases.</p>
         </div>
       </div>
     </footer>
