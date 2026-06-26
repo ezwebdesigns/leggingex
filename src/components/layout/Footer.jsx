@@ -44,7 +44,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-border bg-background mt-16">
-      <div className="w-full px-14 py-12">
+      <div className="w-full px-14 md:pl-16 py-12">
         <div className="flex flex-wrap gap-8 mb-10">
           <div className="w-full md:w-auto md:min-w-[200px] md:max-w-[250px]">
             <Link to="/" className="flex items-center gap-2 mb-3">

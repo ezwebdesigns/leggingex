@@ -13,8 +13,8 @@ export default function AppLayout() {
         <div className="flex-1">
           <Outlet />
         </div>
-        <Footer />
       </main>
+      <Footer />
       <MobileNav />
     </div>
   );
