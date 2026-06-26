@@ -212,6 +212,7 @@ export default function Home() {
             const fs2 = featuredSections.find((f) => f.id === section.featured_section_id_2);
             const pair = [fs1, fs2].filter(Boolean);
             if (pair.length > 0) {
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground mb-4 px-14">{section.description}</p>);
               rendered.push(<FeaturedSectionRow key={`featured-${section.id}`} sections={pair} />);
             }
             i++;
@@ -221,6 +222,7 @@ export default function Home() {
               const viewAllLink = section.category
                 ? `/catalogue?category=${encodeURIComponent(section.category)}`
                 : '/catalogue';
+              const desc = section.description ? <p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p> : null;
               rendered.push(
                 <ProductCarousel
                   key={section.id}
@@ -230,18 +232,23 @@ export default function Home() {
                   loading={loading}
                 />
               );
+              if (desc) rendered.push(desc);
             } else if (type === 'cta_cards') {
               const filtered = section.selected_ids?.length > 0 ? ctaCards.filter((c) => section.selected_ids.includes(c.id)) : ctaCards;
               rendered.push(<CTACardGrid key={section.id} cards={filtered} title={section.title} />);
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
             } else if (type === 'editorial') {
               const filtered = section.selected_ids?.length > 0 ? editorialCards.filter((c) => section.selected_ids.includes(c.id)) : editorialCards;
               rendered.push(<EditorialRow key={section.id} cards={filtered} title={section.title} />);
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
             } else if (type === 'ad_banner') {
               const filtered = section.selected_ids?.length > 0 ? adBanners.filter((b) => section.selected_ids.includes(b.id)) : adBanners;
               rendered.push(<AdBannerSection key={section.id} banners={filtered} />);
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
             } else if (type === 'articles') {
               const filtered = section.selected_ids?.length > 0 ? articles.filter((a) => section.selected_ids.includes(a.id)) : articles;
               rendered.push(<RecentArticles key={section.id} articles={filtered} title={section.title} />);
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
             }
             i++;
           }

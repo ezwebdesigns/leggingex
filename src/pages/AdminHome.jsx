@@ -397,9 +397,10 @@ const entityConfig = {
   },
   home_sections: {
     labelSingular: 'Section',
-    defaultForm: { title: '', section_type: 'products', category: '', featured_section_id: null, featured_section_id_2: null, selected_ids: [], ad_display_type: '', sort_order: 0, product_limit: 8, is_active: true },
+    defaultForm: { title: '', description: '', section_type: 'products', category: '', featured_section_id: null, featured_section_id_2: null, selected_ids: [], ad_display_type: '', sort_order: 0, product_limit: 8, is_active: true },
     fields: [
       { key: 'title', label: 'Title', required: true, placeholder: 'Best Sellers' },
+      { key: 'description', label: 'Short Description', type: 'textarea', rows: 2, fullWidth: true, placeholder: 'Optional short description below the title' },
       { key: 'section_type', label: 'Section Type', type: 'select', options: SECTION_TYPES, fullWidth: true },
       { key: 'ad_display_type', label: 'Ad Display Type', type: 'select', fullWidth: true,
         condition: { field: 'section_type', value: 'ad_banner' },
