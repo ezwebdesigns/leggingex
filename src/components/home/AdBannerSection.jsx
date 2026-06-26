@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function AdBannerSection({ banners }) {
   if (!banners || banners.length === 0) return null;
 
-  const fullBanners = banners.filter((b) => b.display_type === 'simple' || !b.display_type || b.display_type === 'full');
+  const fullBanners = banners.filter((b) => !b.display_type || b.display_type === 'full');
   const simpleBanners = banners.filter((b) => b.display_type === 'simple');
   const squareBanners = banners.filter((b) => b.display_type === 'square');
 
@@ -14,7 +14,7 @@ export default function AdBannerSection({ banners }) {
         <FullBanner key={banner.id} banner={banner} />
       ))}
       {simpleBanners.length > 0 && (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {simpleBanners.map((banner) => (
             <SimpleBanner key={banner.id} banner={banner} />
           ))}
@@ -83,7 +83,7 @@ function FullBanner({ banner }) {
 
 function SimpleBanner({ banner }) {
   return (
-    <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden">
+    <div className="relative h-32 sm:h-36 md:h-40 rounded-2xl overflow-hidden">
       <img src={banner.image_url} alt={banner.title || ''} className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 p-4 md:p-6">
