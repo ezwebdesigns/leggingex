@@ -30,7 +30,7 @@ export default function MiniProductCard({ product, featured = false }) {
     >
       {/* Conteneur de l'image de la carte */}
       <div 
-        className={`w-full overflow-hidden bg-[#F5F5F5] relative rounded-2xl ${
+        className={`w-full overflow-hidden bg-[#F5F5F5] relative rounded-2xl border border-border/50 ${
           featured ? 'flex-1 min-h-0' : 'aspect-square shrink-0'
         }`}
       >

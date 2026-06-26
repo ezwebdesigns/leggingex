@@ -1,8 +1,5 @@
 import { Link } from 'react-router-dom';
 
-// =========================================================================
-// Import absolu d'origine vers votre MiniProductCard
-// =========================================================================
 import MiniProductCard from '@/components/products/MiniProductCard';
 
 export default function FeaturedSectionRow({ sections }) {
