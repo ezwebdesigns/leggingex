@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 
+// =========================================================================
+// Import absolu d'origine vers votre MiniProductCard
+// =========================================================================
 import MiniProductCard from '@/components/products/MiniProductCard';
 
 export default function FeaturedSectionRow({ sections }) {
@@ -51,7 +54,8 @@ function FeaturedProduct({ section }) {
           <div className="grid grid-cols-4 gap-2 h-full w-full">
             {products.slice(0, 4).map((p) => (
               <div key={p.id} className="h-full min-w-0">
-                <MiniProductCard product={p} />
+                {/* Passage de la propriété featured={true} pour adapter le dimensionnement */}
+                <MiniProductCard product={p} featured={true} />
               </div>
             ))}
           </div>

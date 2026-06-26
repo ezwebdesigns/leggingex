@@ -17,30 +17,40 @@ function Stars({ rating }) {
   );
 }
 
-export default function MiniProductCard({ product }) {
+export default function MiniProductCard({ product, featured = false }) {
   const { currencyPrefix } = useCountry();
   const { id, title, image_url, price, rating, ratings_count, brand } = product;
   
   return (
     <Link
       to={`/produit/${id}`}
-      className="group flex flex-col w-full h-full rounded-xl border border-border overflow-hidden bg-card hover:shadow-md transition-all duration-300"
+      className={`group flex flex-col w-full rounded-xl border border-border overflow-hidden bg-card hover:shadow-md transition-all duration-300 ${
+        featured ? 'h-full' : 'h-auto'
+      }`}
     >
-      {/* Conteneur d'image totalement flexible basé sur l'espace vertical restant */}
-      <div className="flex-1 min-h-0 w-full overflow-hidden bg-muted relative">
+      {/* Conteneur de l'image : Flexible si "featured", carré fixe (aspect-square) sinon */}
+      <div 
+        className={`w-full overflow-hidden bg-muted relative ${
+          featured ? 'flex-1 min-h-0' : 'aspect-square shrink-0'
+        }`}
+      >
         {image_url ? (
           <img
             src={image_url}
             alt={title}
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`${
+              featured ? 'absolute inset-0' : 'w-full h-full'
+            } object-cover group-hover:scale-105 transition-transform duration-500`}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-3xl">👖</div>
+          <div className={`${featured ? 'absolute inset-0' : 'w-full aspect-square'} flex items-center justify-center text-3xl`}>
+            👖
+          </div>
         )}
       </div>
       
-      {/* Zone de métadonnées condensée et fixe */}
+      {/* Zone de métadonnées */}
       <div className="p-2 space-y-0.5 shrink-0 bg-card">
         {brand && (
           <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground truncate leading-none">
