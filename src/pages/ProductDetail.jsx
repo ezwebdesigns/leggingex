@@ -93,7 +93,7 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border z-30 px-4 md:px-6 py-3">
+      <div className="sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border z-30 px-14 py-3">
         <Link
           to={-1}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium"
@@ -103,7 +103,7 @@ export default function ProductDetail() {
         </Link>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-6">
+      <div className="max-w-5xl mx-auto px-14 py-6">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           <div className="relative">
             <div className="rounded-3xl overflow-hidden bg-muted aspect-[3/4]">

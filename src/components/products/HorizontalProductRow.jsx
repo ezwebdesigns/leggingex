@@ -7,7 +7,7 @@ export default function HorizontalProductRow({ title, products, categoryPath }) 
 
   return (
     <section className="mb-10">
-      <div className="flex items-center justify-between mb-4 px-4 md:px-6">
+      <div className="flex items-center justify-between mb-4 px-14">
         <Link
           to={categoryPath || '/categories'}
           className="flex items-center gap-1 group"
@@ -17,7 +17,7 @@ export default function HorizontalProductRow({ title, products, categoryPath }) 
         </Link>
       </div>
 
-      <div className="px-4 md:px-6">
+      <div className="px-14">
         {/* 2x2 grid or horizontal scroll on mobile */}
         <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-3">
           {products.slice(0, 4).map((product) => (

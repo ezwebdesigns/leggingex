@@ -4,7 +4,7 @@ import { Calendar } from 'lucide-react';
 export default function RecentArticles({ articles, title = "Recent Articles" }) {
   if (!articles || articles.length === 0) return null;
   return (
-    <section className="px-4 md:px-6 mb-10">
+    <section className="px-14 mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">{title}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {articles.map((article) => (

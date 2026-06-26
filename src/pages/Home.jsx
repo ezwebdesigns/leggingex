@@ -15,7 +15,7 @@ import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 function ProductCarousel({ title, products, viewAllLink, loading }) {
   return (
     <section className="mb-10">
-      <div className="flex items-center justify-between mb-4 px-4 md:px-6">
+      <div className="flex items-center justify-between mb-4 px-14">
         <h2 className="text-base md:text-lg font-bold text-foreground">{title}</h2>
         {viewAllLink && (
           <Link to={viewAllLink} className="flex items-center gap-1 text-sm text-primary font-medium hover:underline whitespace-nowrap">
@@ -23,7 +23,7 @@ function ProductCarousel({ title, products, viewAllLink, loading }) {
           </Link>
         )}
       </div>
-      <div className="px-4 md:px-6">
+      <div className="px-14">
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -47,7 +47,7 @@ function ProductCarousel({ title, products, viewAllLink, loading }) {
 function HeroBanners({ banners }) {
   if (!banners || banners.length === 0) return null;
   return (
-    <div className={`grid ${banners.length === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-3'} gap-3 px-4 md:px-6 mb-10`}>
+    <div className={`grid ${banners.length === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-3'} gap-3 px-14 mb-10`}>
       {banners.map((b) => (
         <Link
           key={b.id}
@@ -76,7 +76,7 @@ function HeroBanners({ banners }) {
 function CategoryGrid({ categories }) {
   if (!categories || categories.length === 0) return null;
   return (
-    <div className="px-4 md:px-6 mb-10">
+    <div className="px-14 mb-10">
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
         {categories.map((c) => (
           <CategoryCircle key={c.id} label={c.label} value={c.value} imageUrl={c.image_url} />
@@ -178,7 +178,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Category pills */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-4 md:px-6 py-3 border-b border-border">
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-14 py-3 border-b border-border">
         {tags.map((tag) => (
           <Link
             key={tag.id}

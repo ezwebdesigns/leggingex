@@ -1,7 +1,7 @@
 export default function CTACardGrid({ cards, title = "Shop by Category" }) {
   if (!cards || cards.length === 0) return null;
   return (
-    <section className="px-4 md:px-6 mb-10">
+    <section className="px-14 mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">{title}</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {cards.map((card) => (

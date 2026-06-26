@@ -39,7 +39,7 @@ export default function DynamicPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-3xl mx-auto px-4 md:px-6 py-8">
+      <div className="max-w-3xl mx-auto px-14 py-8">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium mb-6">
           <ArrowLeft className="w-4 h-4" />
           Home

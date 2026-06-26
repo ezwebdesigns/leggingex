@@ -14,7 +14,7 @@ export default function CategoryPills({ activeCategory = '', onSelect, basePath 
   const pills = [{ label: 'All', value: '', image_url: null }, ...categories.map((c) => ({ label: c.label, value: c.value, image_url: c.image_url }))];
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 px-4 md:px-6">
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 px-14">
       {pills.map(({ label, value, image_url }) => {
         const active = activeCategory === value;
 

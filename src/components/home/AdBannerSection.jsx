@@ -9,7 +9,7 @@ export default function AdBannerSection({ banners }) {
   const squareBanners = banners.filter((b) => b.display_type === 'square');
 
   return (
-    <section className="px-4 md:px-6 mb-10 space-y-4">
+    <section className="px-14 mb-10 space-y-4">
       {fullBanners.map((banner) => (
         <FullBanner key={banner.id} banner={banner} />
       ))}

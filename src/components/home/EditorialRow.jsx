@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 export default function EditorialRow({ cards, title = "New & Now" }) {
   if (!cards || cards.length === 0) return null;
   return (
-    <section className="px-4 md:px-6 mb-10">
+    <section className="px-14 mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">{title}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (

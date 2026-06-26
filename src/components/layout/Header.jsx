@@ -14,7 +14,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="flex items-center gap-2 sm:gap-3 px-4 md:px-6 py-3">
+      <div className="flex items-center gap-2 sm:gap-3 px-14 py-3">
         <Link to="/" className="flex-shrink-0">
           <span className="text-base sm:text-lg font-bold tracking-tight text-foreground">leggings</span>
         </Link>
