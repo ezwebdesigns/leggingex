@@ -12,15 +12,15 @@ function Stars({ rating }) {
   );
 }
 
-export default function MiniProductCard({ product, compact, featured }) {
+export default function MiniProductCard({ product }) {
   const { currencyPrefix } = useCountry();
   const { id, title, image_url, price, rating, ratings_count, brand } = product;
   return (
     <Link
       to={`/produit/${id}`}
-      className={`group flex-shrink-0 block ${compact ? 'w-full' : 'w-36 sm:w-44'}`}
+      className="group block w-full rounded-2xl border border-border overflow-hidden bg-card hover:shadow-md transition-all duration-300"
     >
-      <div className={`${compact ? 'aspect-[1/1]' : 'aspect-[3/4]'} rounded-xl overflow-hidden bg-muted mb-1.5`}>
+      <div className="aspect-[1/1] overflow-hidden bg-muted">
         {image_url ? (
           <img
             src={image_url}
@@ -32,18 +32,20 @@ export default function MiniProductCard({ product, compact, featured }) {
           <div className="w-full h-full flex items-center justify-center text-4xl">👖</div>
         )}
       </div>
-      {brand && <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground truncate">{brand}</p>}
-      <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug mt-0.5">{title}</p>
-      {rating && (
-        <div className="flex items-center gap-1 mt-1">
-          <Stars rating={rating} />
-          <span className="text-xs text-muted-foreground">{rating.toFixed(1)}</span>
-          {ratings_count && <span className="text-xs text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
-        </div>
-      )}
-      {price != null && (
-        <p className="text-sm font-semibold text-foreground mt-0.5">{currencyPrefix}{price.toFixed(2)}</p>
-      )}
+      <div className="p-2 space-y-0.5">
+        {brand && <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground truncate">{brand}</p>}
+        <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{title}</p>
+        {rating && (
+          <div className="flex items-center gap-1">
+            <Stars rating={rating} />
+            <span className="text-xs text-muted-foreground">{rating.toFixed(1)}</span>
+            {ratings_count && <span className="text-xs text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
+          </div>
+        )}
+        {price != null && (
+          <p className="text-sm font-semibold text-foreground">{currencyPrefix}{price.toFixed(2)}</p>
+        )}
+      </div>
     </Link>
   );
 }

@@ -3,14 +3,14 @@ import ProductCard from './ProductCard';
 export default function ProductGrid({ products, loading, emptyMessage = "No products found" }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="rounded-2xl overflow-hidden bg-muted animate-pulse">
-            <div className="aspect-[3/4] bg-muted" />
+            <div className="aspect-[1/1] bg-muted" />
             <div className="p-3 space-y-2">
-              <div className="h-3 bg-secondary rounded w-1/2" />
-              <div className="h-4 bg-secondary rounded w-full" />
-              <div className="h-3 bg-secondary rounded w-2/3" />
+              <div className="h-3 bg-muted rounded w-1/2" />
+              <div className="h-4 bg-muted rounded w-full" />
+              <div className="h-3 bg-muted rounded w-2/3" />
             </div>
           </div>
         ))}
@@ -29,7 +29,7 @@ export default function ProductGrid({ products, loading, emptyMessage = "No prod
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

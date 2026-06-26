@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, ArrowRight } from 'lucide-react';
 import { fetchTopProducts, fetchSection } from '@/lib/supabaseApi';
@@ -13,8 +13,6 @@ import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 
 function ProductCarousel({ title, products, viewAllLink, loading }) {
-  const scrollRef = useRef(null);
-
   return (
     <section className="mb-10">
       <div className="flex items-center justify-between mb-4 px-4 md:px-6">
@@ -25,19 +23,19 @@ function ProductCarousel({ title, products, viewAllLink, loading }) {
           </Link>
         )}
       </div>
-      <div className="relative px-4 md:px-6">
+      <div className="px-4 md:px-6">
         {loading ? (
-          <div className="flex gap-3 overflow-hidden">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex-shrink-0 w-36 sm:w-44 animate-pulse">
-                <div className="aspect-square bg-muted rounded-2xl" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
+                <div className="aspect-[1/1] bg-muted rounded-2xl" />
                 <div className="h-3 bg-muted rounded mt-2 w-3/4" />
                 <div className="h-3 bg-muted rounded mt-1 w-1/2" />
               </div>
             ))}
           </div>
         ) : !products || products.length === 0 ? null : (
-          <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {products.map((p) => <MiniProductCard key={p.id} product={p} />)}
           </div>
         )}

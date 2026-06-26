@@ -41,18 +41,18 @@ function FeaturedProduct({ section }) {
         </Link>
       </div>
       {products.length > 0 ? (
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2">
           {products.slice(0, 4).map((p) => (
-            <div key={p.id} className="flex-1 min-w-0 rounded-xl border border-border">
-              <MiniProductCard product={p} compact />
+            <div key={p.id} className="flex-1 min-w-0">
+              <MiniProductCard product={p} />
             </div>
           ))}
         </div>
       ) : (
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="w-[115px] flex-shrink-0 rounded-2xl border border-border animate-pulse">
-              <div className="aspect-[3/4] bg-muted" />
+            <div key={i} className="flex-1 min-w-0 rounded-2xl border border-border animate-pulse">
+              <div className="aspect-[1/1] bg-muted" />
               <div className="p-1.5">
                 <div className="h-2 bg-muted rounded w-3/4" />
                 <div className="h-2 bg-muted rounded mt-1 w-1/2" />

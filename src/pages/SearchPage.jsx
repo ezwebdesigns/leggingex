@@ -18,15 +18,15 @@ function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
   const { id, title, image_url, price, rating, ratings_count, brand } = product;
   return (
-    <Link to={`/produit/${id}`} className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:shadow-md transition-all duration-300">
-      <div className="aspect-[3/4] bg-muted overflow-hidden">
+    <Link to={`/produit/${id}`} className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-border hover:shadow-md transition-all duration-300">
+      <div className="aspect-[1/1] bg-muted overflow-hidden">
         {image_url ? (
           <img src={image_url} alt={title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-5xl">👖</div>
         )}
       </div>
-      <div className="p-3 space-y-1">
+      <div className="p-2 space-y-0.5">
         {brand && <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground truncate">{brand}</p>}
         <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{title}</p>
         {rating && (
@@ -102,10 +102,10 @@ export default function SearchPage() {
               </p>
             )}
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {Array.from({ length: 8 }).map((_, i) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
-                    <div className="aspect-[3/4] bg-muted" />
+                    <div className="aspect-[1/1] bg-muted" />
                     <div className="p-3 space-y-2"><div className="h-3 bg-muted rounded w-3/4" /><div className="h-3 bg-muted rounded w-1/2" /></div>
                   </div>
                 ))}
@@ -117,7 +117,7 @@ export default function SearchPage() {
                 <p className="text-sm text-muted-foreground mt-1">Try a broader search term</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                 {products.map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
             )}

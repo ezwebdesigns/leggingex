@@ -18,18 +18,18 @@ function StarRating({ rating }) {
 
 export default function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
-  const { id, name, brand, rating, reviews_count, best_seller_rank, image_url, price, category } = product;
+  const { id, title, brand, rating, ratings_count, image_url, price } = product;
 
   return (
     <Link
-      to={`/product/${id}`}
+      to={`/produit/${id}`}
       className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-border hover:shadow-md transition-all duration-300 animate-fade-in"
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+      <div className="relative aspect-[1/1] overflow-hidden bg-muted">
         {image_url ? (
           <img
             src={image_url}
-            alt={name}
+            alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
@@ -38,41 +38,20 @@ export default function ProductCard({ product }) {
             <span className="text-4xl">👖</span>
           </div>
         )}
-
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
-          {best_seller_rank && best_seller_rank <= 10 && (
-            <span className="px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full shadow-sm">
-              #1 Best Seller
-            </span>
-          )}
-          {best_seller_rank && best_seller_rank <= 100 && best_seller_rank > 10 && (
-            <span className="px-2 py-0.5 bg-foreground/80 text-background text-[10px] font-semibold rounded-full shadow-sm">
-              Top 100
-            </span>
-          )}
-        </div>
-
-        {category && (
-          <div className="absolute top-2.5 right-2.5">
-            <span className="px-2 py-0.5 bg-background/80 backdrop-blur-sm text-foreground text-[10px] font-medium rounded-full">
-              {category}
-            </span>
-          </div>
-        )}
       </div>
 
-      <div className="p-3">
-        <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide mb-0.5">{brand}</p>
-        <h3 className="text-sm font-medium text-foreground line-clamp-2 leading-snug mb-2">{name}</h3>
+      <div className="p-2 space-y-0.5">
+        <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">{brand}</p>
+        <h3 className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{title}</h3>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             {rating ? (
               <>
                 <StarRating rating={rating} />
-                {reviews_count && (
+                {ratings_count && (
                   <span className="text-[11px] text-muted-foreground">
-                    ({reviews_count >= 1000 ? `${(reviews_count / 1000).toFixed(1)}k` : reviews_count})
+                    ({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})
                   </span>
                 )}
               </>
@@ -84,10 +63,6 @@ export default function ProductCard({ product }) {
             <span className="text-sm font-semibold text-foreground">{currencyPrefix}{price.toFixed(2)}</span>
           )}
         </div>
-
-        {best_seller_rank && (
-          <p className="text-[10px] text-muted-foreground mt-1.5">Rank #{best_seller_rank}</p>
-        )}
       </div>
     </Link>
   );
