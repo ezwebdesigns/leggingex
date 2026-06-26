@@ -48,13 +48,11 @@ export default function Footer() {
             {social.length > 0 && (
               <div className="flex items-center gap-3 mt-4">
                 {social.map((s, i) => {
-                  const Icon = SOCIAL_ICONS[s.platform] || (() => (
-                    <span className="w-3.5 h-3.5 text-xs font-bold">{s.platform[0]}</span>
-                  ));
+                  const LucideIcon = SOCIAL_ICONS[s.platform];
                   return (
                     <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
                       className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
-                      {typeof Icon === 'function' ? <Icon /> : <Icon className="w-3.5 h-3.5" />}
+                      {LucideIcon ? <LucideIcon className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 text-xs font-bold">{s.platform[0]}</span>}
                     </a>
                   );
                 })}
