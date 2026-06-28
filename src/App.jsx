@@ -28,7 +28,6 @@ import AdminSettings from '@/pages/AdminSettings';
 import Catalogue from '@/pages/Catalogue';
 import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
-import GuidesPage from '@/pages/GuidesPage';
 import AdminPageEditor from '@/pages/AdminPageEditor';
 import DynamicPage from '@/pages/DynamicPage';
 import Login from '@/pages/Login';
@@ -127,7 +126,6 @@ const AuthenticatedApp = () => {
         <Route path="/catalogue" element={<Catalogue />} />
         <Route path="/produit/:id" element={<ProduitDetail />} />
         <Route path="/blog" element={<Blog />} />
-        <Route path="/guides/:slug" element={<GuidesPage />} />
         <Route path="/:slug" element={<DynamicPage />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
