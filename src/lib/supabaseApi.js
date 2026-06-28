@@ -22,7 +22,7 @@ async function supaFetch(params, table = 'products') {
   return res.json();
 }
 
-export async function fetchCatalog({ offset = 0, limit = 20, category, brand, minRating, sort = 'rating.desc.nullslast,ratings_count.desc.nullslast', search, marketplace } = {}) {
+export async function fetchCatalog({ offset = 0, limit = 24, category, brand, minRating, sort = 'rating.desc.nullslast,ratings_count.desc.nullslast', search, marketplace } = {}) {
   const params = new URLSearchParams();
   params.set('is_active', 'eq.true');
   params.set('has_image', 'eq.true');

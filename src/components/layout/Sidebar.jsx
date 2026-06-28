@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, LayoutGrid, Search, Heart, Settings, ShoppingBag } from 'lucide-react';
+import { Home, LayoutGrid, Search, Heart, ShoppingBag } from 'lucide-react';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/' },
@@ -40,20 +40,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      <Link
-        to="/admin"
-        title="Admin"
-        className={`
-          flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 group
-          ${location.pathname.startsWith('/admin')
-            ? 'bg-accent text-accent-foreground'
-            : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-          }
-        `}
-      >
-        <Settings className={`w-5 h-5 ${location.pathname.startsWith('/admin') ? 'text-primary' : ''}`} strokeWidth={1.8} />
-      </Link>
     </aside>
   );
 }

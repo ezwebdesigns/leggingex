@@ -127,7 +127,7 @@ export default function AdminSettings() {
   function renderGeneral() {
     const general = settings.general || {};
     return (
-      <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <SectionCard title="Branding" icon={Palette} description="Site logo and favicon">
           <Field label="Logo" description="Your brand logo, displayed in the header">
             <ImagePicker
@@ -175,7 +175,7 @@ export default function AdminSettings() {
   function renderSidebar() {
     const sidebar = settings.sidebar || {};
     return (
-      <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <SectionCard title="Articles" icon={FileText} description="Recent articles widget settings">
           <Field label="Section Title" description="Heading displayed above the recent articles list">
             <Input
@@ -215,7 +215,7 @@ export default function AdminSettings() {
     const columns = menuFooter.columns || [];
 
     return (
-      <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
         <SectionCard title="Footer Branding" icon={Palette} description="Logo text and description in the footer">
           <Field label="Logo Text" description="Text shown next to the footer logo icon (or as alt text if logo image is set)">
             <Input
@@ -354,7 +354,7 @@ export default function AdminSettings() {
   function renderSeo() {
     const seo = settings.seo || {};
     return (
-      <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
         <SectionCard title="Meta Tags" icon={Hash} description="Search engine meta information">
           <Field label="Meta Title" description="The default title tag for your site (used by search engines)">
             <Input
@@ -430,7 +430,7 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Settings</h1>

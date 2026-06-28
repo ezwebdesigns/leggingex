@@ -85,6 +85,8 @@ function ProductCard({ product }) {
   );
 }
 
+const PAGE_SIZE = 24;
+
 export default function Catalogue() {
   const { marketplace } = useCountry();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -135,8 +137,8 @@ export default function Catalogue() {
       setOffset(0);
       const data = await fetchCatalog({ ...filters, offset: 0, marketplace });
       setProducts(data);
-      setHasMore(data.length === 20);
-      setOffset(20);
+      setHasMore(data.length === PAGE_SIZE);
+      setOffset(PAGE_SIZE);
       setLoading(false);
     };
     load();
@@ -146,8 +148,8 @@ export default function Catalogue() {
     setLoadingMore(true);
     const data = await fetchCatalog({ ...filters, offset, marketplace });
     setProducts((prev) => [...prev, ...data]);
-    setHasMore(data.length === 20);
-    setOffset((o) => o + 20);
+    setHasMore(data.length === PAGE_SIZE);
+    setOffset((o) => o + PAGE_SIZE);
     setLoadingMore(false);
   };
 
