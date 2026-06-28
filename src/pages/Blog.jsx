@@ -39,7 +39,7 @@ export default function Blog() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <Link key={post.id} to={`/${post.slug}`} className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:shadow-md transition-all duration-300">
+              <Link key={post.id} to={`/guides/${post.slug}`} className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:shadow-md transition-all duration-300">
                 {post.cover_image && (
                   <div className="aspect-[2/1] bg-muted overflow-hidden">
                     <img src={post.cover_image} alt={post.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

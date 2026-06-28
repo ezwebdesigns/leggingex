@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
-import ReactMarkdown from 'react-markdown';
 import { ArrowLeft } from 'lucide-react';
 import PageNotFound from '@/lib/PageNotFound';
 
@@ -14,7 +13,12 @@ export default function DynamicPage() {
     const load = async () => {
       setLoading(true);
       try {
-        const { data: results } = await supabase.from('pages').select('*').eq('slug', slug).eq('published', true);
+        const { data: results } = await supabase
+          .from('pages')
+          .select('*')
+          .eq('slug', slug)
+          .eq('type', 'static_page')
+          .eq('published', true);
         setPage(results && results.length > 0 ? results[0] : null);
       } catch {
         setPage(null);
@@ -50,9 +54,7 @@ export default function DynamicPage() {
           </div>
         )}
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{page.title}</h1>
-        <div className="prose prose-sm max-w-none text-foreground">
-          <ReactMarkdown>{page.content || ''}</ReactMarkdown>
-        </div>
+        <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: page.content || '' }} />
       </div>
     </div>
   );

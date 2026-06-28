@@ -28,6 +28,8 @@ import AdminSettings from '@/pages/AdminSettings';
 import Catalogue from '@/pages/Catalogue';
 import ProduitDetail from '@/pages/ProduitDetail';
 import Blog from '@/pages/Blog';
+import GuidesPage from '@/pages/GuidesPage';
+import AdminPageEditor from '@/pages/AdminPageEditor';
 import DynamicPage from '@/pages/DynamicPage';
 import Login from '@/pages/Login';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -117,12 +119,15 @@ const AuthenticatedApp = () => {
             <Route path="/admin/import" element={<AdminImport />} />
             <Route path="/admin/home" element={<AdminHome />} />
             <Route path="/admin/pages" element={<AdminPages />} />
+            <Route path="/admin/pages/new" element={<AdminPageEditor />} />
+            <Route path="/admin/pages/:id/edit" element={<AdminPageEditor />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
           </Route>
         </Route>
         <Route path="/catalogue" element={<Catalogue />} />
         <Route path="/produit/:id" element={<ProduitDetail />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/guides/:slug" element={<GuidesPage />} />
         <Route path="/:slug" element={<DynamicPage />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />

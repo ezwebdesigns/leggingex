@@ -14,7 +14,7 @@ export default function CountryToggle({ compact = false }) {
             : 'text-muted-foreground hover:text-foreground'
         }`}
       >
-        <span className="text-sm leading-none">🇨🇦</span>
+        <img src="/ca_flag_round.png" alt="CA" className="w-4 h-4 rounded-full" />
         {!compact && <span className="hidden sm:inline">CA</span>}
       </button>
       <button
@@ -26,7 +26,7 @@ export default function CountryToggle({ compact = false }) {
             : 'text-muted-foreground hover:text-foreground'
         }`}
       >
-        <span className="text-sm leading-none">🇺🇸</span>
+        <img src="/us_flag_round.png" alt="US" className="w-4 h-4 rounded-full" />
         {!compact && <span className="hidden sm:inline">US</span>}
       </button>
     </div>
