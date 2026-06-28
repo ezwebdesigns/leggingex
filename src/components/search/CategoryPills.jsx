@@ -26,7 +26,7 @@ export default function CategoryPills({ activeCategory = '', onSelect, basePath 
               className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 inline-flex items-center gap-1.5 ${
                 active
                   ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
-                  : 'bg-secondary text-foreground hover:bg-muted border border-border/50'
+                  : 'bg-white text-foreground hover:bg-gray-50 shadow-md border border-gray-100'
               }`}
             >
               {image_url && <img src={image_url} alt="" className="w-5 h-5 rounded-full object-cover" />}
@@ -42,7 +42,7 @@ export default function CategoryPills({ activeCategory = '', onSelect, basePath 
             className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 inline-flex items-center gap-1.5 ${
               active
                 ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
-                : 'bg-secondary text-foreground hover:bg-muted border border-border/50'
+                : 'bg-white text-foreground hover:bg-gray-50 shadow-md border border-gray-100'
             }`}
           >
             {image_url && <img src={image_url} alt="" className="w-5 h-5 rounded-full object-cover" />}
