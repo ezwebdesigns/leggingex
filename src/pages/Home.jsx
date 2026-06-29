@@ -26,7 +26,7 @@ function ProductCarousel({ title, description, products, viewAllLink, loading })
       {description && <p className="text-sm text-muted-foreground mb-4 px-14">{description}</p>}
       <div className="px-14">
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-8 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
                 <div className="aspect-[1/1] bg-muted rounded-2xl border border-border/50" />
@@ -36,7 +36,7 @@ function ProductCarousel({ title, description, products, viewAllLink, loading })
             ))}
           </div>
         ) : !products || products.length === 0 ? null : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-8 gap-3">
             {products.map((p) => <MiniProductCard key={p.id} product={p} />)}
           </div>
         )}

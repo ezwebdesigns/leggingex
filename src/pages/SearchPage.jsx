@@ -109,7 +109,7 @@ export default function SearchPage() {
               </p>
             )}
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
                     <div className="aspect-[1/1] bg-muted rounded-2xl border border-border/50" />
@@ -124,7 +124,7 @@ export default function SearchPage() {
                 <p className="text-sm text-muted-foreground mt-1">Try a broader search term</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
                 {products.map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
             )}

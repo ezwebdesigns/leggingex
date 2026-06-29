@@ -3,7 +3,7 @@ import ProductCard from './ProductCard';
 export default function ProductGrid({ products, loading, emptyMessage = "No products found" }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3 md:gap-4">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="rounded-2xl overflow-hidden bg-muted animate-pulse">
             <div className="aspect-[1/1] bg-muted rounded-2xl border border-border/50" />
@@ -29,7 +29,7 @@ export default function ProductGrid({ products, loading, emptyMessage = "No prod
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3 md:gap-4">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

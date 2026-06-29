@@ -250,7 +250,7 @@ export default function Catalogue() {
         )}
 
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-3 md:gap-4">
             {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="rounded-2xl overflow-hidden animate-pulse">
                 <div className="aspect-[1/1] bg-muted rounded-2xl border border-border/50" />
@@ -269,7 +269,7 @@ export default function Catalogue() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-3 md:gap-4">
               {products.map((p) => <ProductCard key={p.id} product={p} />)}
             </div>
             {hasMore && (
