@@ -417,7 +417,7 @@ export default function AdminSettings() {
         </SectionCard>
 
         <div className="lg:col-span-2">
-          <SectionCard title="FAQ Schema" icon={Code} description="3-column FAQ accordion displayed on the homepage. Each column has a title and expandable Q&A items.">
+          <SectionCard title="FAQ Schema" icon={Code} description="2-column FAQ accordion displayed on the homepage. Add questions and answers for each column.">
             {(() => {
               const faq = seo.faq_schema || [];
               return (
@@ -436,17 +436,6 @@ export default function AdminSettings() {
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                         </Button>
                       </div>
-                      <Field label="Column Title">
-                        <Input
-                          value={col.title}
-                          onChange={(e) => {
-                            const next = [...faq];
-                            next[ci] = { ...next[ci], title: e.target.value };
-                            update('seo', { ...seo, faq_schema: next });
-                          }}
-                          placeholder="e.g. Shipping"
-                        />
-                      </Field>
                       {(col.items || []).map((item, ii) => (
                         <div key={ii} className="border border-border rounded-lg p-3 mb-2 bg-background">
                           <div className="flex items-center justify-between mb-2">
@@ -496,9 +485,9 @@ export default function AdminSettings() {
                   ))}
                   <Button variant="outline" size="sm" onClick={() => {
                     const next = [...faq, { title: '', items: [{ q: '', a: '' }] }];
-                    if (next.length > 3) return;
+                    if (next.length > 2) return;
                     update('seo', { ...seo, faq_schema: next });
-                  }} disabled={faq.length >= 3}>
+                  }} disabled={faq.length >= 2}>
                     + Add Column
                   </Button>
                 </div>
