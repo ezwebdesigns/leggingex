@@ -415,6 +415,97 @@ export default function AdminSettings() {
             />
           </Field>
         </SectionCard>
+
+        <div className="lg:col-span-2">
+          <SectionCard title="FAQ Schema" icon={Code} description="3-column FAQ accordion displayed on the homepage. Each column has a title and expandable Q&A items.">
+            {(() => {
+              const faq = seo.faq_schema || [];
+              return (
+                <div>
+                  {faq.length === 0 && (
+                    <p className="text-sm text-muted-foreground mb-4">No FAQ columns yet. Add your first column below.</p>
+                  )}
+                  {faq.map((col, ci) => (
+                    <div key={ci} className="border border-border rounded-xl p-4 mb-4 bg-muted/20">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Column {ci + 1}</span>
+                        <Button variant="ghost" size="icon" className="text-destructive h-7 w-7" onClick={() => {
+                          const next = faq.filter((_, idx) => idx !== ci);
+                          update('seo', { ...seo, faq_schema: next });
+                        }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </Button>
+                      </div>
+                      <Field label="Column Title">
+                        <Input
+                          value={col.title}
+                          onChange={(e) => {
+                            const next = [...faq];
+                            next[ci] = { ...next[ci], title: e.target.value };
+                            update('seo', { ...seo, faq_schema: next });
+                          }}
+                          placeholder="e.g. Shipping"
+                        />
+                      </Field>
+                      {(col.items || []).map((item, ii) => (
+                        <div key={ii} className="border border-border rounded-lg p-3 mb-2 bg-background">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-muted-foreground">Item {ii + 1}</span>
+                            <Button variant="ghost" size="icon" className="text-destructive h-6 w-6" onClick={() => {
+                              const next = [...faq];
+                              next[ci].items = next[ci].items.filter((_, idx) => idx !== ii);
+                              update('seo', { ...seo, faq_schema: next });
+                            }}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </Button>
+                          </div>
+                          <Field label="Question">
+                            <Input
+                              value={item.q}
+                              onChange={(e) => {
+                                const next = [...faq];
+                                next[ci].items[ii] = { ...next[ci].items[ii], q: e.target.value };
+                                update('seo', { ...seo, faq_schema: next });
+                              }}
+                              placeholder="How long does shipping take?"
+                              className="mb-2"
+                            />
+                          </Field>
+                          <Field label="Answer">
+                            <Textarea
+                              rows={3}
+                              value={item.a}
+                              onChange={(e) => {
+                                const next = [...faq];
+                                next[ci].items[ii] = { ...next[ci].items[ii], a: e.target.value };
+                                update('seo', { ...seo, faq_schema: next });
+                              }}
+                              placeholder="Orders are typically delivered within 5-7 business days..."
+                            />
+                          </Field>
+                        </div>
+                      ))}
+                      <Button variant="ghost" size="sm" className="text-xs mt-1" onClick={() => {
+                        const next = [...faq];
+                        next[ci].items = [...(next[ci].items || []), { q: '', a: '' }];
+                        update('seo', { ...seo, faq_schema: next });
+                      }}>
+                        + Add Question
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={() => {
+                    const next = [...faq, { title: '', items: [{ q: '', a: '' }] }];
+                    if (next.length > 3) return;
+                    update('seo', { ...seo, faq_schema: next });
+                  }} disabled={faq.length >= 3}>
+                    + Add Column
+                  </Button>
+                </div>
+              );
+            })()}
+          </SectionCard>
+        </div>
       </div>
     );
   }

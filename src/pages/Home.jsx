@@ -4,6 +4,7 @@ import { ChevronRight, ArrowRight } from 'lucide-react';
 import { fetchTopProducts, fetchSection } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 import { supabase } from '@/lib/supabaseClient';
+import { getSettings } from '@/lib/settings';
 import MiniProductCard from '@/components/products/MiniProductCard';
 import CategoryCircle from '@/components/home/CategoryCircle';
 import CTACardGrid from '@/components/home/CTACardGrid';
@@ -11,6 +12,7 @@ import EditorialRow from '@/components/home/EditorialRow';
 import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
+import FaqAccordion from '@/components/home/FaqAccordion';
 
 function ProductCarousel({ title, description, products, viewAllLink, loading }) {
   return (
@@ -99,6 +101,7 @@ export default function Home() {
   const [articles, setArticles] = useState([]);
   const [featuredSections, setFeaturedSections] = useState([]);
   const [sectionProducts, setSectionProducts] = useState({});
+  const [faqColumns, setFaqColumns] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -171,6 +174,11 @@ export default function Home() {
           productsMap[section.id] = productResults[i];
         });
         setSectionProducts(productsMap);
+
+        // Load FAQ from settings
+        const settings = await getSettings();
+        const faq = settings.seo?.faq_schema;
+        setFaqColumns(faq || []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -256,6 +264,8 @@ export default function Home() {
         }
         return rendered;
       })()}
+
+      <FaqAccordion columns={faqColumns} />
     </div>
   );
 }
