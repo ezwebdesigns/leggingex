@@ -6,7 +6,7 @@ const HEADERS = {
   'Content-Type': 'application/json',
 };
 
-const BASE_SELECT = 'id,title,image_url,price,currency,rating,ratings_count,best_seller_rank,brand,category,affiliate_link';
+const BASE_SELECT = 'id,title,image_url,price,currency,rating,ratings_count,best_seller_rank,brand,category,categories,affiliate_link,deal_start,deal_end,deal_price,clippable_start,clippable_end,clippable_price,promo_code_start,promo_code_end,promo_code_price,promo_code';
 
 // Build a Postgres array-contains filter for the `categories` column.
 // Pass the raw value; URLSearchParams handles encoding (double-encode breaks it).
@@ -42,13 +42,32 @@ export async function fetchCatalog({ offset = 0, limit = 24, category, brand, mi
 export async function fetchProductById(id, marketplace) {
   const params = new URLSearchParams({
     id: `eq.${id}`,
-    select: `${BASE_SELECT},is_active`,
+    select: `${BASE_SELECT},is_active,asin`,
   });
   if (marketplace) params.set('marketplace', `eq.${marketplace}`);
   return supaFetch(params);
 }
 
-export async function fetchSimilar({ category, excludeId, limit = 4, marketplace } = {}) {
+// Fetch variants: same title + same marketplace, active, different id, deduplicated by image_url
+export async function fetchVariants(title, marketplace, excludeId) {
+  const params = new URLSearchParams();
+  params.set('title', `ilike.${title}`);
+  params.set('marketplace', `eq.${marketplace}`);
+  params.set('is_active', 'eq.true');
+  params.set('select', 'id,title,image_url,price');
+  params.set('limit', 20);
+  const data = await supaFetch(params);
+  const seen = new Set();
+  return (data || [])
+    .filter((p) => p.id !== excludeId && p.image_url)
+    .filter((p) => {
+      if (seen.has(p.image_url)) return false;
+      seen.add(p.image_url);
+      return true;
+    });
+}
+
+export async function fetchSimilar({ category, excludeId, limit = 8, marketplace } = {}) {
   const params = new URLSearchParams();
   params.set('is_active', 'eq.true');
   params.set('has_image', 'eq.true');
