@@ -53,7 +53,7 @@ export default function MiniProductCard({ product, featured = false }) {
       {/* Zone de métadonnées - alignée précisément avec votre maquette */}
       <div className="pt-2 pb-1 px-1 space-y-0.5 shrink-0 bg-card">
         {brand && (
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-primary truncate leading-none">
             {brand}
           </p>
         )}

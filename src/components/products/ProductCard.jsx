@@ -40,7 +40,7 @@ export default function ProductCard({ product }) {
 
       <div className="pt-2 pb-1 px-1 space-y-0.5 bg-card">
         {brand && (
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-primary truncate leading-none">
             {brand}
           </p>
         )}

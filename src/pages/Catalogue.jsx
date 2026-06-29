@@ -63,7 +63,7 @@ function ProductCard({ product }) {
         </button>
       </div>
       <div className="pt-2 pb-1 px-1 space-y-0.5 bg-card">
-        {brand && <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">{brand}</p>}
+        {brand && <p className="text-[10px] font-semibold uppercase tracking-wider text-primary truncate leading-none">{brand}</p>}
         <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">{title}</p>
         {rating && (
           <div className="flex items-center gap-1 leading-none">

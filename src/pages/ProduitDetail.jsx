@@ -153,7 +153,7 @@ export default function ProduitDetail() {
 
           <div className="flex-1 flex flex-col gap-4 pt-2">
             {product.brand && (
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{product.brand}</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">{product.brand}</p>
             )}
             <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">{product.title}</h1>
 
@@ -280,7 +280,7 @@ export default function ProduitDetail() {
                       )}
                     </div>
                     <div className="pt-2 pb-1 px-1 space-y-0.5 bg-card">
-                      {p.brand && <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">{p.brand}</p>}
+                      {p.brand && <p className="text-[10px] font-semibold uppercase tracking-wider text-primary truncate leading-none">{p.brand}</p>}
                       <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">{p.title}</p>
                       {p.rating && (
                         <div className="flex items-center gap-1 leading-none">
