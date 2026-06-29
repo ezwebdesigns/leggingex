@@ -8,7 +8,6 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const SITE_NAME = 'Legging Express';
 const SITE_ORIGIN = 'https://www.leggingexpress.com';
-// Remplace par une vraie image générique de la marque (1200x630 recommandé pour OG)
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/og-default.jpg`;
 
 export default async function handler(req, res) {
