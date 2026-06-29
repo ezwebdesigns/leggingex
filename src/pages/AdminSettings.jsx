@@ -380,23 +380,6 @@ export default function AdminSettings() {
           </Field>
         </SectionCard>
 
-        <SectionCard title="Open Graph" icon={Share2} description="Social sharing preview settings">
-          <Field label="OG Image" description="Default image shown when your site is shared on social media (Facebook, Twitter, etc.)">
-            <ImagePicker
-              value={seo.og_image}
-              label="OG Image"
-              onUpload={(action) => {
-                if (action === 'remove') {
-                  const { og_image, ...rest } = seo;
-                  update('seo', rest);
-                } else {
-                  handleImageUpload('seo', 'og_image');
-                }
-              }}
-            />
-          </Field>
-        </SectionCard>
-
         <SectionCard title="Technical SEO" icon={Code} description="Sitemap and robots.txt configuration">
           <Field label="Sitemap URL" description="Link to your XML sitemap">
             <Input
@@ -416,8 +399,24 @@ export default function AdminSettings() {
           </Field>
         </SectionCard>
 
-        <div className="lg:col-span-2">
-          <SectionCard title="FAQ Schema" icon={Code} description="2-column FAQ accordion displayed on the homepage. Add questions and answers for each column.">
+        <SectionCard title="Open Graph" icon={Share2} description="Social sharing preview settings">
+          <Field label="OG Image" description="Default image shown when your site is shared on social media (Facebook, Twitter, etc.)">
+            <ImagePicker
+              value={seo.og_image}
+              label="OG Image"
+              onUpload={(action) => {
+                if (action === 'remove') {
+                  const { og_image, ...rest } = seo;
+                  update('seo', rest);
+                } else {
+                  handleImageUpload('seo', 'og_image');
+                }
+              }}
+            />
+          </Field>
+        </SectionCard>
+
+        <SectionCard title="FAQ Schema" icon={Code} description="2-column FAQ accordion displayed on the homepage. Add questions and answers for each column.">
             {(() => {
               const faq = seo.faq_schema || [];
               return (
@@ -494,7 +493,6 @@ export default function AdminSettings() {
               );
             })()}
           </SectionCard>
-        </div>
       </div>
     );
   }
