@@ -2,8 +2,29 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { getSettings } from '@/lib/settings';
-import { ArrowLeft, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Calendar, User, ChevronDown } from 'lucide-react';
 import PageNotFound from '@/lib/PageNotFound';
+
+function FaqAccordionItem({ question, answer, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen || false);
+  return (
+    <div className="px-6">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between gap-2 py-4 text-left"
+      >
+        <span className="font-semibold text-foreground text-sm">{question}</span>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="pb-4 -mt-1">
+          <p className="text-sm text-muted-foreground leading-relaxed">{answer}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ArticleSidebar({ post, recentPosts, adScript }) {
   const keywords = post.keywords || [];
@@ -152,14 +173,11 @@ export default function GuidesPage() {
             <div className="prose prose-sm max-w-none text-foreground [&_img]:rounded-xl [&_table]:w-full [&_table]:border-collapse [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:uppercase [&_td]:p-2 [&_td]:border [&_td]:border-border [&_tr]:border-border [&_a]:text-primary [&_a]:underline [&_ul]:pl-4 [&_ol]:pl-4" dangerouslySetInnerHTML={{ __html: post.content || '' }} />
 
             {faq.length > 0 && (
-              <div className="mt-10 border border-border rounded-2xl p-6">
-                <h2 className="text-lg font-bold text-foreground mb-4">Frequently Asked Questions</h2>
-                <div className="space-y-4">
+              <div className="mt-10 border border-border rounded-2xl overflow-hidden">
+                <h2 className="text-lg font-bold text-foreground px-6 pt-6 pb-2">Frequently Asked Questions</h2>
+                <div className="divide-y divide-border">
                   {faq.map((item, i) => (
-                    <div key={i}>
-                      <h3 className="font-semibold text-foreground text-sm mb-1">{item.question}</h3>
-                      <p className="text-sm text-muted-foreground">{item.answer}</p>
-                    </div>
+                    <FaqAccordionItem key={i} question={item.question} answer={item.answer} defaultOpen={i === 0} />
                   ))}
                 </div>
               </div>
