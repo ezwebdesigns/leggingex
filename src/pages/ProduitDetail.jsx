@@ -286,7 +286,7 @@ export default function ProduitDetail() {
                       )}
                       <div className="flex items-baseline gap-1.5 pt-0.5 leading-none">
                         <span className="text-xs font-bold text-foreground">{Number(isDeal ? p.deal_price : p.price).toFixed(2)} {currencyPrefix}</span>
-                        {isDeal && p.deal_price < p.price && (
+                        {isDeal && Number(p.deal_price) < Number(p.price) && (
                           <span className="text-[10px] text-muted-foreground line-through">{Number(p.price).toFixed(2)} {currencyPrefix}</span>
                         )}
                       </div>
