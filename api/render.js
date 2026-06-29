@@ -4,8 +4,8 @@
 // JS — donc visible par tous les bots (Google, réseaux sociaux, IA), pas
 // seulement par les vrais navigateurs.
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 const SITE_NAME = 'Legging Express';
 const SITE_ORIGIN = 'https://www.leggingexpress.com';
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/og-default.jpg`;

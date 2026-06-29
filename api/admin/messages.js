@@ -1,6 +1,6 @@
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'socialmediascanada@gmail.com';
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.VITE_ADMIN_EMAIL || 'socialmediascanada@gmail.com';
 
 const AUTH_HEADERS = { 'Content-Type': 'application/json' };
 
