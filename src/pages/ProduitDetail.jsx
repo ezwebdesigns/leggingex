@@ -262,7 +262,7 @@ export default function ProduitDetail() {
       {similarProducts.length > 0 && (
         <div className="border-t border-border mt-12">
           <div className="px-14 py-10">
-            <h2 className="text-xl font-bold text-foreground mb-6">Tu pourrais aussi aimer</h2>
+            <h2 className="text-xl font-bold text-foreground mb-6">You might also like</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
               {similarProducts.map((p) => {
                 const isDeal = p.deal_start && p.deal_end && new Date(p.deal_start) <= now && new Date(p.deal_end) >= now;
