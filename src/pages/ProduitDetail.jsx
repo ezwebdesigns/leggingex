@@ -188,11 +188,7 @@ export default function ProduitDetail() {
                 </p>
               </div>
             ) : (
-              <div className="mt-auto pt-4 space-y-2">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Choose version:</p>
-                <a href={product.affiliate_link} target="_blank" rel="noopener noreferrer sponsored" className="block w-full">
-                  <img src="/amazon-button.png" alt="View on Amazon" className="w-full h-auto max-h-14 object-contain" />
-                </a>
+              <div className="mt-auto pt-4">
                 <a href={product.affiliate_link} target="_blank" rel="noopener noreferrer sponsored" className="block w-full">
                   <Button className="w-full h-14 text-base font-semibold rounded-2xl shadow-lg shadow-black/20 bg-black text-white hover:bg-black/90 flex items-center gap-3 transition-opacity">
                     <img src="/amazon-logo.svg" alt="Amazon" className="h-8 w-auto" />
