@@ -18,7 +18,7 @@ function StarRating({ rating }) {
 
 export default function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
-  const { id, title, brand, rating, ratings_count, image_url, price, original_price } = product;
+  const { id, title, brand, rating, ratings_count, image_url, price, original_price, variant_images } = product;
 
   return (
     <Link
@@ -67,6 +67,15 @@ export default function ProductCard({ product }) {
                 {original_price.toFixed(2)} {currencyPrefix}
               </span>
             )}
+          </div>
+        )}
+        {variant_images?.length > 1 && (
+          <div className="flex items-center gap-1 pt-1 leading-none">
+            {variant_images.slice(0, 4).map((url, i) => (
+              <div key={i} className="w-5 h-5 rounded-full overflow-hidden border border-border/30 flex-shrink-0">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
         )}
       </div>

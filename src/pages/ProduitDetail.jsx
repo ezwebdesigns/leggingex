@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, ExternalLink, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Star, ExternalLink, Copy, Check, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchProductById, fetchVariants, fetchSimilar } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
@@ -72,7 +72,7 @@ export default function ProduitDetail() {
       }
 
       const [variantsData, simsData] = await Promise.all([
-        fetchVariants(p.title, marketplace, p.id),
+        fetchVariants(p.title, marketplace),
         (async () => {
           const cat = p.categories?.[0] || p.category;
           if (!cat) return [];
@@ -137,19 +137,7 @@ export default function ProduitDetail() {
 
       <div className="max-w-5xl mx-auto px-14 py-6">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-          <div className="flex-1 flex gap-4">
-            {variants.length > 0 && product.is_active && (
-              <div className="flex flex-col gap-2">
-                {variants.map((v) => (
-                  <Link key={v.id} to={`/produit/${v.id}`}
-                    className={`w-14 h-14 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
-                      v.id === id ? 'border-primary' : 'border-border/50 hover:border-primary/50'
-                    }`}>
-                    <img src={v.image_url} alt="" className="w-full h-full object-cover" />
-                  </Link>
-                ))}
-              </div>
-            )}
+          <div className="flex-1">
             <div className="flex-1 h-[591px] rounded-3xl overflow-hidden bg-white shadow-lg flex items-center justify-center">
               {product.image_url ? (
                 <img src={product.image_url} alt={product.title} className="max-w-[569px] max-h-[591px] w-full h-full object-contain p-4" />
@@ -231,6 +219,23 @@ export default function ProduitDetail() {
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {variants.length > 0 && product.is_active && (
+              <div className="flex flex-wrap gap-2">
+                {variants.map((v) => (
+                  <Link key={v.id} to={`/produit/${v.id}`} className="relative inline-block">
+                    <div className={`w-14 h-14 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
+                      v.id === id ? 'border-primary' : 'border-border/50 hover:border-primary/50'
+                    }`}>
+                      <img src={v.image_url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    {v.id === id && (
+                      <CheckCircle2 className="absolute -top-1.5 -right-1.5 w-5 h-5 text-primary bg-white rounded-full" />
+                    )}
+                  </Link>
+                ))}
               </div>
             )}
 

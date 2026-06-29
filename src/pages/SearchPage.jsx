@@ -16,7 +16,7 @@ function Stars({ rating }) {
 
 function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
-  const { id, title, image_url, price, original_price, rating, ratings_count, brand } = product;
+  const { id, title, image_url, price, original_price, rating, ratings_count, brand, variant_images } = product;
   return (
     <Link to={`/produit/${id}`} className="group flex flex-col w-full rounded-2xl overflow-hidden bg-card transition-all duration-300">
       <div className="w-full aspect-square overflow-hidden bg-[#F5F5F5] relative rounded-2xl border border-border/50">
@@ -36,12 +36,21 @@ function ProductCard({ product }) {
             {ratings_count && <span className="text-[10px] font-medium text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
           </div>
         )}
-        {price != null && (
+          {price != null && (
           <div className="flex items-baseline gap-1.5 pt-0.5 leading-none">
             <span className="text-xs font-bold text-foreground">{price.toFixed(2)} {currencyPrefix}</span>
             {original_price && original_price > price && (
               <span className="text-[10px] text-muted-foreground line-through">{original_price.toFixed(2)} {currencyPrefix}</span>
             )}
+          </div>
+        )}
+        {variant_images?.length > 1 && (
+          <div className="flex items-center gap-1 pt-1 leading-none">
+            {variant_images.slice(0, 4).map((url, i) => (
+              <div key={i} className="w-5 h-5 rounded-full overflow-hidden border border-border/30 flex-shrink-0">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
         )}
       </div>

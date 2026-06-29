@@ -19,7 +19,7 @@ function Stars({ rating }) {
 
 export default function MiniProductCard({ product, featured = false }) {
   const { currencyPrefix } = useCountry();
-  const { id, title, image_url, price, original_price, rating, ratings_count, brand } = product;
+  const { id, title, image_url, price, original_price, rating, ratings_count, brand, variant_images } = product;
   
   return (
     <Link
@@ -72,7 +72,7 @@ export default function MiniProductCard({ product, featured = false }) {
           </div>
         )}
         
-        {price != null && (
+          {price != null && (
           <div className="flex items-baseline gap-1.5 pt-0.5 leading-none">
             <span className="text-xs font-bold text-foreground">
               {price.toFixed(2)} {currencyPrefix}
@@ -82,6 +82,15 @@ export default function MiniProductCard({ product, featured = false }) {
                 {original_price.toFixed(2)} {currencyPrefix}
               </span>
             )}
+          </div>
+        )}
+        {variant_images?.length > 1 && (
+          <div className="flex items-center gap-1 pt-1 leading-none">
+            {variant_images.slice(0, 4).map((url, i) => (
+              <div key={i} className="w-5 h-5 rounded-full overflow-hidden border border-border/30 flex-shrink-0">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
         )}
       </div>
