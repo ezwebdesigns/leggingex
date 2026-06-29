@@ -12,7 +12,7 @@ import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 
-function ProductCarousel({ title, products, viewAllLink, loading }) {
+function ProductCarousel({ title, description, products, viewAllLink, loading }) {
   return (
     <section className="mb-10">
       <div className="flex items-center justify-between mb-4 px-14">
@@ -23,6 +23,7 @@ function ProductCarousel({ title, products, viewAllLink, loading }) {
           </Link>
         )}
       </div>
+      {description && <p className="text-sm text-muted-foreground mb-4 px-14">{description}</p>}
       <div className="px-14">
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -154,11 +155,15 @@ export default function Home() {
 
         // Fetch products for product-type sections
         const productSections = (sectionData || []).filter((s) => !s.section_type || s.section_type === 'products');
-        const productPromises = productSections.map((section) =>
-          section.category
-            ? fetchSection(section.category, section.product_limit || 8, marketplace)
-            : fetchTopProducts(section.product_limit || 12, marketplace)
-        );
+        const productPromises = productSections.map((section) => {
+          const sortParams = {};
+          if (section.sort_by) sortParams.sort = section.sort_by;
+          if (section.brand_filter) sortParams.brand = section.brand_filter;
+          if (section.min_rating) sortParams.minRating = section.min_rating;
+          return section.category
+            ? fetchSection(section.category, section.product_limit || 8, marketplace, sortParams)
+            : fetchTopProducts(section.product_limit || 12, marketplace, sortParams);
+        });
         const productResults = await Promise.all(productPromises);
 
         const productsMap = {};
@@ -222,33 +227,29 @@ export default function Home() {
               const viewAllLink = section.category
                 ? `/catalogue?category=${encodeURIComponent(section.category)}`
                 : '/catalogue';
-              const desc = section.description ? <p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p> : null;
               rendered.push(
                 <ProductCarousel
                   key={section.id}
                   title={section.title}
+                  description={section.description}
                   products={products}
                   viewAllLink={viewAllLink}
                   loading={loading}
                 />
               );
-              if (desc) rendered.push(desc);
             } else if (type === 'cta_cards') {
               const filtered = section.selected_ids?.length > 0 ? ctaCards.filter((c) => section.selected_ids.includes(c.id)) : ctaCards;
-              rendered.push(<CTACardGrid key={section.id} cards={filtered} title={section.title} />);
-              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
+              rendered.push(<CTACardGrid key={section.id} cards={filtered} title={section.title} description={section.description} />);
             } else if (type === 'editorial') {
               const filtered = section.selected_ids?.length > 0 ? editorialCards.filter((c) => section.selected_ids.includes(c.id)) : editorialCards;
-              rendered.push(<EditorialRow key={section.id} cards={filtered} title={section.title} />);
-              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
+              rendered.push(<EditorialRow key={section.id} cards={filtered} title={section.title} description={section.description} />);
             } else if (type === 'ad_banner') {
               const filtered = section.selected_ids?.length > 0 ? adBanners.filter((b) => section.selected_ids.includes(b.id)) : adBanners;
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground mb-2 px-14">{section.description}</p>);
               rendered.push(<AdBannerSection key={section.id} banners={filtered} />);
-              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
             } else if (type === 'articles') {
               const filtered = section.selected_ids?.length > 0 ? articles.filter((a) => section.selected_ids.includes(a.id)) : articles;
-              rendered.push(<RecentArticles key={section.id} articles={filtered} title={section.title} />);
-              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground -mt-2 mb-4 px-14">{section.description}</p>);
+              rendered.push(<RecentArticles key={section.id} articles={filtered} title={section.title} description={section.description} />);
             }
             i++;
           }

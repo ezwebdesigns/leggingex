@@ -1,8 +1,9 @@
-export default function CTACardGrid({ cards, title = "Shop by Category" }) {
+export default function CTACardGrid({ cards, title = "Shop by Category", description }) {
   if (!cards || cards.length === 0) return null;
   return (
     <section className="px-14 mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">{title}</h2>
+      {description && <p className="text-sm text-muted-foreground mb-4">{description}</p>}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {cards.map((card) => (
           <a key={card.id} href={card.link} target="_blank" rel="noopener noreferrer" className="group block">

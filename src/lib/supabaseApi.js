@@ -61,26 +61,30 @@ export async function fetchSimilar({ category, excludeId, limit = 4, marketplace
   return data.filter((p) => p.id !== excludeId);
 }
 
-export async function fetchSection(category, limit = 8, marketplace) {
+export async function fetchSection(category, limit = 8, marketplace, { sort, brand, minRating } = {}) {
   const params = new URLSearchParams();
   params.set('is_active', 'eq.true');
   params.set('has_image', 'eq.true');
   params.set('select', BASE_SELECT);
-  params.set('order', 'rating.desc.nullslast,ratings_count.desc.nullslast');
+  params.set('order', sort || 'rating.desc.nullslast,ratings_count.desc.nullslast');
   params.set('limit', limit);
   if (marketplace) params.set('marketplace', `eq.${marketplace}`);
   params.set('categories', buildCategoryFilter(category));
+  if (brand) params.set('brand', `eq.${brand}`);
+  if (minRating > 0) params.set('rating', `gte.${minRating}`);
   return supaFetch(params, 'products_grouped');
 }
 
-export async function fetchTopProducts(limit = 12, marketplace) {
+export async function fetchTopProducts(limit = 12, marketplace, { sort, brand, minRating } = {}) {
   const params = new URLSearchParams();
   params.set('is_active', 'eq.true');
   params.set('has_image', 'eq.true');
   params.set('select', BASE_SELECT);
-  params.set('order', 'rating.desc.nullslast,ratings_count.desc.nullslast');
+  params.set('order', sort || 'rating.desc.nullslast,ratings_count.desc.nullslast');
   params.set('limit', limit);
   if (marketplace) params.set('marketplace', `eq.${marketplace}`);
+  if (brand) params.set('brand', `eq.${brand}`);
+  if (minRating > 0) params.set('rating', `gte.${minRating}`);
   return supaFetch(params, 'products_grouped');
 }
 

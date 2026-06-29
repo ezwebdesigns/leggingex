@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 
-export default function RecentArticles({ articles, title = "Recent Articles" }) {
+export default function RecentArticles({ articles, title = "Recent Articles", description }) {
   if (!articles || articles.length === 0) return null;
   return (
     <section className="px-14 mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">{title}</h2>
+      {description && <p className="text-sm text-muted-foreground mb-4">{description}</p>}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {articles.map((article) => (
           <Link key={article.id} to={`/${article.slug}`} className="group block rounded-2xl overflow-hidden bg-card border border-border/50 hover:shadow-md transition-all duration-300">

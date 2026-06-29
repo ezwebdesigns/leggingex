@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 
-export default function EditorialRow({ cards, title = "New & Now" }) {
+export default function EditorialRow({ cards, title = "New & Now", description }) {
   if (!cards || cards.length === 0) return null;
   return (
     <section className="px-14 mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">{title}</h2>
+      {description && <p className="text-sm text-muted-foreground mb-4">{description}</p>}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <div key={card.id} className="group">
