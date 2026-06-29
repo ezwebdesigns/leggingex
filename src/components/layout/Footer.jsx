@@ -52,6 +52,7 @@ export default function Footer() {
   const infoItems = [
     ...staticPages.map((p) => ({ label: p.title, url: `/${p.slug}` })),
     { label: 'Blog', url: '/blog' },
+    { label: 'Contact', url: '/contact' },
   ];
 
   const hasInfo = columns.some((c) => c.title?.toLowerCase() === 'information');

@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Upload, Home, FileText, LogOut, ShoppingBag, Settings } from 'lucide-react';
+import { LayoutDashboard, Package, Upload, Home, FileText, LogOut, ShoppingBag, Settings, Mail } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 const adminNavItems = [
@@ -9,6 +9,7 @@ const adminNavItems = [
   { icon: Home, label: 'Home', path: '/admin/home' },
   { icon: FileText, label: 'Pages', path: '/admin/pages' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
+  { icon: Mail, label: 'Messages', path: '/admin/messages' },
 ];
 
 export default function AdminLayout() {
