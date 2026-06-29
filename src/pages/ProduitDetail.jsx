@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, Star, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 import { fetchProductById, fetchSimilar } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
@@ -194,7 +195,13 @@ export default function ProduitDetail() {
                   rel="noopener noreferrer sponsored"
                   className="block w-full"
                 >
-                  <img src="/amazon-button.png" alt="View on Amazon" className="w-full h-auto max-h-14 object-contain" />
+                  <Button className="w-full h-14 text-base font-semibold rounded-2xl shadow-lg shadow-primary/20 flex items-center gap-2 hover:opacity-90 transition-opacity">
+                    <svg viewBox="0 0 120 34" className="h-5 w-auto" fill="currentColor">
+                      <path d="M34.1 12.3c0 1.3-.1 2.6-.3 3.8-.2 1.2-.4 2.3-.7 3.4l-.5 1.6c-.2.5-.3.9-.5 1.2l-.3.6c-.1.1-.1.2-.2.2-.2.2-.4.4-.7.5-.3.1-.5.2-.7.2-.4 0-.7-.1-.9-.3-.2-.2-.3-.5-.3-.9 0-.2 0-.4.1-.7.1-.3.1-.6.2-1 .1-.4.2-.8.2-1.3 0-.3 0-.7-.1-1.2-.1-.5-.4-.9-.7-1.2-.3-.3-.8-.5-1.4-.5-.6 0-1.2.1-1.8.4-.6.3-1.1.6-1.6 1.1-.5.5-.9 1-1.2 1.6-.3.6-.5 1.2-.5 1.9 0 .6.1 1.1.4 1.5.3.4.6.6 1.1.6.3 0 .5-.1.7-.2.2-.1.4-.3.5-.5l.3-.5c.1-.2.2-.4.3-.6.1-.2.3-.4.5-.5.2-.1.4-.2.7-.2.3 0 .6.1.8.2.2.1.4.3.5.5.1.2.2.5.2.8 0 .4-.2.8-.5 1.2-.3.4-.7.7-1.2 1-.5.3-1.1.5-1.8.6-.7.1-1.4.1-2.1-.1-.7-.2-1.4-.5-2-.9-.6-.4-1.1-.9-1.5-1.5-.4-.6-.6-1.4-.6-2.2 0-.6.1-1.2.3-1.8.2-.6.5-1.1.9-1.6.4-.5.8-.9 1.4-1.3.5-.4 1.1-.7 1.7-.9.6-.2 1.2-.4 1.8-.4.7 0 1.3.1 1.9.3.6.2 1.1.5 1.6.9.5.4.9.9 1.2 1.5.3.6.5 1.3.5 2.1zm-8.1 2.6c0-.4.1-.8.2-1.2.1-.4.3-.7.6-1 .3-.3.6-.5 1-.7.4-.2.8-.2 1.2-.2.6 0 1.1.2 1.5.5.4.3.6.8.6 1.3 0 .5-.1.9-.3 1.3-.2.4-.5.7-.9 1-.4.3-.8.5-1.3.5-.5 0-.9-.1-1.3-.4-.4-.3-.6-.7-.6-1.1h0z"/>
+                    </svg>
+                    View on Amazon
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
                 </a>
                 <p className="text-center text-xs text-muted-foreground mt-2">
                   Affiliate link — you will be redirected to the partner site
