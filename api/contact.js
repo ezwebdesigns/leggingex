@@ -1,5 +1,5 @@
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://vptbrllldcvgykpfljjd.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdGJybGxsZGN2Z3lrcGZsampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MjEzODEsImV4cCI6MjA5NzQ5NzM4MX0.WwMP2GQiegQoVSly5eS8sXRQsYsGCL33U43GEITNrFI';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { name, email, subject, message } = JSON.parse(req.body || '{}');
+    const { name, email, subject, message } = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
 
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Name, email, and message are required' });

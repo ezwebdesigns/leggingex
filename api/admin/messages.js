@@ -1,5 +1,5 @@
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://vptbrllldcvgykpfljjd.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdGJybGxsZGN2Z3lrcGZsampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MjEzODEsImV4cCI6MjA5NzQ5NzM4MX0.WwMP2GQiegQoVSly5eS8sXRQsYsGCL33U43GEITNrFI';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || process.env.VITE_ADMIN_EMAIL || 'socialmediascanada@gmail.com';
 
 const AUTH_HEADERS = { 'Content-Type': 'application/json' };
@@ -34,14 +34,14 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PATCH') {
-      const { id, read } = JSON.parse(req.body || '{}');
+      const { id, read } = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
       if (!id) return res.status(400).json({ error: 'ID required' });
       await supaQuery(`id=eq.${id}`, 'PATCH', { read });
       return res.status(200).json({ ok: true });
     }
 
     if (req.method === 'DELETE') {
-      const { id } = JSON.parse(req.body || '{}');
+      const { id } = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
       if (!id) return res.status(400).json({ error: 'ID required' });
       await supaQuery(`id=eq.${id}`, 'DELETE');
       return res.status(200).json({ ok: true });
