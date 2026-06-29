@@ -38,11 +38,12 @@ export async function fetchCatalog({ offset = 0, limit = 24, category, brand, mi
   return supaFetch(params, 'products_grouped');
 }
 
-// Product detail page uses the full 'products' table so all variants are accessible
+// Product detail page uses the full 'products' table (variant_images only exists on products_grouped)
+const DETAIL_SELECT = 'id,title,image_url,price,currency,rating,ratings_count,best_seller_rank,brand,category,categories,affiliate_link,deal_start,deal_end,deal_price,clippable_start,clippable_end,clippable_price,promo_code_start,promo_code_end,promo_code_price,promo_code';
 export async function fetchProductById(id, marketplace) {
   const params = new URLSearchParams({
     id: `eq.${id}`,
-    select: `${BASE_SELECT},is_active,asin`,
+    select: `${DETAIL_SELECT},is_active,asin`,
   });
   if (marketplace) params.set('marketplace', `eq.${marketplace}`);
   return supaFetch(params);
