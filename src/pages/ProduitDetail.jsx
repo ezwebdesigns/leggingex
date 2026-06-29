@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft, Star } from 'lucide-react';
+
 import { fetchProductById, fetchSimilar } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 
@@ -194,10 +194,7 @@ export default function ProduitDetail() {
                   rel="noopener noreferrer sponsored"
                   className="block w-full"
                 >
-                  <Button className="w-full h-14 text-base font-semibold rounded-2xl shadow-lg shadow-primary/20 flex items-center gap-2 hover:opacity-90 transition-opacity">
-                    View Offer
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
+                  <img src="/amazon-button.png" alt="View on Amazon" className="w-full h-auto max-h-14 object-contain" />
                 </a>
                 <p className="text-center text-xs text-muted-foreground mt-2">
                   Affiliate link — you will be redirected to the partner site
