@@ -141,11 +141,11 @@ export default function ProduitDetail() {
 
       <div className="max-w-5xl mx-auto px-14 py-6">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          <div className="rounded-3xl overflow-hidden bg-muted aspect-[3/4]">
+          <div className="rounded-3xl overflow-hidden bg-[#F5F5F5] h-[500px] md:h-[600px] flex items-center justify-center">
             {product.image_url ? (
-              <img src={product.image_url} alt={product.title} className="w-full h-full object-cover" />
+              <img src={product.image_url} alt={product.title} className="w-full h-full object-contain p-4" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-8xl">👖</div>
+              <div className="flex items-center justify-center text-8xl">👖</div>
             )}
           </div>
 
@@ -172,12 +172,6 @@ export default function ProduitDetail() {
             {product.price != null && (
               <p className="text-2xl font-bold text-foreground">
                 {currencyPrefix}{product.price.toFixed(2)}
-              </p>
-            )}
-
-            {product.best_seller_rank && (
-              <p className="text-sm text-muted-foreground">
-                🏆 Best Seller Rank: <span className="font-semibold text-foreground">#{product.best_seller_rank}</span>
               </p>
             )}
 
