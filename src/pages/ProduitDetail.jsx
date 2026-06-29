@@ -141,15 +141,15 @@ export default function ProduitDetail() {
 
       <div className="max-w-5xl mx-auto px-14 py-6">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-          <div className="rounded-3xl overflow-hidden bg-white w-[569px] h-[591px] shrink-0 flex items-center justify-center shadow-lg">
+          <div className="flex-1 h-[591px] rounded-3xl overflow-hidden bg-white shadow-lg flex items-center justify-center">
             {product.image_url ? (
-              <img src={product.image_url} alt={product.title} className="w-full h-full object-contain p-4" />
+              <img src={product.image_url} alt={product.title} className="max-w-[569px] max-h-[591px] w-full h-full object-contain p-4" />
             ) : (
               <div className="flex items-center justify-center text-8xl">👖</div>
             )}
           </div>
 
-          <div className="flex flex-col gap-4 pt-2">
+          <div className="flex-1 flex flex-col gap-4 pt-2">
             {product.brand && (
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{product.brand}</p>
             )}
