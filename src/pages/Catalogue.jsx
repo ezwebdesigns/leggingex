@@ -285,7 +285,7 @@ export default function Catalogue() {
                 <span className="text-foreground font-medium">{filters.category}</span>
               </nav>
               <div className="flex flex-col md:flex-row md:items-start gap-2 md:gap-4">
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground truncate">{filters.category}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground whitespace-nowrap">{filters.category}</h1>
                 {currentTag?.description && (
                   <>
                     <div className="hidden md:block w-px h-8 bg-border self-center" />
