@@ -46,6 +46,7 @@ CREATE TABLE home_categories (
   label TEXT NOT NULL,
   value TEXT NOT NULL,
   image_url TEXT,
+  faq_schema JSONB DEFAULT '[]'::jsonb,
   sort_order INTEGER DEFAULT 0,
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now(),

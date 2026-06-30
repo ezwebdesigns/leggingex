@@ -6,7 +6,6 @@ import ProductGrid from '@/components/products/ProductGrid';
 import FilterPanel from '@/components/products/FilterPanel';
 import SearchBar from '@/components/search/SearchBar';
 import FaqAccordion from '@/components/home/FaqAccordion';
-import { getSettings } from '@/lib/settings';
 
 export default function Categories() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,8 +52,14 @@ export default function Categories() {
   }, [filters]);
 
   useEffect(() => {
-    getSettings().then((s) => setFaqColumns(s.seo?.faq_schema || [])).catch(() => {});
-  }, []);
+    if (filters.category) {
+      supabase.from('home_categories').select('faq_schema').eq('value', filters.category).maybeSingle()
+        .then(({ data }) => setFaqColumns(data?.faq_schema || []))
+        .catch(() => setFaqColumns([]));
+    } else {
+      setFaqColumns([]);
+    }
+  }, [filters.category]);
 
   const handleCategorySelect = (cat) => {
     setFilters((f) => ({ ...f, category: cat }));

@@ -8,7 +8,6 @@ import { supabase } from '@/lib/supabaseClient';
 import { SLUG_TO_CATEGORY, CATEGORY_SLUGS } from '@/lib/categorySlugs';
 import ScrollableRow from '@/components/ui/ScrollableRow';
 import FaqAccordion from '@/components/home/FaqAccordion';
-import { getSettings } from '@/lib/settings';
 
 const SORT_OPTIONS = [
   { label: 'Top Rated', value: 'rating.desc.nullslast,ratings_count.desc.nullslast' },
@@ -208,8 +207,14 @@ export default function Catalogue() {
   const activeFilterCount = [filters.category, filters.brand, filters.minRating > 0].filter(Boolean).length;
 
   useEffect(() => {
-    getSettings().then((s) => setFaqColumns(s.seo?.faq_schema || [])).catch(() => {});
-  }, []);
+    if (filters.category) {
+      supabase.from('home_categories').select('faq_schema').eq('value', filters.category).maybeSingle()
+        .then(({ data }) => setFaqColumns(data?.faq_schema || []))
+        .catch(() => setFaqColumns([]));
+    } else {
+      setFaqColumns([]);
+    }
+  }, [filters.category]);
 
   return (
     <div className="min-h-screen bg-background">

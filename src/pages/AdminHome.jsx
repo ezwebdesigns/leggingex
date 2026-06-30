@@ -146,6 +146,16 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
                     </div>
                   )}
                 </div>
+                  ) : f.type === 'faq_columns' ? (
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 block">
+                    FAQ ({f.label})
+                  </Label>
+                  <FaqColumnsEditor
+                    value={form[f.key] || []}
+                    onChange={(v) => set(f.key, v)}
+                  />
+                </div>
               ) : (
                 <>
                   <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -378,6 +388,71 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
   );
 }
 
+function FaqColumnsEditor({ value, onChange }) {
+  const faq = Array.isArray(value) ? value : [];
+  const updateColumn = (ci, items) => {
+    const next = [...faq];
+    next[ci] = { ...next[ci], items };
+    onChange(next);
+  };
+  const removeColumn = (ci) => onChange(faq.filter((_, i) => i !== ci));
+  const addColumn = () => {
+    if (faq.length >= 2) return;
+    onChange([...faq, { title: '', items: [{ q: '', a: '' }] }]);
+  };
+  const addItem = (ci) => updateColumn(ci, [...(faq[ci]?.items || []), { q: '', a: '' }]);
+  const removeItem = (ci, ii) => updateColumn(ci, faq[ci].items.filter((_, i) => i !== ii));
+  const updateItem = (ci, ii, field, val) => {
+    const items = [...faq[ci].items];
+    items[ii] = { ...items[ii], [field]: val };
+    updateColumn(ci, items);
+  };
+  return (
+    <div className="space-y-4">
+      {faq.length === 0 && <p className="text-sm text-muted-foreground">Aucune colonne FAQ. Ajoutez-en une ci-dessous.</p>}
+      {faq.map((col, ci) => (
+        <div key={ci} className="border border-border rounded-xl p-4 bg-muted/20">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Colonne {ci + 1}</span>
+            <Button type="button" variant="ghost" size="icon" className="text-destructive h-7 w-7" onClick={() => removeColumn(ci)}>
+              <X className="w-3 h-3" />
+            </Button>
+          </div>
+          {(col.items || []).map((item, ii) => (
+            <div key={ii} className="border border-border rounded-lg p-3 mb-2 bg-background">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-muted-foreground">Question {ii + 1}</span>
+                <Button type="button" variant="ghost" size="icon" className="text-destructive h-6 w-6" onClick={() => removeItem(ci, ii)}>
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+              <Input
+                value={item.q}
+                onChange={(e) => updateItem(ci, ii, 'q', e.target.value)}
+                placeholder="Question"
+                className="mb-2 rounded-lg"
+              />
+              <Textarea
+                value={item.a}
+                onChange={(e) => updateItem(ci, ii, 'a', e.target.value)}
+                placeholder="Réponse"
+                rows={2}
+                className="rounded-lg resize-none"
+              />
+            </div>
+          ))}
+          <Button type="button" variant="ghost" size="sm" className="text-xs mt-1" onClick={() => addItem(ci)}>
+            <Plus className="w-3 h-3 mr-1" /> Ajouter une question
+          </Button>
+        </div>
+      ))}
+      <Button type="button" variant="outline" size="sm" onClick={addColumn} disabled={faq.length >= 2}>
+        <Plus className="w-3.5 h-3.5 mr-1" /> Ajouter une colonne
+      </Button>
+    </div>
+  );
+}
+
 const entityConfig = {
   hero_banners: {
     labelSingular: 'Hero Banner',
@@ -483,12 +558,13 @@ const entityConfig = {
   },
   home_categories: {
     labelSingular: 'Category',
-    defaultForm: { label: '', value: '', description: '', image_url: '', sort_order: 0, is_active: true },
+    defaultForm: { label: '', value: '', description: '', image_url: '', faq_schema: [], sort_order: 0, is_active: true },
     fields: [
       { key: 'label', label: 'Label', required: true, placeholder: 'Yoga' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Yoga' },
       { key: 'description', label: 'Description (SEO)', type: 'textarea', rows: 3, fullWidth: true, placeholder: 'A short description of this category for SEO...' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
+      { key: 'faq_schema', label: 'Schema FAQ', type: 'faq_columns', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
