@@ -188,14 +188,14 @@ CREATE POLICY "Admins can delete home_categories"
   ON home_categories FOR DELETE USING (auth.jwt() ->> 'role' = 'admin');
 
 -- catalogue_pages: public can read active
-CREATE POLICY "Public can read active catalogue_pages"
-  ON catalogue_pages FOR SELECT USING (is_active = true);
-CREATE POLICY "Admins can insert catalogue_pages"
-  ON catalogue_pages FOR INSERT WITH CHECK (auth.jwt() ->> 'role' = 'admin');
-CREATE POLICY "Admins can update catalogue_pages"
-  ON catalogue_pages FOR UPDATE USING (auth.jwt() ->> 'role' = 'admin');
-CREATE POLICY "Admins can delete catalogue_pages"
-  ON catalogue_pages FOR DELETE USING (auth.jwt() ->> 'role' = 'admin');
+CREATE POLICY "Public read catalogue_pages"
+  ON catalogue_pages FOR SELECT USING (true);
+CREATE POLICY "Admin insert catalogue_pages"
+  ON catalogue_pages FOR INSERT WITH CHECK (auth.jwt() ->> 'email' = 'socialmediascanada@gmail.com');
+CREATE POLICY "Admin update catalogue_pages"
+  ON catalogue_pages FOR UPDATE USING (auth.jwt() ->> 'email' = 'socialmediascanada@gmail.com');
+CREATE POLICY "Admin delete catalogue_pages"
+  ON catalogue_pages FOR DELETE USING (auth.jwt() ->> 'email' = 'socialmediascanada@gmail.com');
 
 -- cta_cards: public can read active
 CREATE POLICY "Public can read active cta_cards"
