@@ -44,6 +44,7 @@ const homeTabs = [
   { id: 'cta_cards', label: 'CTA Cards', table: 'cta_cards' },
   { id: 'editorial_cards', label: 'Editorial', table: 'editorial_cards' },
   { id: 'ad_banners', label: 'Ad Banners', table: 'ad_banners' },
+  { id: 'catalogue_pages', label: 'Catalogue Page', table: 'catalogue_pages' },
   { id: 'featured_sections', label: 'Featured Sections', table: 'featured_sections' },
 ];
 
@@ -555,6 +556,19 @@ const entityConfig = {
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
+  catalogue_pages: {
+    labelSingular: 'Catalogue Page',
+    defaultForm: { label: '', value: '', description: '', image_url: '', link: '', faq_schema: [], sort_order: 0, is_active: true },
+    fields: [
+      { key: 'label', label: 'Label', required: true, placeholder: 'Yoga' },
+      { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Yoga' },
+      { key: 'description', label: 'Description (SEO)', type: 'textarea', rows: 3, fullWidth: true, placeholder: 'A short description of this category for SEO...' },
+      { key: 'link', label: 'Custom Link (optional)', type: 'url', placeholder: '/catalogue?category=...' },
+      { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
+      { key: 'faq_schema', label: 'Schema FAQ', type: 'faq_columns', sidebar: true },
+      { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
+    ],
+  },
   cta_cards: {
     labelSingular: 'CTA Card',
     defaultForm: { title: '', image_url: '', link: '', bg_color: '#f3f4f6', text_color: '#000000', sort_order: 0, is_active: true },
@@ -623,6 +637,7 @@ const entityFolders = {
   editorial_cards: 'editorial-cards',
   ad_banners: 'ad-banners',
   featured_sections: 'featured-sections',
+  catalogue_pages: 'catalogue-pages',
 };
 
 export default function AdminHome() {

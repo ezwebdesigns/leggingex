@@ -116,6 +116,7 @@ export default function Catalogue() {
   const [subcategories, setSubcategories] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [faqColumns, setFaqColumns] = useState([]);
+  const [pageData, setPageData] = useState(null);
 
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
@@ -208,10 +209,14 @@ export default function Catalogue() {
 
   useEffect(() => {
     if (filters.category) {
-      supabase.from('home_categories').select('faq_schema').eq('value', filters.category).maybeSingle()
-        .then(({ data }) => setFaqColumns(data?.faq_schema || []))
-        .catch(() => setFaqColumns([]));
+      supabase.from('catalogue_pages').select('*').eq('value', filters.category).eq('is_active', true).maybeSingle()
+        .then(({ data }) => {
+          setPageData(data || null);
+          setFaqColumns(data?.faq_schema || []);
+        })
+        .catch(() => { setPageData(null); setFaqColumns([]); });
     } else {
+      setPageData(null);
       setFaqColumns([]);
     }
   }, [filters.category]);
@@ -276,20 +281,21 @@ export default function Catalogue() {
 
       <div className="px-4 lg:px-14 py-5">
         {filters.category && (() => {
-          const currentTag = subcategories.find(t => t.value === filters.category);
+          const displayLabel = pageData?.label || filters.category;
+          const displayDesc = pageData?.description || subcategories.find(t => t.value === filters.category)?.description;
           return (
             <div className="mb-6">
               <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
                 <Link to="/catalogue" className="hover:text-foreground transition-colors">All categories</Link>
                 <span className="text-border">/</span>
-                <span className="text-foreground font-medium">{filters.category}</span>
+                <span className="text-foreground font-medium">{displayLabel}</span>
               </nav>
               <div className="flex flex-col md:flex-row md:items-start gap-2 md:gap-4">
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground whitespace-nowrap">{filters.category}</h1>
-                {currentTag?.description && (
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground whitespace-nowrap">{displayLabel}</h1>
+                {displayDesc && (
                   <>
                     <div className="hidden md:block w-px h-8 bg-border self-center" />
-                    <p className="text-sm text-muted-foreground leading-relaxed">{currentTag.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{displayDesc}</p>
                   </>
                 )}
               </div>

@@ -53,7 +53,22 @@ CREATE TABLE home_categories (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 5. cta_cards
+-- 5. catalogue_pages
+CREATE TABLE catalogue_pages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  label TEXT NOT NULL,
+  value TEXT NOT NULL,
+  description TEXT,
+  image_url TEXT,
+  link TEXT,
+  faq_schema JSONB DEFAULT '[]'::jsonb,
+  sort_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 6. cta_cards
 CREATE TABLE cta_cards (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
@@ -122,6 +137,7 @@ ALTER TABLE hero_banners ENABLE ROW LEVEL SECURITY;
 ALTER TABLE home_sections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE category_tags ENABLE ROW LEVEL SECURITY;
 ALTER TABLE home_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE catalogue_pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cta_cards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE editorial_cards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ad_banners ENABLE ROW LEVEL SECURITY;
@@ -170,6 +186,16 @@ CREATE POLICY "Admins can update home_categories"
   ON home_categories FOR UPDATE USING (auth.jwt() ->> 'role' = 'admin');
 CREATE POLICY "Admins can delete home_categories"
   ON home_categories FOR DELETE USING (auth.jwt() ->> 'role' = 'admin');
+
+-- catalogue_pages: public can read active
+CREATE POLICY "Public can read active catalogue_pages"
+  ON catalogue_pages FOR SELECT USING (is_active = true);
+CREATE POLICY "Admins can insert catalogue_pages"
+  ON catalogue_pages FOR INSERT WITH CHECK (auth.jwt() ->> 'role' = 'admin');
+CREATE POLICY "Admins can update catalogue_pages"
+  ON catalogue_pages FOR UPDATE USING (auth.jwt() ->> 'role' = 'admin');
+CREATE POLICY "Admins can delete catalogue_pages"
+  ON catalogue_pages FOR DELETE USING (auth.jwt() ->> 'role' = 'admin');
 
 -- cta_cards: public can read active
 CREATE POLICY "Public can read active cta_cards"
