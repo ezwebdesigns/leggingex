@@ -1,12 +1,14 @@
 {
   "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/favicon\\.ico", "dest": "/favicon.ico" },
+    { "src": "/og-default\\.jpg", "dest": "/og-default.jpg" },
+    { "src": "/robots\\.txt", "dest": "/robots.txt" },
     { "src": "/", "dest": "/api/render" },
     { "src": "/produit/(?<id>[^/]+)", "dest": "/api/render?__path=produit&id=$id" },
     { "src": "/catalogue/(?<slug>[^/]+)", "dest": "/api/render?__path=categorie&slug=$slug" },
     { "src": "/catalogue", "dest": "/api/render?__path=catalogue" },
-    { "src": "/sitemap.xml", "dest": "/api/render" },
-    { "src": "/robots.txt", "dest": "/api/render" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)", "dest": "/api/render" }
   ]
 }
