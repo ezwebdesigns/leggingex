@@ -235,40 +235,49 @@ async function buildMeta(url) {
 async function buildCategoryMeta(url, canonical) {
   const slug = url.searchParams.get('slug');
   const category = SLUG_TO_CATEGORY[slug];
-  if (!category) { ... } // cas inchangé
 
-  // Récupérer le contenu éditorial depuis Supabase
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/category_content?slug=eq.${slug}&select=intro_html,faq`,
-    { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
-  );
-  const rows = await res.json();
-  const content = rows?.[0];
+  if (!category) {
+    return {
+      title: `Category not found | ${SITE_NAME}`,
+      description: `This category doesn't exist on ${SITE_NAME}.`,
+      image: DEFAULT_IMAGE,
+      canonical,
+    };
+  }
 
-  let jsonLd = undefined;
+  let content = null;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/category_content?slug=eq.${slug}&select=intro_html,faq`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const rows = await res.json();
+    content = rows?.[0] ?? null;
+  } catch (err) {
+    console.error('category_content fetch error:', err);
+  }
+
+  let jsonLd = '';
   if (content?.faq?.length > 0) {
-    jsonLd = JSON.stringify({
+    jsonLd = `<script type="application/ld+json">${JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
       mainEntity: content.faq.map((item) => ({
         '@type': 'Question',
         name: item.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: item.answer,
-        },
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
       })),
-    });
+    })}</script>`;
   }
 
   return {
     title: `${category} — Shop the best picks | ${SITE_NAME}`,
     description: content?.intro_html
       ? content.intro_html.replace(/<[^>]+>/g, '').substring(0, 160)
-      : `Discover the best ${category.toLowerCase()} available on Amazon.`,
+      : `Discover the best ${category.toLowerCase()} available on Amazon. Compare prices, ratings and best sellers.`,
     image: DEFAULT_IMAGE,
     canonical,
-    jsonLd: jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : '',
+    jsonLd,
   };
 }
 
