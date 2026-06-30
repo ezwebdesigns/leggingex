@@ -83,7 +83,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border px-14 py-3">
+      <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border px-4 lg:px-14 py-3">
         <div className="max-w-2xl mx-auto">
           <form onSubmit={handleSubmit} className="flex items-center gap-2 bg-secondary rounded-xl px-3 sm:px-4 py-2.5 border border-border focus-within:border-primary/40 focus-within:bg-background transition-all">
             <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" strokeWidth={1.8} />
@@ -103,7 +103,7 @@ export default function SearchPage() {
         </div>
       </div>
 
-      <div className="px-14 py-5">
+      <div className="px-4 lg:px-14 py-5">
         {!currentQ ? (
           <div className="flex flex-col items-center justify-center py-20 md:py-32 text-center">
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4 text-3xl">🔍</div>

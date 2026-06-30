@@ -15,7 +15,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="px-14 py-8">
+      <div className="px-4 lg:px-14 py-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Blog</h1>
         <p className="text-muted-foreground mb-8">Tips, guides, and leggings trends</p>
 

@@ -61,14 +61,14 @@ export default function Categories() {
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border z-30">
-        <div className="px-14 pt-4 pb-3 space-y-3">
+        <div className="px-4 lg:px-14 pt-4 pb-3 space-y-3">
           <SearchBar />
           <CategoryPills activeCategory={filters.category} onSelect={handleCategorySelect} />
           <FilterPanel filters={filters} onFiltersChange={setFilters} brands={brands} />
         </div>
       </div>
 
-      <div className="px-14 py-5">
+      <div className="px-4 lg:px-14 py-5">
         {!loading && (
           <p className="text-sm text-muted-foreground mb-4 font-medium">
             {products.length} legging{products.length !== 1 ? 's' : ''} found

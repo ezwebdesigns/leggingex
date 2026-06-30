@@ -36,7 +36,7 @@ export default function FaqAccordion({ columns }) {
   if (!columns || columns.length === 0) return null;
 
   return (
-    <section className="px-14 pt-8 pb-4 border-t border-border">
+    <section className="px-4 lg:px-14 pt-8 pb-4 border-t border-border">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-0">
         {columns.map((col, i) => (
           <AccordionColumn key={i} items={col.items} />

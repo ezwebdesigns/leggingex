@@ -6,6 +6,7 @@ import { fetchCatalog, fetchFilterOptions } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 import { supabase } from '@/lib/supabaseClient';
 import { SLUG_TO_CATEGORY, CATEGORY_SLUGS } from '@/lib/categorySlugs';
+import ScrollableRow from '@/components/ui/ScrollableRow';
 
 const SORT_OPTIONS = [
   { label: 'Top Rated', value: 'rating.desc.nullslast,ratings_count.desc.nullslast' },
@@ -206,7 +207,7 @@ export default function Catalogue() {
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-14 pt-2 pb-2">
+        <ScrollableRow className="px-4 lg:px-14 pt-2 pb-2">
           <button
             onClick={() => updateFilter('category', '')}
             className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${!filters.category ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border/50 text-foreground hover:bg-muted'}`}
@@ -222,9 +223,9 @@ export default function Catalogue() {
               {cat.label}
             </button>
           ))}
-        </div>
+        </ScrollableRow>
 
-        <div className="flex items-center gap-2 px-14 pb-3">
+        <div className="flex items-center gap-2 px-4 lg:px-14 pb-3">
           <div className="relative">
             <select
               value={filters.sort}
@@ -261,7 +262,7 @@ export default function Catalogue() {
         </div>
       </div>
 
-      <div className="px-14 py-5">
+      <div className="px-4 lg:px-14 py-5">
         {filters.category && (() => {
           const currentTag = subcategories.find(t => t.value === filters.category);
           return (

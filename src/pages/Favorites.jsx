@@ -36,7 +36,7 @@ export default function Favorites() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="px-14 pt-8 pb-4">
+      <div className="px-4 lg:px-14 pt-8 pb-4">
         <div className="flex items-center gap-2 mb-1">
           <Heart className="w-5 h-5 text-primary fill-primary" />
           <h1 className="text-xl font-bold text-foreground">My Favorites</h1>
@@ -48,7 +48,7 @@ export default function Favorites() {
         )}
       </div>
 
-      <div className="px-14 pb-8">
+      <div className="px-4 lg:px-14 pb-8">
         {!loading && products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">

@@ -7,7 +7,7 @@ export default function FeaturedSectionRow({ sections }) {
   if (!sections || sections.length === 0) return null;
 
   return (
-    <section className="px-14 mb-10">
+    <section className="px-4 lg:px-14 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section) => (
           <div

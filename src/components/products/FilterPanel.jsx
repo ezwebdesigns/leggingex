@@ -28,7 +28,7 @@ export default function FilterPanel({ filters, onFiltersChange, brands = [] }) {
   const activeCount = [filters.category, filters.brand, filters.minRating > 0].filter(Boolean).length;
 
   return (
-    <div className="flex items-center gap-3 px-14">
+    <div className="flex items-center gap-3 px-4 lg:px-14">
       <Select value={filters.sort || 'best_seller_rank'} onValueChange={(v) => updateFilter('sort', v)}>
         <SelectTrigger className="w-44 rounded-xl text-sm border-border bg-background h-9">
           <SelectValue placeholder="Sort by" />

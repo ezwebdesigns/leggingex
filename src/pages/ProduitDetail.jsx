@@ -128,7 +128,7 @@ export default function ProduitDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border z-30 px-14 py-3">
+      <div className="sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border z-30 px-4 lg:px-14 py-3">
         <Link to="/catalogue" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back to catalogue</span>
@@ -136,7 +136,7 @@ export default function ProduitDetail() {
         </Link>
       </div>
 
-      <div className="max-w-5xl mx-auto px-14 py-6">
+      <div className="max-w-5xl mx-auto px-4 lg:px-14 py-6">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
           <div className="flex-1">
             <div className="flex-1 h-[591px] rounded-3xl overflow-hidden bg-white shadow-lg flex items-center justify-center p-4">
@@ -266,7 +266,7 @@ export default function ProduitDetail() {
 
       {similarProducts.length > 0 && (
         <div className="border-t border-border mt-12">
-          <div className="px-14 py-10">
+          <div className="px-4 lg:px-14 py-10">
             <h2 className="text-xl font-bold text-foreground mb-6">You might also like</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
               {similarProducts.map((p) => {

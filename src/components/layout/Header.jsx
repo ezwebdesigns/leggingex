@@ -23,7 +23,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="flex items-center gap-2 sm:gap-3 px-14 py-3">
+      <div className="flex items-center gap-2 sm:gap-3 px-4 lg:px-14 py-3">
         <Link to="/" className="flex-shrink-0 flex items-center gap-2">
           {logo ? (
             <img src={logo} alt={siteTitle} className="h-7 w-auto" />

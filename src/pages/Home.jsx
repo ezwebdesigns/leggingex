@@ -13,12 +13,13 @@ import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 import FaqAccordion from '@/components/home/FaqAccordion';
+import ScrollableRow from '@/components/ui/ScrollableRow';
 import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
 function ProductCarousel({ title, description, products, viewAllLink, loading }) {
   return (
     <section className="mb-10">
-      <div className="flex items-center justify-between mb-4 px-14">
+      <div className="flex items-center justify-between mb-4 px-4 lg:px-14">
         <h2 className="text-base md:text-lg font-bold text-foreground">{title}</h2>
         {viewAllLink && (
           <Link to={viewAllLink} className="flex items-center gap-1 text-sm text-primary font-medium hover:underline whitespace-nowrap">
@@ -26,8 +27,8 @@ function ProductCarousel({ title, description, products, viewAllLink, loading })
           </Link>
         )}
       </div>
-      {description && <p className="text-sm text-muted-foreground mb-4 px-14">{description}</p>}
-      <div className="px-14">
+      {description && <p className="text-sm text-muted-foreground mb-4 px-4 lg:px-14">{description}</p>}
+      <div className="px-4 lg:px-14">
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-8 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -51,7 +52,7 @@ function ProductCarousel({ title, description, products, viewAllLink, loading })
 function HeroBanners({ banners }) {
   if (!banners || banners.length === 0) return null;
   return (
-    <div className={`grid ${banners.length === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-3'} gap-3 px-14 mb-10`}>
+    <div className={`grid ${banners.length === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-3'} gap-3 px-4 lg:px-14 mb-10`}>
       {banners.map((b) => (
         <Link
           key={b.id}
@@ -80,12 +81,12 @@ function HeroBanners({ banners }) {
 function CategoryGrid({ categories }) {
   if (!categories || categories.length === 0) return null;
   return (
-    <div className="px-14 mb-10">
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+    <div className="px-4 lg:px-14 mb-10">
+      <ScrollableRow>
         {categories.map((c) => (
           <CategoryCircle key={c.id} label={c.label} value={c.value} imageUrl={c.image_url} />
         ))}
-      </div>
+      </ScrollableRow>
     </div>
   );
 }
@@ -192,7 +193,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Category pills */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide px-14 py-3 border-b border-border">
+      <ScrollableRow className="px-4 lg:px-14 py-3 border-b border-border">
         {tags.map((tag) => (
           <Link
             key={tag.id}
@@ -205,7 +206,7 @@ export default function Home() {
             {tag.label}
           </Link>
         ))}
-      </div>
+      </ScrollableRow>
 
       <div className="pt-6">
         <HeroBanners banners={banners} />
@@ -226,7 +227,7 @@ export default function Home() {
             const fs2 = featuredSections.find((f) => f.id === section.featured_section_id_2);
             const pair = [fs1, fs2].filter(Boolean);
             if (pair.length > 0) {
-              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground mb-4 px-14">{section.description}</p>);
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground mb-4 px-4 lg:px-14">{section.description}</p>);
               rendered.push(<FeaturedSectionRow key={`featured-${section.id}`} sections={pair} />);
             }
             i++;
@@ -254,7 +255,7 @@ export default function Home() {
               rendered.push(<EditorialRow key={section.id} cards={filtered} title={section.title} description={section.description} />);
             } else if (type === 'ad_banner') {
               const filtered = section.selected_ids?.length > 0 ? adBanners.filter((b) => section.selected_ids.includes(b.id)) : adBanners;
-              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground mb-2 px-14">{section.description}</p>);
+              if (section.description) rendered.push(<p key={`desc-${section.id}`} className="text-sm text-muted-foreground mb-2 px-4 lg:px-14">{section.description}</p>);
               rendered.push(<AdBannerSection key={section.id} banners={filtered} />);
             } else if (type === 'articles') {
               const filtered = section.selected_ids?.length > 0 ? articles.filter((a) => section.selected_ids.includes(a.id)) : articles;
