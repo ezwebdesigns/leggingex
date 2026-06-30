@@ -97,86 +97,66 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
     onSave(payload);
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fields.map((f) => {
-          if (f.condition && form[f.condition.field] !== f.condition.value) return null;
-          const options = typeof f.options === 'function' ? (dynamicOptions[f.key] || []) : (f.options || []);
-          return (
-            <div key={f.key} className={f.fullWidth ? 'sm:col-span-2 lg:col-span-3' : ''}>
-              {f.type === 'image' ? (
-                <ImageUploader
-                  value={form[f.key] || ''}
-                  onChange={(url) => set(f.key, url)}
-                  folder={imageFolder || 'general'}
-                  label={f.label}
-                />
-              ) : f.type === 'multi-select' ? (
-                <div>
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
-                    {f.label} {f.required ? '*' : ''}
-                  </Label>
-                  {(!options || options.length === 0) ? (
-                    <p className="text-sm text-muted-foreground">No items available. Create them first in the {f.label} tab.</p>
-                  ) : (
-                    <div className="space-y-1.5 max-h-60 overflow-y-auto border border-border rounded-xl p-2">
-                      {options.map((opt) => {
-                        const checked = (form[f.key] || []).includes(opt.value);
-                        return (
-                          <label
-                            key={opt.value}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                              checked ? 'bg-primary/5 border border-primary/20' : 'hover:bg-muted border border-transparent'
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() => toggleSelected(f.key, opt.value)}
-                              className="rounded accent-primary"
-                            />
-                            {opt.image && (
-                              <img src={opt.image} alt="" className="w-8 h-8 rounded object-cover border border-border/50" />
-                            )}
-                            <span className="text-sm font-medium text-foreground">{opt.label}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-                  ) : f.type === 'faq_columns' ? (
-                <div className="sm:col-span-2 lg:col-span-3">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 block">
-                    FAQ ({f.label})
-                  </Label>
-                  <FaqColumnsEditor
-                    value={form[f.key] || []}
-                    onChange={(v) => set(f.key, v)}
-                  />
-                </div>
-              ) : (
-                <>
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                    {f.label} {f.required ? '*' : ''}
-                  </Label>
-                  {f.type === 'textarea' ? (
-              <Textarea
-                value={form[f.key] || ''}
-                onChange={(e) => set(f.key, e.target.value)}
-                className="mt-1 rounded-xl resize-none"
-                rows={f.rows || 3}
-                required={f.required}
-                placeholder={f.placeholder}
-              />
+  const hasSidebar = fields.some(f => f.sidebar);
+  const renderField = (f, inSidebar) => {
+    if (f.condition && form[f.condition.field] !== f.condition.value) return null;
+    const options = typeof f.options === 'function' ? (dynamicOptions[f.key] || []) : (f.options || []);
+    const colSpan = hasSidebar && inSidebar ? '' : (f.fullWidth ? 'sm:col-span-2' : '');
+    return (
+      <div key={f.key} className={colSpan}>
+        {f.type === 'image' ? (
+          <ImageUploader
+            value={form[f.key] || ''}
+            onChange={(url) => set(f.key, url)}
+            folder={imageFolder || 'general'}
+            label={f.label}
+          />
+        ) : f.type === 'multi-select' ? (
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+              {f.label} {f.required ? '*' : ''}
+            </Label>
+            {(!options || options.length === 0) ? (
+              <p className="text-sm text-muted-foreground">No items available. Create them first in the {f.label} tab.</p>
+            ) : (
+              <div className="space-y-1.5 max-h-60 overflow-y-auto border border-border rounded-xl p-2">
+                {options.map((opt) => {
+                  const checked = (form[f.key] || []).includes(opt.value);
+                  return (
+                    <label key={opt.value}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                        checked ? 'bg-primary/5 border border-primary/20' : 'hover:bg-muted border border-transparent'
+                      }`}
+                    >
+                      <input type="checkbox" checked={checked} onChange={() => toggleSelected(f.key, opt.value)} className="rounded accent-primary" />
+                      {opt.image && <img src={opt.image} alt="" className="w-8 h-8 rounded object-cover border border-border/50" />}
+                      <span className="text-sm font-medium text-foreground">{opt.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : f.type === 'faq_columns' ? (
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 block">
+              FAQ ({f.label})
+            </Label>
+            <FaqColumnsEditor value={form[f.key] || []} onChange={(v) => set(f.key, v)} />
+          </div>
+        ) : (
+          <>
+            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              {f.label} {f.required ? '*' : ''}
+            </Label>
+            {f.type === 'textarea' ? (
+              <Textarea value={form[f.key] || ''} onChange={(e) => set(f.key, e.target.value)}
+                className="mt-1 rounded-xl resize-none" rows={f.rows || 3} required={f.required} placeholder={f.placeholder} />
             ) : f.type === 'select' ? (
               <Select value={form[f.key] || ''} onValueChange={(v) => set(f.key, v)}>
                 <SelectTrigger className="mt-1 rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent className="rounded-xl">
-                  {options.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                  ))}
+                  {options.map((o) => (<SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>))}
                 </SelectContent>
               </Select>
             ) : f.type === 'switch' ? (
@@ -184,30 +164,37 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
                 <Switch checked={form[f.key]} onCheckedChange={(v) => set(f.key, v)} />
               </div>
             ) : f.type === 'number' ? (
-              <Input
-                value={form[f.key] || ''}
-                onChange={(e) => set(f.key, e.target.value)}
-                className="mt-1 rounded-xl"
-                type="number"
-                step="0.01"
-                placeholder={f.placeholder}
-              />
+              <Input value={form[f.key] || ''} onChange={(e) => set(f.key, e.target.value)}
+                className="mt-1 rounded-xl" type="number" step="0.01" placeholder={f.placeholder} />
             ) : (
-              <Input
-                value={form[f.key] || ''}
-                onChange={(e) => set(f.key, e.target.value)}
-                className="mt-1 rounded-xl"
-                required={f.required}
-                placeholder={f.placeholder}
-                type={f.type === 'url' ? 'url' : 'text'}
-              />
+              <Input value={form[f.key] || ''} onChange={(e) => set(f.key, e.target.value)}
+                className="mt-1 rounded-xl" required={f.required} placeholder={f.placeholder}
+                type={f.type === 'url' ? 'url' : 'text'} />
             )}
-              </>
-            )}
-          </div>
-          );
-        })}
+          </>
+        )}
       </div>
+    );
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {hasSidebar ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {fields.filter(f => !f.sidebar).map((f) => renderField(f, false))}
+            </div>
+          </div>
+          <div className="space-y-4">
+            {fields.filter(f => f.sidebar).map((f) => renderField(f, true))}
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {fields.map((f) => renderField(f, false))}
+        </div>
+      )}
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl">Cancel</Button>
         <Button type="submit" disabled={saving} className="flex-1 rounded-xl">
@@ -564,7 +551,7 @@ const entityConfig = {
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Yoga' },
       { key: 'description', label: 'Description (SEO)', type: 'textarea', rows: 3, fullWidth: true, placeholder: 'A short description of this category for SEO...' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
-      { key: 'faq_schema', label: 'Schema FAQ', type: 'faq_columns', fullWidth: true },
+      { key: 'faq_schema', label: 'Schema FAQ', type: 'faq_columns', sidebar: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
