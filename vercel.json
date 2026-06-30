@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/sitemap.xml", "destination": "/api/render" },
     { "source": "/produit/:id", "destination": "/api/render?__path=produit&id=:id" },
     { "source": "/catalogue",   "destination": "/api/render?__path=catalogue" },
     { "source": "/(.*)",        "destination": "/api/render" }

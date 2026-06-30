@@ -15,14 +15,21 @@ export default async function handler(req, res) {
   const origin = `https://${host}`;
   const url = new URL(req.url, origin);
 
+  // --- Routes spéciales : sitemap et robots ---
   if (url.pathname === '/robots.txt') {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Cache-Control', 's-maxage=86400');
     res.status(200).send(
-      `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://www.leggingexpress.com/sitemap.xml`
+      'User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://www.leggingexpress.com/sitemap.xml'
     );
     return;
   }
+
+  if (url.pathname === '/sitemap.xml') {
+    await handleSitemap(res);
+    return;
+  }
+  // --- Fin routes spéciales ---
 
   let meta;
   try {
@@ -156,4 +163,66 @@ async function buildCatalogueMeta(url, canonical) {
     image: DEFAULT_IMAGE,
     canonical,
   };
+}
+
+async function handleSitemap(res) {
+  const staticUrls = [
+    { loc: '/', priority: '1.0', changefreq: 'daily' },
+    { loc: '/catalogue', priority: '0.9', changefreq: 'daily' },
+    { loc: '/blog', priority: '0.7', changefreq: 'weekly' },
+    { loc: '/contact', priority: '0.5', changefreq: 'monthly' },
+  ];
+
+  let productUrls = [];
+  try {
+    const pRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/products?select=id,updated_at&is_active=eq.true&limit=50000`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const products = await pRes.json();
+    if (Array.isArray(products)) {
+      productUrls = products.map((p) => ({
+        loc: `/produit/${p.id}`,
+        priority: '0.8',
+        changefreq: 'weekly',
+        lastmod: p.updated_at,
+      }));
+    }
+  } catch (e) {
+    console.error('sitemap products fetch error:', e);
+  }
+
+  let blogUrls = [];
+  try {
+    const bRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/pages?select=slug,updated_at&type=eq.blog_post&published=eq.true&limit=500`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const blogs = await bRes.json();
+    if (Array.isArray(blogs)) {
+      blogUrls = blogs.map((b) => ({
+        loc: `/${b.slug}`,
+        priority: '0.6',
+        changefreq: 'monthly',
+        lastmod: b.updated_at,
+      }));
+    }
+  } catch (e) {
+    console.error('sitemap blogs fetch error:', e);
+  }
+
+  const allUrls = [...staticUrls, ...productUrls, ...blogUrls];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls.map((u) => `  <url>
+    <loc>${SITE_ORIGIN}${u.loc}</loc>
+    ${u.lastmod ? `<lastmod>${new Date(u.lastmod).toISOString().split('T')[0]}</lastmod>` : ''}
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=43200');
+  res.status(200).send(xml);
 }
