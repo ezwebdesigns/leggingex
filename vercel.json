@@ -1,7 +1,8 @@
 {
   "rewrites": [
     { "source": "/produit/:id", "destination": "/api/render?__path=produit&id=:id" },
-    { "source": "/catalogue",   "destination": "/api/render?__path=catalogue" },
-    { "source": "/(.*)",        "destination": "/api/render" }
+    { "source": "/catalogue/:slug", "destination": "/api/render?__path=categorie&slug=:slug" },
+    { "source": "/catalogue", "destination": "/api/render?__path=catalogue" },
+    { "source": "/(.*)", "destination": "/api/render" }
   ]
 }
