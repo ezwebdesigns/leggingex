@@ -81,12 +81,19 @@ function HeroBanners({ banners }) {
 function CategoryGrid({ categories }) {
   if (!categories || categories.length === 0) return null;
   return (
-    <div className="px-4 lg:px-14 mb-10">
-      <ScrollableRow>
+    <div className="mb-10">
+      <div className="px-4 lg:hidden">
+        <ScrollableRow>
+          {categories.map((c) => (
+            <CategoryCircle key={c.id} label={c.label} value={c.value} imageUrl={c.image_url} />
+          ))}
+        </ScrollableRow>
+      </div>
+      <div className="hidden lg:grid lg:grid-cols-8 gap-3 px-14">
         {categories.map((c) => (
           <CategoryCircle key={c.id} label={c.label} value={c.value} imageUrl={c.image_url} />
         ))}
-      </ScrollableRow>
+      </div>
     </div>
   );
 }
