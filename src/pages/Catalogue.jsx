@@ -7,6 +7,8 @@ import { useCountry } from '@/contexts/CountryContext';
 import { supabase } from '@/lib/supabaseClient';
 import { SLUG_TO_CATEGORY, CATEGORY_SLUGS } from '@/lib/categorySlugs';
 import ScrollableRow from '@/components/ui/ScrollableRow';
+import FaqAccordion from '@/components/home/FaqAccordion';
+import { getSettings } from '@/lib/settings';
 
 const SORT_OPTIONS = [
   { label: 'Top Rated', value: 'rating.desc.nullslast,ratings_count.desc.nullslast' },
@@ -114,6 +116,7 @@ export default function Catalogue() {
   const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [faqColumns, setFaqColumns] = useState([]);
 
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
@@ -203,6 +206,10 @@ export default function Catalogue() {
   };
 
   const activeFilterCount = [filters.category, filters.brand, filters.minRating > 0].filter(Boolean).length;
+
+  useEffect(() => {
+    getSettings().then((s) => setFaqColumns(s.seo?.faq_schema || [])).catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -366,6 +373,12 @@ export default function Catalogue() {
               Apply
             </Button>
           </div>
+        </div>
+      )}
+
+      {faqColumns.length > 0 && (
+        <div className="mt-12">
+          <FaqAccordion columns={faqColumns} />
         </div>
       )}
     </div>

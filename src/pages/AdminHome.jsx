@@ -99,12 +99,12 @@ function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFo
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {fields.map((f) => {
           if (f.condition && form[f.condition.field] !== f.condition.value) return null;
           const options = typeof f.options === 'function' ? (dynamicOptions[f.key] || []) : (f.options || []);
           return (
-            <div key={f.key} className={f.fullWidth ? 'sm:col-span-2' : ''}>
+            <div key={f.key} className={f.fullWidth ? 'sm:col-span-2 lg:col-span-3' : ''}>
               {f.type === 'image' ? (
                 <ImageUploader
                   value={form[f.key] || ''}
@@ -276,108 +276,103 @@ function EntityManager({ table, fields, defaultForm, labelSingular }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <h2 className="text-lg font-semibold text-foreground">{labelSingular}s ({items.length})</h2>
-        <Button onClick={() => { setShowForm(true); setEditItem(null); }} className="rounded-xl flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add {labelSingular}
-        </Button>
-      </div>
-      <div className="mb-4">
-        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${labelSingular.toLowerCase()}s...`} className="max-w-sm rounded-xl" />
-      </div>
-
-      {loading ? (
-        <div className="space-y-3">{[1,2,3].map((i) => <div key={i} className="h-14 bg-muted rounded-2xl animate-pulse" />)}</div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <span className="text-4xl block mb-3">📄</span>
-          <p className="font-medium">No {labelSingular.toLowerCase()}s yet.</p>
-        </div>
-      ) : (
-        <>
+      {showForm ? (
+        <div>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-lg font-semibold text-foreground">{editItem ? `Edit ${labelSingular}` : `New ${labelSingular}`}</h2>
+            <Button variant="ghost" onClick={() => { setShowForm(false); setEditItem(null); setError(null); }} className="rounded-xl">
+              ← Back to list
+            </Button>
+          </div>
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-xl">
               {error}
             </div>
           )}
-        <div className="rounded-2xl border border-border overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-muted border-b border-border">
-              <tr>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide w-8"><GripVertical className="w-3 h-3" /></th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide">Name</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide hidden sm:table-cell">Order</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide">Active</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filtered.map((item) => (
-                <tr key={item.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 text-muted-foreground"><GripVertical className="w-3.5 h-3.5" /></td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      {getPreview(item) ? (
-                        <div className="w-9 h-9 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                          <img src={getPreview(item)} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      ) : <div className="w-9 h-9 rounded-lg bg-muted flex-shrink-0" />}
-                      <span className="font-medium text-foreground line-clamp-1">{getName(item)}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{item.sort_order ?? '-'}</td>
-                  <td className="px-4 py-3">
-                    <button onClick={() => toggleActive(item)} className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${item.is_active ? 'bg-green-50 text-green-600' : 'bg-muted text-muted-foreground'}`}>
-                      {item.is_active ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                    </button>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => { setEditItem(item); setShowForm(true); }} className="w-8 h-8 rounded-xl hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground">
-                        <Pencil className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => handleDelete(item.id)} className="w-8 h-8 rounded-xl hover:bg-destructive/10 flex items-center justify-center text-muted-foreground hover:text-destructive">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <EntityForm
+            entity={editItem}
+            fields={fields}
+            initial={editItem || defaultForm}
+            onSave={handleSave}
+            onCancel={() => { setShowForm(false); setEditItem(null); setError(null); }}
+            saving={saving}
+          />
         </div>
-        </>
-      )}
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <h2 className="text-lg font-semibold text-foreground">{labelSingular}s ({items.length})</h2>
+            <Button onClick={() => { setShowForm(true); setEditItem(null); }} className="rounded-xl flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add {labelSingular}
+            </Button>
+          </div>
+          <div className="mb-4">
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`Search ${labelSingular.toLowerCase()}s...`} className="max-w-sm rounded-xl" />
+          </div>
 
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
-          onClick={() => { setShowForm(false); setEditItem(null); }}>
-          <div className="w-full max-w-2xl bg-background rounded-3xl border border-border shadow-2xl max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-background border-b border-border px-6 py-4 flex items-center justify-between rounded-t-3xl">
-              <h2 className="text-lg font-bold">{editItem ? `Edit ${labelSingular}` : `New ${labelSingular}`}</h2>
-              <button onClick={() => { setShowForm(false); setEditItem(null); }}
-                className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-muted transition-colors">
-                <X className="w-4 h-4" />
-              </button>
+          {loading ? (
+            <div className="space-y-3">{[1,2,3].map((i) => <div key={i} className="h-14 bg-muted rounded-2xl animate-pulse" />)}</div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-16 text-muted-foreground">
+              <span className="text-4xl block mb-3">📄</span>
+              <p className="font-medium">No {labelSingular.toLowerCase()}s yet.</p>
             </div>
-            <div className="p-6">
+          ) : (
+            <>
               {error && (
                 <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-xl">
                   {error}
                 </div>
               )}
-              <EntityForm
-                entity={editItem}
-                fields={fields}
-                initial={editItem || defaultForm}
-                onSave={handleSave}
-                onCancel={() => { setShowForm(false); setEditItem(null); }}
-                saving={saving}
-              />
+            <div className="rounded-2xl border border-border overflow-hidden overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted border-b border-border">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide w-8"><GripVertical className="w-3 h-3" /></th>
+                    <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide">Name</th>
+                    <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide hidden sm:table-cell">Order</th>
+                    <th className="text-left px-4 py-3 font-semibold text-muted-foreground text-xs uppercase tracking-wide">Active</th>
+                    <th className="px-4 py-3" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {filtered.map((item) => (
+                    <tr key={item.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 text-muted-foreground"><GripVertical className="w-3.5 h-3.5" /></td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          {getPreview(item) ? (
+                            <div className="w-9 h-9 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                              <img src={getPreview(item)} alt="" className="w-full h-full object-cover" />
+                            </div>
+                          ) : <div className="w-9 h-9 rounded-lg bg-muted flex-shrink-0" />}
+                          <span className="font-medium text-foreground line-clamp-1">{getName(item)}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{item.sort_order ?? '-'}</td>
+                      <td className="px-4 py-3">
+                        <button onClick={() => toggleActive(item)} className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${item.is_active ? 'bg-green-50 text-green-600' : 'bg-muted text-muted-foreground'}`}>
+                          {item.is_active ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          <button onClick={() => { setEditItem(item); setShowForm(true); }} className="w-8 h-8 rounded-xl hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => handleDelete(item.id)} className="w-8 h-8 rounded-xl hover:bg-destructive/10 flex items-center justify-center text-muted-foreground hover:text-destructive">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </div>
+            </>
+          )}
+        </>
       )}
     </div>
   );

@@ -5,12 +5,15 @@ import CategoryPills from '@/components/search/CategoryPills';
 import ProductGrid from '@/components/products/ProductGrid';
 import FilterPanel from '@/components/products/FilterPanel';
 import SearchBar from '@/components/search/SearchBar';
+import FaqAccordion from '@/components/home/FaqAccordion';
+import { getSettings } from '@/lib/settings';
 
 export default function Categories() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [brands, setBrands] = useState([]);
+  const [faqColumns, setFaqColumns] = useState([]);
 
   const [filters, setFilters] = useState({
     category: searchParams.get('cat') || '',
@@ -49,6 +52,10 @@ export default function Categories() {
     fetchProducts();
   }, [filters]);
 
+  useEffect(() => {
+    getSettings().then((s) => setFaqColumns(s.seo?.faq_schema || [])).catch(() => {});
+  }, []);
+
   const handleCategorySelect = (cat) => {
     setFilters((f) => ({ ...f, category: cat }));
     if (cat) {
@@ -81,6 +88,12 @@ export default function Categories() {
           emptyMessage={`No leggings found${filters.category ? ` in "${filters.category}"` : ''}`}
         />
       </div>
+
+      {faqColumns.length > 0 && (
+        <div className="mt-12">
+          <FaqAccordion columns={faqColumns} />
+        </div>
+      )}
     </div>
   );
 }
