@@ -1,43 +1,104 @@
-// /api/render.js
-// Intercepte /produit/:id et /catalogue (voir vercel.json) pour injecter des
-// balises <title>/meta/OG/JSON-LD correctes dans le HTML, AVANT exécution du
-// JS — donc visible par tous les bots (Google, réseaux sociaux, IA), pas
-// seulement par les vrais navigateurs.
+// /api/render.js — version consolidée avec robots.txt et sitemap.xml intégrés.
+// Toutes les routes passent par ici ; les assets statiques (JS, CSS, images)
+// sont servis par Vercel avant d'atteindre cette fonction grâce à l'ordre
+// de priorité natif de Vercel (fichiers statiques > rewrites).
 
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://vptbrllldcvgykpfljjd.supabase.co';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdGJybGxsZGN2Z3lrcGZsampkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MjEzODEsImV4cCI6MjA5NzQ5NzM4MX0.WwMP2GQiegQoVSly5eS8sXRQsYsGCL33U43GEITNrFI';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const SITE_NAME = 'Legging Express';
 const SITE_ORIGIN = 'https://www.leggingexpress.com';
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/og-default.jpg`;
+
+const CATEGORIES = [
+  'Biker Shorts','Cycling Shorts','Yoga Pants','High Waisted Leggings',
+  'High Waisted Shorts','Gym Shorts','Gym Leggings','Booty Shorts',
+  'Booty Leggings','Plus Size Leggings','Plus Size Shorts','Workout Shorts',
+  'Workout Leggings','Pack','Leather Leggings','Fashion Leggings',
+  'Cropped Leggings','Waist Trainer','Shapewear','Thigh Shorts',
+];
+
+// Mapping unique source-de-vérité catégorie <-> slug d'URL.
+// Tenu à jour manuellement en miroir de CATEGORY_RULES dans sync-products.js.
+const CATEGORY_SLUGS = {
+  'Biker Shorts': 'biker-shorts',
+  'Cycling Shorts': 'cycling-shorts',
+  'Yoga Pants': 'yoga-pants',
+  'High Waisted Leggings': 'high-waisted-leggings',
+  'High Waisted Shorts': 'high-waisted-shorts',
+  'Gym Shorts': 'gym-shorts',
+  'Gym Leggings': 'gym-leggings',
+  'Booty Shorts': 'booty-shorts',
+  'Booty Leggings': 'booty-leggings',
+  'Plus Size Leggings': 'plus-size-leggings',
+  'Plus Size Shorts': 'plus-size-shorts',
+  'Workout Shorts': 'workout-shorts',
+  'Workout Leggings': 'workout-leggings',
+  'Pack': 'pack',
+  'Leather Leggings': 'leather-leggings',
+  'Fashion Leggings': 'fashion-leggings',
+  'Cropped Leggings': 'cropped-leggings',
+  'Waist Trainer': 'waist-trainer',
+  'Shapewear': 'shapewear',
+  'Thigh Shorts': 'thigh-shorts',
+};
+const SLUG_TO_CATEGORY = Object.fromEntries(
+  Object.entries(CATEGORY_SLUGS).map(([category, slug]) => [slug, category])
+);
+
+const STATIC_PAGES = [
+  { path: '/',           changefreq: 'daily',   priority: '1.0' },
+  { path: '/catalogue',  changefreq: 'hourly',  priority: '0.9' },
+  { path: '/blog',       changefreq: 'weekly',  priority: '0.7' },
+  { path: '/about',      changefreq: 'monthly', priority: '0.4' },
+  { path: '/contact',    changefreq: 'monthly', priority: '0.4' },
+  { path: '/terms',      changefreq: 'monthly', priority: '0.3' },
+  { path: '/privacy',    changefreq: 'monthly', priority: '0.3' },
+  { path: '/disclaimer', changefreq: 'monthly', priority: '0.3' },
+];
+
+// ---------------------------------------------------------------------------
+// Handler principal
+// ---------------------------------------------------------------------------
 
 export default async function handler(req, res) {
   const host = req.headers['x-forwarded-host'] || req.headers.host;
   const origin = `https://${host}`;
   const url = new URL(req.url, origin);
 
-  // --- Routes spéciales : sitemap et robots ---
+  // robots.txt
   if (url.pathname === '/robots.txt') {
-    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=86400');
-    res.status(200).send(
-      'User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://www.leggingexpress.com/sitemap.xml'
+    return res.status(200).send(
+      `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml`
     );
-    return;
   }
 
+  // sitemap.xml
   if (url.pathname === '/sitemap.xml') {
-    await handleSitemap(res);
-    return;
+    return handleSitemap(res);
   }
-  // --- Fin routes spéciales ---
 
+  // Redirection 301 : ancien format ?category=Gym+Leggings -> nouveau
+  // chemin /catalogue/gym-leggings. Préserve le SEO déjà accumulé sur les
+  // anciens liens plutôt que de les laisser pendre dans le vide.
+  if (url.pathname === '/catalogue' && url.searchParams.has('category')) {
+    const rawCategory = url.searchParams.get('category');
+    const slug = CATEGORY_SLUGS[rawCategory];
+    if (slug) {
+      res.setHeader('Location', `${SITE_ORIGIN}/catalogue/${slug}`);
+      return res.status(301).end();
+    }
+    // Catégorie inconnue dans le mapping : on laisse passer vers le
+    // catalogue général plutôt que de casser la requête.
+  }
+
+  // Toutes les autres routes → injecter les meta dans la coquille HTML
   let meta;
   try {
     meta = await buildMeta(url);
   } catch (err) {
-    console.error('api/render.js buildMeta error:', err);
-    // Si la donnée (Supabase, etc.) échoue, on retombe sur des valeurs
-    // génériques mais réelles — jamais sur les tokens bruts.
+    console.error('render.js buildMeta error:', err);
     meta = {
       title: `${SITE_NAME} — Find your perfect pair`,
       description: 'Discover the best leggings for women, men, kids, sports and fashion.',
@@ -50,42 +111,119 @@ export default async function handler(req, res) {
   let html = await shellRes.text();
 
   html = html
-    .replaceAll('__TITLE__', escapeHtml(meta.title))
+    .replaceAll('__TITLE__',       escapeHtml(meta.title))
     .replaceAll('__DESCRIPTION__', escapeHtml(meta.description))
-    .replaceAll('__OG_TITLE__', escapeHtml(meta.title))
+    .replaceAll('__OG_TITLE__',    escapeHtml(meta.title))
     .replaceAll('__OG_DESCRIPTION__', escapeHtml(meta.description))
-    .replaceAll('__OG_IMAGE__', escapeHtml(meta.image))
-    .replaceAll('__OG_URL__', escapeHtml(meta.canonical))
+    .replaceAll('__OG_IMAGE__',    escapeHtml(meta.image))
+    .replaceAll('__OG_URL__',      escapeHtml(meta.canonical))
     .replaceAll('__CANONICAL_URL__', escapeHtml(meta.canonical))
-    .replace(
-      '__JSON_LD__',
+    .replace('__JSON_LD__',
       meta.jsonLd ? `<script type="application/ld+json">${meta.jsonLd}</script>` : ''
     );
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  // Cache 5 min côté edge Vercel : évite de retaper Supabase à chaque crawl
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-  res.status(200).send(html);
+  return res.status(200).send(html);
 }
 
-function escapeHtml(str = '') {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+// ---------------------------------------------------------------------------
+// Sitemap
+// ---------------------------------------------------------------------------
+
+async function handleSitemap(res) {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const [caRows, usRows, blogPosts] = await Promise.all([
+      fetchProducts('amazon.ca'),
+      fetchProducts('amazon.com'),
+      fetchBlogPosts(),
+    ]);
+
+    const urls = [
+      ...STATIC_PAGES.map(({ path, changefreq, priority }) =>
+        sitemapUrl(SITE_ORIGIN + path, today, changefreq, priority)
+      ),
+      ...CATEGORIES.map((cat) =>
+        sitemapUrl(
+          `${SITE_ORIGIN}/catalogue/${CATEGORY_SLUGS[cat]}`,
+          today, 'hourly', '0.8'
+        )
+      ),
+      ...[...caRows, ...usRows].map((p) =>
+        sitemapUrl(
+          `${SITE_ORIGIN}/produit/${p.id}`,
+          p.last_seen_at ? p.last_seen_at.split('T')[0] : today,
+          'daily', '0.6'
+        )
+      ),
+      ...blogPosts.map((post) =>
+        sitemapUrl(
+          `${SITE_ORIGIN}/${post.slug}`,
+          post.published_at ? post.published_at.split('T')[0] : today,
+          'weekly', '0.7'
+        )
+      ),
+    ];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`;
+
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=7200');
+    return res.status(200).send(xml);
+  } catch (err) {
+    console.error('render.js handleSitemap error:', err);
+    return res.status(500).send('Error generating sitemap');
+  }
 }
+
+function sitemapUrl(loc, lastmod, changefreq, priority) {
+  return `  <url>\n    <loc>${escapeXml(loc)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+}
+
+async function fetchProducts(marketplace) {
+  const rows = [];
+  let offset = 0;
+  const limit = 1000;
+  while (true) {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/products_grouped` +
+      `?is_active=eq.true&has_image=eq.true` +
+      `&marketplace=eq.${encodeURIComponent(marketplace)}` +
+      `&select=id,last_seen_at&limit=${limit}&offset=${offset}`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const batch = await res.json();
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    rows.push(...batch);
+    if (batch.length < limit) break;
+    offset += limit;
+  }
+  return rows;
+}
+
+async function fetchBlogPosts() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/Page?type=eq.blog_post&published=eq.true&select=slug,published_at`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const rows = await res.json();
+    return Array.isArray(rows) ? rows : [];
+  } catch { return []; }
+}
+
+// ---------------------------------------------------------------------------
+// Meta tags
+// ---------------------------------------------------------------------------
 
 async function buildMeta(url) {
-  const path = url.searchParams.get('__path'); // 'produit' | 'catalogue'
-  const canonical = `${SITE_ORIGIN}${url.pathname}${url.search.replace(/[?&]__path=[^&]*/, '')}`;
+  const path = url.searchParams.get('__path');
+  const canonical = `${SITE_ORIGIN}${url.pathname}${url.search.replace(/[?&]__path=[^&]*/, '').replace(/[?&]id=[^&]*/, '').replace(/[?&]slug=[^&]*/, '')}`;
 
-  if (path === 'produit') {
-    return buildProductMeta(url, canonical);
-  }
-  if (path === 'catalogue') {
-    return buildCatalogueMeta(url, canonical);
-  }
+  if (path === 'produit') return buildProductMeta(url, canonical);
+  if (path === 'categorie') return buildCategoryMeta(url, canonical);
+  if (path === 'catalogue') return buildCatalogueMeta(url, canonical);
   return {
     title: `${SITE_NAME} — Find your perfect pair`,
     description: 'Discover the best leggings for women, men, kids, sports and fashion.',
@@ -94,24 +232,41 @@ async function buildMeta(url) {
   };
 }
 
+async function buildCategoryMeta(url, canonical) {
+  const slug = url.searchParams.get('slug');
+  const category = SLUG_TO_CATEGORY[slug];
+
+  if (!category) {
+    return {
+      title: `Category not found | ${SITE_NAME}`,
+      description: `This category doesn't exist on ${SITE_NAME}.`,
+      image: DEFAULT_IMAGE,
+      canonical,
+    };
+  }
+
+  return {
+    title: `${category} — Shop the best picks | ${SITE_NAME}`,
+    description: `Discover the best ${category.toLowerCase()} available on Amazon. Compare prices, ratings and best sellers.`,
+    image: DEFAULT_IMAGE,
+    canonical,
+  };
+}
+
 async function buildProductMeta(url, canonical) {
   const id = url.searchParams.get('id');
   const fields = 'id,title,image_url,price,currency,rating,ratings_count,brand,is_active,affiliate_link';
-
   const res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}&select=${fields}`, {
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
   });
   const rows = await res.json();
   const p = rows?.[0];
 
-  if (!p) {
-    return {
-      title: `Product not found | ${SITE_NAME}`,
-      description: `This product is no longer available on ${SITE_NAME}.`,
-      image: DEFAULT_IMAGE,
-      canonical,
-    };
-  }
+  if (!p) return {
+    title: `Product not found | ${SITE_NAME}`,
+    description: `This product is no longer available on ${SITE_NAME}.`,
+    image: DEFAULT_IMAGE, canonical,
+  };
 
   const title = `${p.title}${p.brand ? ` | ${p.brand}` : ''} — ${SITE_NAME}`;
   const ratingPart = p.rating ? ` Rated ${p.rating}/5 (${p.ratings_count ?? 0} reviews).` : '';
@@ -119,110 +274,34 @@ async function buildProductMeta(url, canonical) {
   const description = `${p.currency} $${p.price} on Amazon.${ratingPart} ${availabilityPart}`;
 
   const jsonLd = JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: p.title,
-    image: p.image_url,
+    '@context': 'https://schema.org', '@type': 'Product',
+    name: p.title, image: p.image_url,
     ...(p.brand ? { brand: { '@type': 'Brand', name: p.brand } } : {}),
-    ...(p.rating
-      ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: p.rating,
-            reviewCount: p.ratings_count ?? 0,
-          },
-        }
-      : {}),
-    offers: {
-      '@type': 'Offer',
-      price: p.price,
-      priceCurrency: p.currency,
+    ...(p.rating ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: p.rating, reviewCount: p.ratings_count ?? 0 } } : {}),
+    offers: { '@type': 'Offer', price: p.price, priceCurrency: p.currency,
       availability: p.is_active ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: p.affiliate_link,
-    },
+      url: p.affiliate_link },
   });
 
   return { title, description, image: p.image_url || DEFAULT_IMAGE, canonical, jsonLd };
 }
 
 async function buildCatalogueMeta(url, canonical) {
-  const category = url.searchParams.get('category');
-
-  if (category) {
-    return {
-      title: `${category} — Shop the best picks | ${SITE_NAME}`,
-      description: `Discover the best ${category.toLowerCase()} available on Amazon. Compare prices, ratings and best sellers.`,
-      image: DEFAULT_IMAGE,
-      canonical,
-    };
-  }
-
   return {
     title: `Catalogue — ${SITE_NAME}`,
     description: 'Browse our full catalogue of leggings, shorts and activewear.',
-    image: DEFAULT_IMAGE,
-    canonical,
+    image: DEFAULT_IMAGE, canonical,
   };
 }
 
-async function handleSitemap(res) {
-  const staticUrls = [
-    { loc: '/', priority: '1.0', changefreq: 'daily' },
-    { loc: '/catalogue', priority: '0.9', changefreq: 'daily' },
-    { loc: '/blog', priority: '0.7', changefreq: 'weekly' },
-    { loc: '/contact', priority: '0.5', changefreq: 'monthly' },
-  ];
+// ---------------------------------------------------------------------------
+// Utilitaires
+// ---------------------------------------------------------------------------
 
-  let productUrls = [];
-  try {
-    const pRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/products?select=id,updated_at&is_active=eq.true&limit=50000`,
-      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
-    );
-    const products = await pRes.json();
-    if (Array.isArray(products)) {
-      productUrls = products.map((p) => ({
-        loc: `/produit/${p.id}`,
-        priority: '0.8',
-        changefreq: 'weekly',
-        lastmod: p.updated_at,
-      }));
-    }
-  } catch (e) {
-    console.error('sitemap products fetch error:', e);
-  }
+function escapeHtml(str = '') {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-  let blogUrls = [];
-  try {
-    const bRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/pages?select=slug,updated_at&type=eq.blog_post&published=eq.true&limit=500`,
-      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
-    );
-    const blogs = await bRes.json();
-    if (Array.isArray(blogs)) {
-      blogUrls = blogs.map((b) => ({
-        loc: `/${b.slug}`,
-        priority: '0.6',
-        changefreq: 'monthly',
-        lastmod: b.updated_at,
-      }));
-    }
-  } catch (e) {
-    console.error('sitemap blogs fetch error:', e);
-  }
-
-  const allUrls = [...staticUrls, ...productUrls, ...blogUrls];
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map((u) => `  <url>
-    <loc>${SITE_ORIGIN}${u.loc}</loc>
-    ${u.lastmod ? `<lastmod>${new Date(u.lastmod).toISOString().split('T')[0]}</lastmod>` : ''}
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`;
-
-  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=43200');
-  res.status(200).send(xml);
+function escapeXml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
 }

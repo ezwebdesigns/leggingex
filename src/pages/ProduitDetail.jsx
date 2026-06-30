@@ -4,6 +4,7 @@ import { ArrowLeft, Star, ExternalLink, Copy, Check, CheckCircle2 } from 'lucide
 import { Button } from '@/components/ui/button';
 import { fetchProductById, fetchVariants, fetchSimilar } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
+import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
 function StarRating({ rating, size = 'md' }) {
   const cls = size === 'lg' ? 'w-5 h-5' : 'w-3.5 h-3.5';
@@ -160,7 +161,7 @@ export default function ProduitDetail() {
             {categories.length > 0 && product.is_active && (
               <div className="flex flex-wrap gap-1.5">
                 {categories.map((cat) => (
-                  <Link key={cat} to={`/catalogue?category=${encodeURIComponent(cat)}`}
+                  <Link key={cat} to={`/catalogue/${CATEGORY_SLUGS[cat] || encodeURIComponent(cat)}`}
                     className="px-3 py-1 rounded-full text-[10px] font-medium bg-secondary border border-border/50 text-muted-foreground hover:text-foreground hover:bg-accent transition-all">
                     {cat}
                   </Link>

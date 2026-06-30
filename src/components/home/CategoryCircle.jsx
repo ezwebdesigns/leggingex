@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchSection } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
+import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
 export default function CategoryCircle({ label, value, imageUrl }) {
   const { marketplace } = useCountry();
@@ -15,7 +16,7 @@ export default function CategoryCircle({ label, value, imageUrl }) {
   }, [value, marketplace, imageUrl]);
 
   return (
-    <Link to={`/catalogue?category=${encodeURIComponent(value)}`} className="flex flex-col items-center gap-2 group">
+    <Link to={`/catalogue/${CATEGORY_SLUGS[value] || encodeURIComponent(value)}`} className="flex flex-col items-center gap-2 group">
       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-secondary border-2 border-primary group-hover:border-black transition-all">
         {img ? (
           <img src={img} alt={label} className="w-full h-full object-cover" loading="lazy" />

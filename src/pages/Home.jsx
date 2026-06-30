@@ -13,6 +13,7 @@ import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 import FaqAccordion from '@/components/home/FaqAccordion';
+import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
 function ProductCarousel({ title, description, products, viewAllLink, loading }) {
   return (
@@ -195,7 +196,7 @@ export default function Home() {
         {tags.map((tag) => (
           <Link
             key={tag.id}
-            to={tag.link || `/catalogue?category=${encodeURIComponent(tag.value)}`}
+            to={tag.link || `/catalogue/${CATEGORY_SLUGS[tag.value] || encodeURIComponent(tag.value)}`}
             className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium bg-secondary border border-border/50 text-foreground hover:bg-accent hover:text-accent-foreground hover:border-primary/30 transition-all whitespace-nowrap inline-flex items-center gap-1.5"
           >
             {tag.image_url && (
@@ -233,7 +234,7 @@ export default function Home() {
             if (type === 'products') {
               const products = sectionProducts[section.id] || [];
               const viewAllLink = section.category
-                ? `/catalogue?category=${encodeURIComponent(section.category)}`
+                ? `/catalogue/${CATEGORY_SLUGS[section.category] || encodeURIComponent(section.category)}`
                 : '/catalogue';
               rendered.push(
                 <ProductCarousel

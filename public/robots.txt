@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Pages inutiles à indexer (paramètres de recherche bruts, etc.)
+Disallow: /api/
+
+Sitemap: https://www.leggingexpress.com/sitemap.xml

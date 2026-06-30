@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import MiniProductCard from '@/components/products/MiniProductCard';
+import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
 export default function FeaturedSectionRow({ sections }) {
   if (!sections || sections.length === 0) return null;
@@ -30,7 +31,7 @@ export default function FeaturedSectionRow({ sections }) {
 function FeaturedProduct({ section }) {
   const products = section._products || [];
   const viewAllLink = section.category
-    ? `/catalogue?category=${encodeURIComponent(section.category)}`
+    ? `/catalogue/${CATEGORY_SLUGS[section.category] || encodeURIComponent(section.category)}`
     : '/catalogue';
 
   return (

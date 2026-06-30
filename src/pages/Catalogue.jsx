@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { Star, Loader2, SlidersHorizontal, X, ChevronDown, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchCatalog, fetchFilterOptions } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 import { supabase } from '@/lib/supabaseClient';
+import { SLUG_TO_CATEGORY, CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
 const SORT_OPTIONS = [
   { label: 'Top Rated', value: 'rating.desc.nullslast,ratings_count.desc.nullslast' },
@@ -99,6 +100,10 @@ const PAGE_SIZE = 24;
 export default function Catalogue() {
   const { marketplace } = useCountry();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { categorySlug } = useParams();
+  const navigate = useNavigate();
+
+  const slugCategory = SLUG_TO_CATEGORY[categorySlug] || '';
 
   const [products, setProducts] = useState([]);
   const [offset, setOffset] = useState(0);
@@ -112,7 +117,7 @@ export default function Catalogue() {
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
   const [filters, setFilters] = useState({
-    category: searchParams.get('category') || '',
+    category: slugCategory || searchParams.get('category') || '',
     brand: searchParams.get('brand') || '',
     minRating: parseFloat(searchParams.get('minRating') || '0'),
     sort: searchParams.get('sort') || DEFAULT_SORT,
@@ -131,14 +136,14 @@ export default function Catalogue() {
 
   useEffect(() => {
     const newFilters = {
-      category: searchParams.get('category') || '',
+      category: slugCategory || searchParams.get('category') || '',
       brand: searchParams.get('brand') || '',
       minRating: parseFloat(searchParams.get('minRating') || '0'),
       sort: searchParams.get('sort') || DEFAULT_SORT,
       search: searchParams.get('search') || '',
     };
     setFilters(newFilters);
-  }, [searchParams.toString()]);
+  }, [searchParams.toString(), categorySlug]);
 
   useEffect(() => {
     const load = async () => {
@@ -165,6 +170,23 @@ export default function Catalogue() {
   const updateFilter = (key, value) => {
     const next = { ...filters, [key]: value };
     setFilters(next);
+    if (key === 'category') {
+      const params = {};
+      if (next.brand) params.brand = next.brand;
+      if (next.minRating > 0) params.minRating = next.minRating;
+      if (next.sort !== DEFAULT_SORT) params.sort = next.sort;
+      if (next.search) params.search = next.search;
+      if (value) {
+        const slug = CATEGORY_SLUGS[value];
+        if (slug) {
+          const qs = Object.keys(params).length ? '?' + new URLSearchParams(params).toString() : '';
+          navigate(`/catalogue/${slug}${qs}`, { replace: true });
+          return;
+        }
+      }
+      navigate(`/catalogue${Object.keys(params).length ? '?' + new URLSearchParams(params).toString() : ''}`, { replace: true });
+      return;
+    }
     const params = {};
     if (next.category) params.category = next.category;
     if (next.brand) params.brand = next.brand;
@@ -176,7 +198,7 @@ export default function Catalogue() {
 
   const clearFilters = () => {
     setFilters({ category: '', brand: '', minRating: 0, sort: DEFAULT_SORT, search: '' });
-    setSearchParams({});
+    navigate('/catalogue', { replace: true });
   };
 
   const activeFilterCount = [filters.category, filters.brand, filters.minRating > 0].filter(Boolean).length;
