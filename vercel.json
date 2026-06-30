@@ -1,9 +1,12 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/api/render" },
-    { "source": "/produit/:id", "destination": "/api/render?__path=produit&id=:id" },
-    { "source": "/catalogue/:slug", "destination": "/api/render?__path=categorie&slug=:slug" },
-    { "source": "/catalogue", "destination": "/api/render?__path=catalogue" },
-    { "source": "/(.*)", "destination": "/api/render" }
+  "routes": [
+    { "src": "/", "dest": "/api/render" },
+    { "src": "/produit/(?<id>[^/]+)", "dest": "/api/render?__path=produit&id=$id" },
+    { "src": "/catalogue/(?<slug>[^/]+)", "dest": "/api/render?__path=categorie&slug=$slug" },
+    { "src": "/catalogue", "dest": "/api/render?__path=catalogue" },
+    { "src": "/sitemap.xml", "dest": "/api/render" },
+    { "src": "/robots.txt", "dest": "/api/render" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/(.*)", "dest": "/api/render" }
   ]
 }
