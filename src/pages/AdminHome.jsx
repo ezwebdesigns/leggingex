@@ -476,10 +476,11 @@ const entityConfig = {
   },
   category_tags: {
     labelSingular: 'Tag',
-    defaultForm: { label: '', value: '', image_url: '', link: '', sort_order: 0, is_active: true },
+    defaultForm: { label: '', value: '', description: '', image_url: '', link: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'label', label: 'Label', required: true, placeholder: 'Women' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Women' },
+      { key: 'description', label: 'Description (SEO)', type: 'textarea', rows: 3, fullWidth: true, placeholder: 'A short description of this category for SEO...' },
       { key: 'link', label: 'Custom Link (optional)', type: 'url', placeholder: '/catalogue?category=...' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
@@ -487,10 +488,11 @@ const entityConfig = {
   },
   home_categories: {
     labelSingular: 'Category',
-    defaultForm: { label: '', value: '', image_url: '', sort_order: 0, is_active: true },
+    defaultForm: { label: '', value: '', description: '', image_url: '', sort_order: 0, is_active: true },
     fields: [
       { key: 'label', label: 'Label', required: true, placeholder: 'Yoga' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Yoga' },
+      { key: 'description', label: 'Description (SEO)', type: 'textarea', rows: 3, fullWidth: true, placeholder: 'A short description of this category for SEO...' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],

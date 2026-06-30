@@ -240,17 +240,27 @@ export default function Catalogue() {
       </div>
 
       <div className="px-14 py-5">
-        {/* Centered header with breadcrumbs (shop.app inspired) */}
-        {filters.category && (
-          <div className="text-center mb-6">
-            <nav className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-2">
-              <Link to="/catalogue" className="hover:text-foreground transition-colors">All categories</Link>
-              <span className="text-border">/</span>
-              <span className="text-foreground font-medium">{filters.category}</span>
-            </nav>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">{filters.category}</h1>
-          </div>
-        )}
+        {filters.category && (() => {
+          const currentTag = subcategories.find(t => t.value === filters.category);
+          return (
+            <div className="mb-6">
+              <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+                <Link to="/catalogue" className="hover:text-foreground transition-colors">All categories</Link>
+                <span className="text-border">/</span>
+                <span className="text-foreground font-medium">{filters.category}</span>
+              </nav>
+              <div className="flex items-start gap-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground flex-shrink-0">{filters.category}</h1>
+                {currentTag?.description && (
+                  <>
+                    <div className="w-px h-8 bg-border self-center" />
+                    <p className="text-sm text-muted-foreground leading-relaxed">{currentTag.description}</p>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })()}
         {filters.search && (
           <div className="text-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">"{filters.search}"</h1>
