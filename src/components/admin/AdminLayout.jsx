@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Upload, Home, FileText, LogOut, ShoppingBag, Settings, Mail } from 'lucide-react';
+import { LayoutDashboard, Package, Upload, Home, FileText, LogOut, ShoppingBag, Settings, Mail, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 const adminNavItems = [
@@ -53,6 +53,10 @@ export default function AdminLayout() {
             );
           })}
         </nav>
+
+        <Link to="/" title="Visit site" className="flex flex-col items-center justify-center w-12 h-12 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all">
+          <ExternalLink className="w-5 h-5" strokeWidth={1.8} />
+        </Link>
 
         <button
           onClick={handleLogout}
