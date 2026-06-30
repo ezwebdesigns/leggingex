@@ -16,7 +16,13 @@ const meta = {
   '__OG_IMAGE__': `${SITE_ORIGIN}/og-default.jpg`,
   '__OG_URL__': SITE_ORIGIN,
   '__CANONICAL_URL__': SITE_ORIGIN,
-  '__JSON_LD__': '',
+  '__JSON_LD__': `<script type="application/ld+json">${JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: SITE_ORIGIN,
+    description: 'Shop the best leggings, biker shorts, yoga pants and activewear for women on Amazon CA and US.',
+  })}</script>`,
 };
 
 let html = readFileSync(distIndex, 'utf-8');
