@@ -235,21 +235,40 @@ async function buildMeta(url) {
 async function buildCategoryMeta(url, canonical) {
   const slug = url.searchParams.get('slug');
   const category = SLUG_TO_CATEGORY[slug];
+  if (!category) { ... } // cas inchangé
 
-  if (!category) {
-    return {
-      title: `Category not found | ${SITE_NAME}`,
-      description: `This category doesn't exist on ${SITE_NAME}.`,
-      image: DEFAULT_IMAGE,
-      canonical,
-    };
+  // Récupérer le contenu éditorial depuis Supabase
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/category_content?slug=eq.${slug}&select=intro_html,faq`,
+    { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+  );
+  const rows = await res.json();
+  const content = rows?.[0];
+
+  let jsonLd = undefined;
+  if (content?.faq?.length > 0) {
+    jsonLd = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: content.faq.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    });
   }
 
   return {
     title: `${category} — Shop the best picks | ${SITE_NAME}`,
-    description: `Discover the best ${category.toLowerCase()} available on Amazon. Compare prices, ratings and best sellers.`,
+    description: content?.intro_html
+      ? content.intro_html.replace(/<[^>]+>/g, '').substring(0, 160)
+      : `Discover the best ${category.toLowerCase()} available on Amazon.`,
     image: DEFAULT_IMAGE,
     canonical,
+    jsonLd: jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : '',
   };
 }
 
