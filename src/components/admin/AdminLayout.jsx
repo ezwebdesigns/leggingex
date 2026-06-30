@@ -71,9 +71,6 @@ export default function AdminLayout() {
         <div className="border-b border-border bg-background px-4 md:px-8 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-foreground">Back-office</h1>
           <div className="flex items-center gap-3">
-            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Back to site
-            </Link>
             <span className="text-xs text-muted-foreground bg-secondary px-3 py-1.5 rounded-full font-medium">
               Admin
             </span>
