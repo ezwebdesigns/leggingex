@@ -1,8 +1,8 @@
 {
   "rewrites": [
-    { "source": "/google3dc2d2ed525efd76.html", "destination": "/google3dc2d2ed525efd76.html" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/produit/:id", "destination": "/api/render?__path=produit&id=:id" },
-    { "source": "/catalogue", "destination": "/api/render?__path=catalogue" },
-    { "source": "/(.*)", "destination": "/api/render" }
+    { "source": "/catalogue",   "destination": "/api/render?__path=catalogue" },
+    { "source": "/(.*)",        "destination": "/api/render" }
   ]
 }
