@@ -15,6 +15,15 @@ export default async function handler(req, res) {
   const origin = `https://${host}`;
   const url = new URL(req.url, origin);
 
+  if (url.pathname === '/robots.txt') {
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Cache-Control', 's-maxage=86400');
+    res.status(200).send(
+      `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://www.leggingexpress.com/sitemap.xml`
+    );
+    return;
+  }
+
   let meta;
   try {
     meta = await buildMeta(url);
