@@ -216,8 +216,12 @@ export default function Catalogue() {
         })
         .catch(() => { setPageData(null); setFaqColumns([]); });
     } else {
-      setPageData(null);
-      setFaqColumns([]);
+      supabase.from('catalogue_pages').select('*').eq('is_active', true).order('sort_order').limit(1).maybeSingle()
+        .then(({ data }) => {
+          setPageData(data || null);
+          setFaqColumns(data?.faq_schema || []);
+        })
+        .catch(() => { setPageData(null); setFaqColumns([]); });
     }
   }, [filters.category]);
 
@@ -280,15 +284,14 @@ export default function Catalogue() {
       </div>
 
       <div className="px-4 lg:px-14 py-5">
-        {filters.category && (() => {
+        {(filters.category || pageData) && (() => {
           const displayLabel = pageData?.label || filters.category;
-          const displayDesc = pageData?.description || subcategories.find(t => t.value === filters.category)?.description;
+          const displayDesc = pageData?.description || (filters.category ? subcategories.find(t => t.value === filters.category)?.description : '');
           return (
             <div className="mb-6">
               <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
                 <Link to="/catalogue" className="hover:text-foreground transition-colors">All categories</Link>
-                <span className="text-border">/</span>
-                <span className="text-foreground font-medium">{displayLabel}</span>
+                {filters.category && <><span className="text-border">/</span><span className="text-foreground font-medium">{displayLabel}</span></>}
               </nav>
               <div className="flex flex-col md:flex-row md:items-start gap-2 md:gap-4">
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground whitespace-nowrap">{displayLabel}</h1>
