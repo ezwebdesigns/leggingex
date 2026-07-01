@@ -43,6 +43,12 @@ const CATEGORIES = [
   'Thigh Shorts',
   'Flare Leggings',
   'Capri Leggings',
+  'Fleece Leggings',
+  'Black Leggings',
+  'Scrunch Leggings',
+  'Scrunch Shorts',
+  'Butt Shorts',
+  'Butt Leggings',
 ];
 
 const CATEGORY_SLUGS = Object.fromEntries(CATEGORIES.map(c => [c, c.toLowerCase().replace(/\s+/g, '-')]));

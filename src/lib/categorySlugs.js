@@ -21,6 +21,12 @@ export const CATEGORY_SLUGS = {
   'Thigh Shorts': 'thigh-shorts',
   'Flare Leggings': 'flare-leggings',
   'Capri Leggings': 'capri-leggings',
+  'Fleece Leggings': 'fleece-leggings',
+  'Black Leggings': 'black-leggings',
+  'Scrunch Leggings': 'scrunch-leggings',
+  'Scrunch Shorts': 'scrunch-shorts',
+  'Butt Shorts': 'butt-shorts',
+  'Butt Leggings': 'butt-leggings',
 };
 
 export const SLUG_TO_CATEGORY = Object.fromEntries(
