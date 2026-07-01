@@ -3,8 +3,13 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import ProductGrid from '@/components/products/ProductGrid';
 import { supabase } from '@/lib/supabaseClient';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 export default function Favorites() {
+  usePageMeta({
+    title: 'My Favorites | Legging Express',
+    description: 'Your saved legging favorites.',
+  });
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 

@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Search, ArrowRight, Star } from 'lucide-react';
 import { fetchCatalog } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 function Stars({ rating }) {
   return (
@@ -66,6 +67,11 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
 
   const currentQ = searchParams.get('q') || '';
+
+  usePageMeta({
+    title: currentQ ? `"${currentQ}" — Search results | Legging Express` : 'Search leggings | Legging Express',
+    description: currentQ ? `Search results for "${currentQ}" on Legging Express.` : 'Search for leggings by name, brand, or style.',
+  });
 
   useEffect(() => {
     setQuery(currentQ);

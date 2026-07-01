@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { Calendar } from 'lucide-react';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 export default function Blog() {
+  usePageMeta({
+    title: 'Blog — Leggings tips, guides and trends | Legging Express',
+    description: 'Tips, guides, and leggings trends — read the latest articles from Legging Express.',
+  });
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 

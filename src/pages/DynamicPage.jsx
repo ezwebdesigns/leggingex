@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { getSettings } from '@/lib/settings';
 import { ArrowLeft, Calendar, User, ChevronDown } from 'lucide-react';
 import PageNotFound from '@/lib/PageNotFound';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 function FaqAccordionItem({ question, answer, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen || false);
@@ -82,6 +83,13 @@ export default function DynamicPage() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adScript, setAdScript] = useState('');
+
+  usePageMeta({
+    title: page ? `${page.title} | Legging Express` : undefined,
+    description: page?.excerpt || undefined,
+    ogImage: page?.cover_image || undefined,
+    canonical: slug ? `/${slug}` : undefined,
+  });
 
   useEffect(() => {
     const load = async () => {

@@ -13,6 +13,7 @@ import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
 import FaqAccordion from '@/components/home/FaqAccordion';
+import { usePageMeta } from '@/hooks/usePageMeta';
 import ScrollableRow from '@/components/ui/ScrollableRow';
 import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 
@@ -111,7 +112,14 @@ export default function Home() {
   const [featuredSections, setFeaturedSections] = useState([]);
   const [sectionProducts, setSectionProducts] = useState({});
   const [faqColumns, setFaqColumns] = useState([]);
+  const [homeMeta, setHomeMeta] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  usePageMeta({
+    title: homeMeta?.title || undefined,
+    description: homeMeta?.description || undefined,
+    ogImage: homeMeta?.ogImage || undefined,
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -184,10 +192,17 @@ export default function Home() {
         });
         setSectionProducts(productsMap);
 
-        // Load FAQ from settings
+        // Load FAQ & SEO meta from settings
         const settings = await getSettings();
-        const faq = settings.seo?.faq_schema;
+        const seo = settings.seo || {};
+        const general = settings.general || {};
+        const faq = seo.faq_schema;
         setFaqColumns(faq || []);
+        setHomeMeta({
+          title: seo.meta_title || general.site_title || 'Leggings — Find your perfect pair',
+          description: seo.meta_description || 'Discover the best leggings for women, men, kids, sports and fashion.',
+          ogImage: seo.og_image || '',
+        });
       } catch (err) {
         console.error(err);
       } finally {

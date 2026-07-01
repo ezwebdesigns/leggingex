@@ -61,29 +61,12 @@ const AuthenticatedApp = () => {
 
   useEffect(() => {
     getSettings().then((s) => {
-      const seo = s.seo || {};
       const general = s.general || {};
       const favicon = general.favicon;
-      const siteTitle = general.site_title || 'Leggings — Find your perfect pair';
-      const metaTitle = seo.meta_title || siteTitle;
-      const metaDesc = seo.meta_description || 'Discover the best leggings for women, men, kids, sports and fashion.';
-
-      document.title = metaTitle;
       let link = document.querySelector('link[rel="icon"]');
       if (favicon) {
         if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
         link.href = favicon;
-      }
-      let desc = document.querySelector('meta[name="description"]');
-      if (desc) desc.content = metaDesc;
-      let ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle) ogTitle.content = metaTitle;
-      let ogDesc = document.querySelector('meta[property="og:description"]');
-      if (ogDesc) ogDesc.content = metaDesc;
-      if (seo.og_image) {
-        let ogImg = document.querySelector('meta[property="og:image"]');
-        if (!ogImg) { ogImg = document.createElement('meta'); ogImg.setAttribute('property', 'og:image'); document.head.appendChild(ogImg); }
-        ogImg.content = seo.og_image;
       }
     }).catch(() => {});
   }, []);

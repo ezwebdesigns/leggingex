@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { Mail, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 export default function ContactPage() {
+  usePageMeta({
+    title: 'Contact us | Legging Express',
+    description: 'A question? A suggestion? Get in touch with the Legging Express team.',
+  });
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);

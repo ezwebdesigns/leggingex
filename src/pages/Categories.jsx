@@ -6,8 +6,13 @@ import ProductGrid from '@/components/products/ProductGrid';
 import FilterPanel from '@/components/products/FilterPanel';
 import SearchBar from '@/components/search/SearchBar';
 import FaqAccordion from '@/components/home/FaqAccordion';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 export default function Categories() {
+  usePageMeta({
+    title: 'All Categories | Legging Express',
+    description: 'Browse all legging categories — find your perfect fit.',
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
