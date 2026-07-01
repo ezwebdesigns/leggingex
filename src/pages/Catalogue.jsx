@@ -118,6 +118,7 @@ export default function Catalogue() {
   const [showFilters, setShowFilters] = useState(false);
   const [faqColumns, setFaqColumns] = useState([]);
   const [pageData, setPageData] = useState(null);
+  const [categoryContent, setCategoryContent] = useState(null);
 
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
@@ -226,10 +227,21 @@ export default function Catalogue() {
     }
   }, [filters.category]);
 
+  useEffect(() => {
+    if (!categorySlug) { setCategoryContent(null); return; }
+    supabase.from('category_content').select('*').eq('slug', categorySlug).maybeSingle()
+      .then(({ data }) => setCategoryContent(data || null))
+      .catch(() => setCategoryContent(null));
+  }, [categorySlug]);
+
   const categoryName = pageData?.label || slugCategory;
+  const rawDesc = categoryContent?.intro_html
+    ? categoryContent.intro_html.replace(/<[^>]*>/g, '')
+    : undefined;
   usePageMeta({
     title: categoryName ? `${categoryName} — Shop the best picks | Legging Express` : undefined,
-    description: pageData?.description || undefined,
+    description: rawDesc,
+    ogImage: categoryContent?.intro_html ? 'https://www.leggingexpress.com/og-default.jpg' : undefined,
     canonical: categorySlug ? `/catalogue/${categorySlug}` : '/catalogue',
   });
 

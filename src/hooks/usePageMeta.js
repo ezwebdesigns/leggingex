@@ -27,39 +27,41 @@ export function usePageMeta({ title, description, ogImage, canonical } = {}) {
       };
     }
 
-    const hasAny = title || description || ogImage || canonical;
-    if (!hasAny) return;
-
     if (title != null) document.title = title;
-    setContent(meta('name', 'description'), description);
     setContent(meta('property', 'og:title'), title);
-    setContent(meta('property', 'og:description'), description);
-    setContent(meta('property', 'og:image'), ogImage);
-    setContent(meta('property', 'og:url'), canonical);
     setContent(meta('name', 'twitter:title'), title);
-    setContent(meta('name', 'twitter:description'), description);
-    setContent(meta('name', 'twitter:image'), ogImage);
+    setContent(meta('property', 'og:url'), canonical);
     const lnk = qs('link[rel="canonical"]');
     if (lnk && canonical != null) lnk.href = canonical;
+
+    if (description) {
+      setContent(meta('name', 'description'), description);
+      setContent(meta('property', 'og:description'), description);
+      setContent(meta('name', 'twitter:description'), description);
+    }
+    if (ogImage) {
+      setContent(meta('property', 'og:image'), ogImage);
+      setContent(meta('name', 'twitter:image'), ogImage);
+    }
 
     return () => {
       const s = saved.current;
       if (!s) return;
       document.title = s.title;
-      setContent(meta('name', 'description'), s.description);
       setContent(meta('property', 'og:title'), s.ogTitle);
-      setContent(meta('property', 'og:description'), s.ogDescription);
-      setContent(meta('property', 'og:image'), s.ogImage);
-      setContent(meta('property', 'og:url'), s.ogUrl);
       setContent(meta('name', 'twitter:title'), s.twTitle);
-      setContent(meta('name', 'twitter:description'), s.twDescription);
-      setContent(meta('name', 'twitter:image'), s.twImage);
+      setContent(meta('property', 'og:url'), s.ogUrl);
       const clnk = qs('link[rel="canonical"]');
       if (clnk) clnk.href = s.canonical;
+      setContent(meta('name', 'description'), s.description);
+      setContent(meta('property', 'og:description'), s.ogDescription);
+      setContent(meta('name', 'twitter:description'), s.twDescription);
+      setContent(meta('property', 'og:image'), s.ogImage);
+      setContent(meta('name', 'twitter:image'), s.twImage);
     };
   }, [title, description, ogImage, canonical]);
 }
 
 function setContent(el, val) {
-  if (el) el.content = val ?? '';
+  if (el && val != null) el.content = val;
 }
