@@ -83,17 +83,14 @@ function CategoryGrid({ categories }) {
   if (!categories || categories.length === 0) return null;
   return (
     <div className="mb-10">
-      <div className="px-4 lg:hidden">
-        <ScrollableRow>
+      <div className="px-4 lg:px-14">
+        <div className="flex overflow-x-auto scrollbar-hide lg:gap-3">
           {categories.map((c) => (
-            <CategoryCircle key={c.id} label={c.label} value={c.value} imageUrl={c.image_url} />
+            <div key={c.id} className="flex-shrink-0 w-1/4 lg:w-auto px-1 lg:px-0">
+              <CategoryCircle label={c.label} value={c.value} imageUrl={c.image_url} />
+            </div>
           ))}
-        </ScrollableRow>
-      </div>
-      <div className="hidden lg:grid lg:grid-cols-8 gap-3 px-14">
-        {categories.map((c) => (
-          <CategoryCircle key={c.id} label={c.label} value={c.value} imageUrl={c.image_url} />
-        ))}
+        </div>
       </div>
     </div>
   );

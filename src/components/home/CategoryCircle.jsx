@@ -24,7 +24,7 @@ export default function CategoryCircle({ label, value, imageUrl }) {
           <div className="w-full h-full bg-gradient-to-br from-secondary to-muted animate-pulse" />
         )}
       </div>
-      <span className="text-xs text-center text-muted-foreground font-medium group-hover:text-foreground transition-colors leading-tight">{label}</span>
+      <span className="text-xs text-center text-muted-foreground font-medium group-hover:text-foreground transition-colors whitespace-nowrap">{label}</span>
     </Link>
   );
 }
