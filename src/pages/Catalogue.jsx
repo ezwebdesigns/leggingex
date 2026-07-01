@@ -325,20 +325,28 @@ export default function Catalogue() {
                 {displayDesc && (() => {
                   const words = displayDesc.split(/\s+/);
                   const isLong = words.length > 50;
-                  const truncated = isLong && !descExpanded
-                    ? words.slice(0, 50).join(' ') + '...'
-                    : displayDesc;
+                  const shown = isLong && !descExpanded ? words.slice(0, 50) : words;
                   return (
                     <>
                       <div className="hidden md:block w-px h-8 bg-border self-center" />
                       <div>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{truncated}</p>
-                        {isLong && (
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {shown.join(' ')}
+                          {isLong && !descExpanded && (
+                            <button
+                              onClick={() => setDescExpanded(true)}
+                              className="text-xs text-primary hover:underline font-medium ml-1"
+                            >
+                              ... See more
+                            </button>
+                          )}
+                        </p>
+                        {isLong && descExpanded && (
                           <button
-                            onClick={() => setDescExpanded((v) => !v)}
-                            className="text-xs text-primary hover:underline mt-1 font-medium"
+                            onClick={() => setDescExpanded(false)}
+                            className="text-xs text-primary hover:underline font-medium mt-1"
                           >
-                            {descExpanded ? 'See less' : 'See more'}
+                            See less
                           </button>
                         )}
                       </div>
