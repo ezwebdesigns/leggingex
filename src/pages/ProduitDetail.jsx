@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { fetchProductById, fetchVariants, fetchSimilar } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 function StarRating({ rating, size = 'md' }) {
   const cls = size === 'lg' ? 'w-5 h-5' : 'w-3.5 h-3.5';
@@ -28,6 +29,16 @@ export default function ProduitDetail() {
   const [copied, setCopied] = useState(false);
 
   const now = new Date();
+
+  const metaProductTitle = product?.title;
+  usePageMeta({
+    title: metaProductTitle ? `${metaProductTitle} | ${product.brand || 'Legging Express'} — Legging Express` : undefined,
+    description: metaProductTitle && product.price != null
+      ? `${currencyPrefix}${Number(product.price).toFixed(2)} on Amazon. Rated ${product.rating || '?'}/5.`
+      : undefined,
+    ogImage: product?.image_url || undefined,
+    canonical: id ? `/produit/${id}` : undefined,
+  });
 
   const isDealActive = product?.deal_start && product?.deal_end &&
     new Date(product.deal_start) <= now && new Date(product.deal_end) >= now;

@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { SLUG_TO_CATEGORY, CATEGORY_SLUGS } from '@/lib/categorySlugs';
 import ScrollableRow from '@/components/ui/ScrollableRow';
 import FaqAccordion from '@/components/home/FaqAccordion';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 const SORT_OPTIONS = [
   { label: 'Top Rated', value: 'rating.desc.nullslast,ratings_count.desc.nullslast' },
@@ -224,6 +225,13 @@ export default function Catalogue() {
         .catch(() => { setPageData(null); setFaqColumns([]); });
     }
   }, [filters.category]);
+
+  const categoryName = pageData?.label || slugCategory;
+  usePageMeta({
+    title: categoryName ? `${categoryName} — Shop the best picks | Legging Express` : undefined,
+    description: pageData?.description || undefined,
+    canonical: categorySlug ? `/catalogue/${categorySlug}` : '/catalogue',
+  });
 
   return (
     <div className="min-h-screen bg-background">
