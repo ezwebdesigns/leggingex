@@ -124,18 +124,18 @@ export default async function handler(req, res) {
     };
   }
 
-  const shellRes = await fetch(`${origin}/index.html`);
+  const shellRes = await fetch(`${origin}/_shell.html`);
   let html = await shellRes.text();
 
   html = html
-    .replaceAll('__TITLE__',       escapeHtml(meta.title))
-    .replaceAll('__DESCRIPTION__', escapeHtml(meta.description))
-    .replaceAll('__OG_TITLE__',    escapeHtml(meta.title))
-    .replaceAll('__OG_DESCRIPTION__', escapeHtml(meta.description))
-    .replaceAll('__OG_IMAGE__',    escapeHtml(meta.image))
-    .replaceAll('__OG_URL__',      escapeHtml(meta.canonical))
-    .replaceAll('__CANONICAL_URL__', escapeHtml(meta.canonical))
-    .replace('__JSON_LD__',
+    .replaceAll('META_TITLE',       escapeHtml(meta.title))
+    .replaceAll('META_DESCRIPTION', escapeHtml(meta.description))
+    .replaceAll('META_OG_TITLE',    escapeHtml(meta.title))
+    .replaceAll('META_OG_DESCRIPTION', escapeHtml(meta.description))
+    .replaceAll('META_OG_IMAGE',    escapeHtml(meta.image))
+    .replaceAll('META_OG_URL',      escapeHtml(meta.canonical))
+    .replaceAll('META_CANONICAL_URL', escapeHtml(meta.canonical))
+    .replace('META_JSON_LD',
       meta.jsonLd ? `<script type="application/ld+json">${meta.jsonLd}</script>` : ''
     );
 
