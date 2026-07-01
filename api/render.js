@@ -118,9 +118,7 @@ export default async function handler(req, res) {
     .replaceAll('META_OG_IMAGE',    escapeHtml(meta.image))
     .replaceAll('META_OG_URL',      escapeHtml(meta.canonical))
     .replaceAll('META_CANONICAL_URL', escapeHtml(meta.canonical))
-    .replace('META_JSON_LD',
-      meta.jsonLd ? `<script type="application/ld+json">${meta.jsonLd}</script>` : ''
-    );
+    .replace('META_JSON_LD', meta.jsonLd ?? '')
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
