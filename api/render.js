@@ -65,23 +65,6 @@ export default async function handler(req, res) {
   const origin = `https://${host}`;
   const url = new URL(req.url, origin);
 
-  if (url.pathname === '/catalogue/high-waisted-leggings' || url.search.includes('debug-render')) {
-    return res.status(200).json({
-      pathname: url.pathname,
-      search: url.search,
-      reqUrl: req.url,
-      host: origin,
-    });
-  }
-
-  if (url.pathname.startsWith('/debug-params')) {
-    return res.status(200).json({
-      pathname: url.pathname,
-      search: url.search,
-      allParams: Object.fromEntries(url.searchParams),
-    });
-  }
-
   // robots.txt
   if (url.pathname === '/robots.txt') {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
