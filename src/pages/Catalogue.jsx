@@ -116,7 +116,6 @@ export default function Catalogue() {
   const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [faqColumns, setFaqColumns] = useState([]);
   const [pageData, setPageData] = useState(null);
   const [categoryContent, setCategoryContent] = useState(null);
 
@@ -212,18 +211,12 @@ export default function Catalogue() {
   useEffect(() => {
     if (filters.category) {
       supabase.from('catalogue_pages').select('*').eq('value', filters.category).eq('is_active', true).maybeSingle()
-        .then(({ data }) => {
-          setPageData(data || null);
-          setFaqColumns(data?.faq_schema || []);
-        })
-        .catch(() => { setPageData(null); setFaqColumns([]); });
+        .then(({ data }) => setPageData(data || null))
+        .catch(() => setPageData(null));
     } else {
       supabase.from('catalogue_pages').select('*').eq('is_active', true).order('sort_order').limit(1).maybeSingle()
-        .then(({ data }) => {
-          setPageData(data || null);
-          setFaqColumns(data?.faq_schema || []);
-        })
-        .catch(() => { setPageData(null); setFaqColumns([]); });
+        .then(({ data }) => setPageData(data || null))
+        .catch(() => setPageData(null));
     }
   }, [filters.category]);
 
@@ -233,6 +226,8 @@ export default function Catalogue() {
       .then(({ data }) => setCategoryContent(data || null))
       .catch(() => setCategoryContent(null));
   }, [categorySlug]);
+
+  const faqItems = categoryContent?.faq || [];
 
   const categoryName = pageData?.label || slugCategory;
   const rawDesc = categoryContent?.intro_html
@@ -410,9 +405,9 @@ export default function Catalogue() {
         </div>
       )}
 
-      {faqColumns.length > 0 && (
+      {faqItems.length > 0 && (
         <div className="mt-12">
-          <FaqAccordion columns={faqColumns} />
+          <FaqAccordion columns={faqItems} />
         </div>
       )}
     </div>
