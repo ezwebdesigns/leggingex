@@ -119,6 +119,7 @@ export default function Catalogue() {
   const [pageData, setPageData] = useState(null);
   const [categoryContent, setCategoryContent] = useState(null);
   const [categoryFaq, setCategoryFaq] = useState([]);
+  const [descExpanded, setDescExpanded] = useState(false);
 
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
@@ -321,12 +322,29 @@ export default function Catalogue() {
               </nav>
               <div className="flex flex-col md:flex-row md:items-start gap-2 md:gap-4">
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground whitespace-nowrap">{displayLabel}</h1>
-                {displayDesc && (
-                  <>
-                    <div className="hidden md:block w-px h-8 bg-border self-center" />
-                    <p className="text-sm text-muted-foreground leading-relaxed">{displayDesc}</p>
-                  </>
-                )}
+                {displayDesc && (() => {
+                  const words = displayDesc.split(/\s+/);
+                  const isLong = words.length > 50;
+                  const truncated = isLong && !descExpanded
+                    ? words.slice(0, 50).join(' ') + '...'
+                    : displayDesc;
+                  return (
+                    <>
+                      <div className="hidden md:block w-px h-8 bg-border self-center" />
+                      <div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{truncated}</p>
+                        {isLong && (
+                          <button
+                            onClick={() => setDescExpanded((v) => !v)}
+                            className="text-xs text-primary hover:underline mt-1 font-medium"
+                          >
+                            {descExpanded ? 'See less' : 'See more'}
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
           );
