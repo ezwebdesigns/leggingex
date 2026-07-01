@@ -227,21 +227,34 @@ async function fetchBlogPosts() {
 
 async function buildMeta(url) {
   const path = url.searchParams.get('__path');
-  const canonical = `${SITE_ORIGIN}${url.pathname}${url.search.replace(/[?&]__path=[^&]*/, '').replace(/[?&]id=[^&]*/, '').replace(/[?&]slug=[^&]*/, '')}`;
+  const pathname = url.pathname;
 
-  if (path === 'produit') return buildProductMeta(url, canonical);
-  if (path === 'categorie') return buildCategoryMeta(url, canonical);
-  if (path === 'catalogue') return buildCatalogueMeta(url, canonical);
+  const produitMatch = pathname.match(/^\/produit\/([^/]+)$/);
+  const categorieMatch = pathname.match(/^\/catalogue\/([^/]+)$/);
+
+  const canonical = `${SITE_ORIGIN}${pathname}`;
+
+  if (produitMatch) {
+    const id = produitMatch[1];
+    return buildProductMeta(id, canonical);
+  }
+
+  if (categorieMatch) {
+    const slug = categorieMatch[1];
+    return buildCategoryMeta(slug, canonical);
+  }
+
+  if (pathname === '/catalogue') return buildCatalogueMeta(canonical);
+
   return {
-    title: `${SITE_NAME} — Find your perfect pair`,
-    description: 'Discover the best leggings for women, men, kids, sports and fashion.',
+    title: `${SITE_NAME} — Find Your Perfect Leggings`,
+    description: 'Shop the best leggings, biker shorts, yoga pants and activewear for women. Compare ratings, prices and bestsellers from top brands on Amazon CA and US.',
     image: DEFAULT_IMAGE,
     canonical,
   };
 }
 
-async function buildCategoryMeta(url, canonical) {
-  const slug = url.searchParams.get('slug');
+async function buildCategoryMeta(slug, canonical) {
   const category = SLUG_TO_CATEGORY[slug];
 
   if (!category) {
@@ -289,8 +302,7 @@ async function buildCategoryMeta(url, canonical) {
   };
 }
 
-async function buildProductMeta(url, canonical) {
-  const id = url.searchParams.get('id');
+async function buildProductMeta(id, canonical) {
   const fields = 'id,title,image_url,price,currency,rating,ratings_count,brand,is_active,affiliate_link';
   const res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}&select=${fields}`, {
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
@@ -322,7 +334,7 @@ async function buildProductMeta(url, canonical) {
   return { title, description, image: p.image_url || DEFAULT_IMAGE, canonical, jsonLd };
 }
 
-async function buildCatalogueMeta(url, canonical) {
+async function buildCatalogueMeta(canonical) {
   return {
     title: `Catalogue — ${SITE_NAME}`,
     description: 'Browse our full catalogue of leggings, shorts and activewear.',
