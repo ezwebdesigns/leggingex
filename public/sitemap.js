@@ -41,6 +41,8 @@ const CATEGORIES = [
   'Waist Trainer',
   'Shapewear',
   'Thigh Shorts',
+  'Flare Leggings',
+  'Capri Leggings',
 ];
 
 const CATEGORY_SLUGS = Object.fromEntries(CATEGORIES.map(c => [c, c.toLowerCase().replace(/\s+/g, '-')]));

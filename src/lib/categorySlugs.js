@@ -19,6 +19,8 @@ export const CATEGORY_SLUGS = {
   'Waist Trainer': 'waist-trainer',
   'Shapewear': 'shapewear',
   'Thigh Shorts': 'thigh-shorts',
+  'Flare Leggings': 'flare-leggings',
+  'Capri Leggings': 'capri-leggings',
 };
 
 export const SLUG_TO_CATEGORY = Object.fromEntries(

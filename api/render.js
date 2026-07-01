@@ -15,6 +15,7 @@ const CATEGORIES = [
   'Booty Leggings','Plus Size Leggings','Plus Size Shorts','Workout Shorts',
   'Workout Leggings','Pack','Leather Leggings','Fashion Leggings',
   'Cropped Leggings','Waist Trainer','Shapewear','Thigh Shorts',
+  'Flare Leggings','Capri Leggings',
 ];
 
 // Mapping unique source-de-vérité catégorie <-> slug d'URL.
@@ -40,6 +41,8 @@ const CATEGORY_SLUGS = {
   'Waist Trainer': 'waist-trainer',
   'Shapewear': 'shapewear',
   'Thigh Shorts': 'thigh-shorts',
+  'Flare Leggings': 'flare-leggings',
+  'Capri Leggings': 'capri-leggings',
 };
 const SLUG_TO_CATEGORY = Object.fromEntries(
   Object.entries(CATEGORY_SLUGS).map(([category, slug]) => [slug, category])
