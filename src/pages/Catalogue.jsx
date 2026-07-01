@@ -118,6 +118,7 @@ export default function Catalogue() {
   const [showFilters, setShowFilters] = useState(false);
   const [pageData, setPageData] = useState(null);
   const [categoryContent, setCategoryContent] = useState(null);
+  const [categoryFaq, setCategoryFaq] = useState([]);
 
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
@@ -221,13 +222,23 @@ export default function Catalogue() {
   }, [filters.category]);
 
   useEffect(() => {
+    if (!filters.category) { setCategoryFaq([]); return; }
+    supabase.from('home_categories')
+      .select('faq_schema')
+      .eq('value', filters.category)
+      .maybeSingle()
+      .then(({ data }) => setCategoryFaq(data?.faq_schema || []))
+      .catch(() => setCategoryFaq([]));
+  }, [filters.category]);
+
+  useEffect(() => {
     if (!categorySlug) { setCategoryContent(null); return; }
     supabase.from('category_content').select('*').eq('slug', categorySlug).maybeSingle()
       .then(({ data }) => setCategoryContent(data || null))
       .catch(() => setCategoryContent(null));
   }, [categorySlug]);
 
-  const faqItems = categoryContent?.faq || [];
+  const faqItems = categoryFaq;
 
   const categoryName = pageData?.label || slugCategory;
   const rawDesc = categoryContent?.intro_html
