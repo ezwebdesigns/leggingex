@@ -255,7 +255,7 @@ export default function Catalogue() {
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-16 z-30 bg-background/95 backdrop-blur-sm border-b border-border">
-        <ScrollableRow className="px-4 lg:px-14 pt-2 pb-2">
+        <ScrollableRow alwaysShowArrows className="px-4 lg:px-14 pt-2 pb-2">
           <button
             onClick={() => updateFilter('category', '')}
             className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all whitespace-nowrap ${!filters.category ? 'bg-primary text-primary-foreground border-primary' : 'bg-secondary border-border/50 text-foreground hover:bg-muted'}`}

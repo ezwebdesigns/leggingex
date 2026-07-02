@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function ScrollableRow({ children, className = '' }) {
+export default function ScrollableRow({ children, className = '', alwaysShowArrows }) {
   const ref = useRef(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
@@ -33,7 +33,7 @@ export default function ScrollableRow({ children, className = '' }) {
         <button
           onClick={() => scroll(-1)}
           aria-label="Scroll left"
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-accent"
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center transition-opacity hover:bg-accent ${alwaysShowArrows ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -47,7 +47,7 @@ export default function ScrollableRow({ children, className = '' }) {
         <button
           onClick={() => scroll(1)}
           aria-label="Scroll right"
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-accent"
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center transition-opacity hover:bg-accent ${alwaysShowArrows ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
         >
           <ChevronRight className="w-4 h-4" />
         </button>

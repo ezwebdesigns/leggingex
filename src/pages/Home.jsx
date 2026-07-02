@@ -83,15 +83,15 @@ function CategoryGrid({ categories }) {
   if (!categories || categories.length === 0) return null;
   return (
     <div className="mb-10">
-      {/* Mobile: 4 at a time with horizontal scroll */}
+      {/* Mobile: 4 at a time with arrows */}
       <div className="px-4 lg:hidden">
-        <div className="flex overflow-x-auto scrollbar-hide">
+        <ScrollableRow alwaysShowArrows>
           {categories.map((c) => (
             <div key={c.id} className="flex-shrink-0 w-1/4 px-1">
               <CategoryCircle label={c.label} value={c.value} imageUrl={c.image_url} />
             </div>
           ))}
-        </div>
+        </ScrollableRow>
       </div>
       {/* Desktop: full-width single line */}
       <div className="hidden lg:block px-14">
@@ -221,7 +221,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Category pills */}
-      <ScrollableRow className="px-4 lg:px-14 py-3 border-b border-border">
+      <ScrollableRow alwaysShowArrows className="px-4 lg:px-14 py-3 border-b border-border">
         {tags.map((tag) => (
           <Link
             key={tag.id}
