@@ -120,6 +120,15 @@ export default function Catalogue() {
   const [categoryContent, setCategoryContent] = useState(null);
   const [categoryFaq, setCategoryFaq] = useState([]);
   const [descExpanded, setDescExpanded] = useState(false);
+  const [wordLimit, setWordLimit] = useState(50);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)');
+    const update = () => setWordLimit(mql.matches ? 30 : 50);
+    update();
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
+  }, []);
 
   const DEFAULT_SORT = 'rating.desc.nullslast,ratings_count.desc.nullslast';
 
@@ -324,8 +333,8 @@ export default function Catalogue() {
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground whitespace-nowrap">{displayLabel}</h1>
                 {displayDesc && (() => {
                   const words = displayDesc.split(/\s+/);
-                  const isLong = words.length > 50;
-                  const shown = isLong && !descExpanded ? words.slice(0, 50) : words;
+                  const isLong = words.length > wordLimit;
+                  const shown = isLong && !descExpanded ? words.slice(0, wordLimit) : words;
                   return (
                     <>
                       <div className="hidden md:block w-px h-8 bg-border self-center" />
