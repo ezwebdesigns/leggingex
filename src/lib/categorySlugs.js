@@ -25,6 +25,7 @@ export const CATEGORY_SLUGS = {
   'Black Leggings': 'black-leggings',
   'Scrunch Leggings': 'scrunch-leggings',
   'Scrunch Shorts': 'scrunch-shorts',
+  'Leggings with Pockets': 'leggings-with-pockets',
   'Butt Shorts': 'butt-shorts',
   'Butt Leggings': 'butt-leggings',
 };
