@@ -539,7 +539,7 @@ const entityConfig = {
       { key: 'label', label: 'Label', required: true, placeholder: 'Women' },
       { key: 'value', label: 'Value (URL parameter)', required: true, placeholder: 'Women' },
       { key: 'description', label: 'Description (SEO)', type: 'textarea', rows: 3, fullWidth: true, placeholder: 'A short description of this category for SEO...' },
-      { key: 'link', label: 'Custom Link (optional)', type: 'url', placeholder: '/catalogue?category=...' },
+      { key: 'link', label: 'Custom Link (optional)', type: 'text', placeholder: '/catalogue?category=... or https://...' },
       { key: 'image_url', label: 'Image', type: 'image', fullWidth: true },
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
