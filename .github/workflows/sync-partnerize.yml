@@ -1,0 +1,30 @@
+name: Sync Partnerize feed to Supabase
+
+on:
+  schedule:
+    # Toutes les 4 heures (5e, 9e, 13e, 17e, 21e, 1e)
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sync-partnerize
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: node scripts/sync-products.js
+        env:
+          PARTNERIZE_FEED_URL: ${{ secrets.PARTNERIZE_FEED_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
