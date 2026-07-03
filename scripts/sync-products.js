@@ -66,9 +66,6 @@ const CATEGORY_RULES = [
   { label: 'Thigh Shorts', phrases: ['thigh', 'short'] },
   { label: 'Flare Leggings', phrases: ['flare', 'legging'] },
   { label: 'Capri Leggings', phrases: ['capri', 'legging'] },
-  { label: 'Fleece Leggings', phrases: ['fleece', 'legging'] },
-  { label: 'Scrunch Shorts', phrases: ['scrunch', 'short'] },
-  { label: 'Leggings with Pockets', phrases: ['pocket', 'legging'] },
 ];
 
 if (!FEED_URL || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
