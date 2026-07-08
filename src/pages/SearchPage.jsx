@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search, ArrowRight, Star } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 import { fetchCatalog } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 import { usePageMeta } from '@/hooks/usePageMeta';
-
-function Stars({ rating }) {
-  return (
-    <span className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} strokeWidth={0} className={`w-3 h-3 ${i <= Math.round(rating) ? 'fill-yellow-400' : 'fill-gray-200'}`} />
-      ))}
-    </span>
-  );
-}
 
 function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
@@ -32,7 +23,7 @@ function ProductCard({ product }) {
         <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">{title}</p>
         {rating && (
           <div className="flex items-center gap-1 leading-none">
-            <Stars rating={rating} />
+            <StarRating rating={rating} size="sm" />
             <span className="text-[10px] font-medium text-muted-foreground">{rating.toFixed(1)}</span>
             {ratings_count && <span className="text-[10px] font-medium text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
           </div>

@@ -1,22 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, ExternalLink, Copy, Check, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Copy, Check, CheckCircle2 } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
 import { fetchProductById, fetchVariants, fetchSimilar } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
 import { CATEGORY_SLUGS } from '@/lib/categorySlugs';
 import { usePageMeta } from '@/hooks/usePageMeta';
-
-function StarRating({ rating, size = 'md' }) {
-  const cls = size === 'lg' ? 'w-5 h-5' : 'w-3.5 h-3.5';
-  return (
-    <span className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} strokeWidth={0} className={`${cls} ${i <= Math.round(rating) ? 'fill-yellow-400' : 'fill-gray-200'}`} />
-      ))}
-    </span>
-  );
-}
 
 export default function ProduitDetail() {
   const { id } = useParams();
@@ -296,7 +286,7 @@ export default function ProduitDetail() {
                       <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">{p.title}</p>
                       {p.rating && (
                         <div className="flex items-center gap-1 leading-none">
-                          <StarRating rating={p.rating} />
+                          <StarRating rating={p.rating} size="md" />
                           <span className="text-[10px] font-medium text-muted-foreground">{p.rating.toFixed(1)}</span>
                         </div>
                       )}

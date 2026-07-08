@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -21,45 +22,6 @@ const KNOWN_CATEGORIES = [
 function normalizeCategory(input) {
   const lower = input.toLowerCase().trim();
   return KNOWN_CATEGORIES.find((c) => c.toLowerCase() === lower) || input;
-}
-
-function StarPath() {
-  return 'M10 1l2.5 7.5H20l-6 4.5 2.5 7.5L10 15l-6.5 5L6 13l-6-4.5h7.5z';
-}
-
-function StarSvg({ fill, half }) {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 20 20">
-      {half ? (
-        <>
-          <path d={StarPath()} fill="#e5e7eb" />
-          <path d={StarPath()} fill="#facc15" style={{ clipPath: 'inset(0 50% 0 0)' }} />
-        </>
-      ) : (
-        <path d={StarPath()} fill={fill} />
-      )}
-    </svg>
-  );
-}
-
-function StarRating({ rating }) {
-  const full = Math.floor(rating);
-  const fraction = rating - full;
-  const visualFull = fraction >= 0.7 ? full + 1 : full;
-  const visualHalf = fraction >= 0.3 && fraction < 0.7 ? 1 : 0;
-  const visualEmpty = 5 - visualFull - visualHalf;
-
-  return (
-    <span className="flex items-center gap-0.5">
-      {Array.from({ length: visualFull }).map((_, i) => (
-        <StarSvg key={`f${i}`} fill="#facc15" />
-      ))}
-      {visualHalf > 0 && <StarSvg half />}
-      {Array.from({ length: visualEmpty }).map((_, i) => (
-        <StarSvg key={`e${i}`} fill="#e5e7eb" />
-      ))}
-    </span>
-  );
 }
 
 function SkeletonCard() {
@@ -177,7 +139,7 @@ export default function LeggingShortcode({ category, sort, limit = 10, marketpla
                 )}
                 {p.rating && (
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <StarRating rating={p.rating} />
+                    <StarRating rating={p.rating} size="md" />
                     <span className="text-sm font-semibold">{p.rating.toFixed(2)} / 5</span>
                     {p.ratings_count && (
                       <span className="text-xs text-muted-foreground">

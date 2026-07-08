@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams, useParams, useNavigate } from 'react-router-dom';
-import { Star, Loader2, SlidersHorizontal, X, ChevronDown, Heart } from 'lucide-react';
+import { Loader2, SlidersHorizontal, X, ChevronDown, Heart } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
 import { fetchCatalog, fetchFilterOptions } from '@/lib/supabaseApi';
 import { useCountry } from '@/contexts/CountryContext';
@@ -17,16 +18,6 @@ const SORT_OPTIONS = [
   { label: 'Price: High to Low', value: 'price.desc.nullslast' },
   { label: 'Best Seller', value: 'best_seller_rank.asc.nullslast' },
 ];
-
-function Stars({ rating }) {
-  return (
-    <span className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} strokeWidth={0} className={`w-3 h-3 ${i <= Math.round(rating) ? 'fill-yellow-400' : 'fill-gray-200'}`} />
-      ))}
-    </span>
-  );
-}
 
 function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
@@ -71,7 +62,7 @@ function ProductCard({ product }) {
         <p className="text-xs font-bold text-foreground line-clamp-1 leading-tight">{title}</p>
         {rating && (
           <div className="flex items-center gap-1 leading-none">
-            <Stars rating={rating} />
+            <StarRating rating={rating} size="sm" />
             <span className="text-[10px] font-medium text-muted-foreground">{rating.toFixed(1)}</span>
             {ratings_count && <span className="text-[10px] font-medium text-muted-foreground">({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})</span>}
           </div>

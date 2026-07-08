@@ -1,24 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
-import { Star, ExternalLink, ArrowLeft, Award, Users, TrendingUp, Tag } from 'lucide-react';
+import { ExternalLink, ArrowLeft, Award, Users, TrendingUp, Tag } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 import { Button } from '@/components/ui/button';
 import { useCountry } from '@/contexts/CountryContext';
-
-function StarRating({ rating, size = 'md' }) {
-  const s = size === 'lg' ? 'w-5 h-5' : 'w-4 h-4';
-  return (
-    <span className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star
-          key={i}
-          className={`${s} ${i <= Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200 fill-gray-200'}`}
-          strokeWidth={0}
-        />
-      ))}
-    </span>
-  );
-}
 
 export default function ProductDetail() {
   const { id } = useParams();

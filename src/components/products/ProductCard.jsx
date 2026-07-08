@@ -1,20 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Star } from 'lucide-react';
 import { useCountry } from '@/contexts/CountryContext';
-
-function StarRating({ rating }) {
-  return (
-    <span className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star
-          key={i}
-          className={`w-3 h-3 ${i <= Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 fill-gray-200'}`}
-          strokeWidth={0}
-        />
-      ))}
-    </span>
-  );
-}
+import StarRating from '@/components/StarRating';
 
 export default function ProductCard({ product }) {
   const { currencyPrefix } = useCountry();
@@ -49,7 +35,7 @@ export default function ProductCard({ product }) {
         </p>
         {rating && (
           <div className="flex items-center gap-1 leading-none">
-            <StarRating rating={rating} />
+            <StarRating rating={rating} size="sm" />
             {ratings_count && (
               <span className="text-[10px] font-medium text-muted-foreground">
                 ({ratings_count >= 1000 ? `${(ratings_count / 1000).toFixed(1)}k` : ratings_count})
