@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { getSettings } from '@/lib/settings';
 import { ArrowLeft, Calendar, User, ChevronDown } from 'lucide-react';
 import { renderContent } from '@/utils/renderContent';
 import PageNotFound from '@/lib/PageNotFound';
+import { useAuth } from '@/lib/AuthContext';
 
 function FaqAccordionItem({ question, answer, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen || false);
@@ -79,6 +80,9 @@ function ArticleSidebar({ post, recentPosts, adScript }) {
 
 export default function GuidesPage() {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const { isAdmin } = useAuth();
+  const isPreview = searchParams.get('preview') === 'true' && isAdmin;
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,24 +92,22 @@ export default function GuidesPage() {
     const load = async () => {
       setLoading(true);
       try {
-        const { data: results } = await supabase
-          .from('pages')
-          .select('*')
-          .eq('slug', slug)
-          .eq('type', 'blog_post')
-          .eq('published', true);
+        let query = supabase.from('pages').select('*').eq('slug', slug).eq('type', 'blog_post');
+        if (!isPreview) query = query.eq('published', true);
+        const { data: results } = await query;
         const found = results && results.length > 0 ? results[0] : null;
         setPost(found);
 
         if (found) {
-          const { data: recent } = await supabase
+          let recentQuery = supabase
             .from('pages')
             .select('id, title, slug, cover_image, published_at')
             .eq('type', 'blog_post')
-            .eq('published', true)
             .neq('id', found.id)
             .order('published_at', { ascending: false })
             .limit(3);
+          if (!isPreview) recentQuery = recentQuery.eq('published', true);
+          const { data: recent } = await recentQuery;
           setRecentPosts(recent || []);
         }
 
@@ -118,7 +120,7 @@ export default function GuidesPage() {
       }
     };
     load();
-  }, [slug]);
+  }, [slug, isPreview]);
 
   if (loading) {
     return (
@@ -139,6 +141,11 @@ export default function GuidesPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {isPreview && (
+        <div className="bg-amber-500 text-white text-center text-sm font-medium py-2 px-4">
+          Preview Mode — This article is not published
+        </div>
+      )}
       <div className="px-4 lg:px-14 py-8">
         <Link to="/guides" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium mb-6">
           <ArrowLeft className="w-4 h-4" />

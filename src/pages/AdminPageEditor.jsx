@@ -132,6 +132,11 @@ export default function AdminPageEditor() {
           <h1 className="text-lg font-bold">{isEdit ? 'Edit Page' : 'New Page'}</h1>
         </div>
         <div className="flex items-center gap-3">
+          {form.slug && (
+            <Button type="button" variant="outline" onClick={() => window.open(`/${form.slug}?preview=true`, '_blank')} className="rounded-xl">
+              Preview
+            </Button>
+          )}
           <Button variant="outline" onClick={() => navigate('/admin/pages')} className="rounded-xl">Cancel</Button>
           <Button onClick={handleSave} disabled={saving} className="rounded-xl">
             {saving ? 'Saving...' : (isEdit ? 'Update' : 'Create')}
