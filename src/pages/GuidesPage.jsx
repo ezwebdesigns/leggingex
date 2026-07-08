@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { getSettings } from '@/lib/settings';
 import { ArrowLeft, Calendar, User, ChevronDown } from 'lucide-react';
+import { renderContent } from '@/utils/renderContent';
 import PageNotFound from '@/lib/PageNotFound';
 
 function FaqAccordionItem({ question, answer, defaultOpen }) {
@@ -170,7 +171,7 @@ export default function GuidesPage() {
               <p className="text-muted-foreground text-sm mb-6 leading-relaxed">{post.excerpt}</p>
             )}
 
-            <div className="prose prose-sm max-w-none text-foreground [&_img]:rounded-xl [&_table]:w-full [&_table]:border-collapse [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:uppercase [&_td]:p-2 [&_td]:border [&_td]:border-border [&_tr]:border-border [&_a]:text-primary [&_a]:underline [&_ul]:pl-4 [&_ol]:pl-4" dangerouslySetInnerHTML={{ __html: post.content || '' }} />
+            <div className="prose prose-sm max-w-none text-foreground [&_img]:rounded-xl [&_table]:w-full [&_table]:border-collapse [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:uppercase [&_td]:p-2 [&_td]:border [&_td]:border-border [&_tr]:border-border [&_a]:text-primary [&_a]:underline [&_ul]:pl-4 [&_ol]:pl-4">{renderContent(post.content)}</div>
 
             {faq.length > 0 && (
               <div className="mt-10 border border-border rounded-2xl overflow-hidden">
