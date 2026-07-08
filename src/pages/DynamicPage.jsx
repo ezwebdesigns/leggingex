@@ -6,6 +6,7 @@ import { ArrowLeft, Calendar, User, ChevronDown } from 'lucide-react';
 import PageNotFound from '@/lib/PageNotFound';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { useAuth } from '@/lib/AuthContext';
+import { renderContent } from '@/utils/renderContent';
 
 function FaqAccordionItem({ question, answer, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen || false);
@@ -183,7 +184,7 @@ export default function DynamicPage() {
                 <p className="text-muted-foreground text-sm mb-6 leading-relaxed">{page.excerpt}</p>
               )}
 
-              <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: page.content || '' }} />
+              <div className="prose prose-sm max-w-none text-foreground">{renderContent(page.content)}</div>
 
               {faq.length > 0 && (
                 <div className="mt-10 border border-border rounded-2xl overflow-hidden">
@@ -234,7 +235,7 @@ export default function DynamicPage() {
           </div>
         )}
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{page.title}</h1>
-        <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: page.content || '' }} />
+        <div className="prose prose-sm max-w-none text-foreground">{renderContent(page.content)}</div>
       </div>
     </div>
   );
