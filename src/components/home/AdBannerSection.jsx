@@ -27,9 +27,7 @@ export default function AdBannerSection({ banners }) {
           ))}
         </div>
       )}
-      {!banners.some((b) => b.type === 'script') && banners.some((b) => b.display_type === 'simple' || b.display_type === 'square') && (
-        <p className="text-center text-xs text-muted-foreground mt-2">Sponsored</p>
-      )}
+      
     </section>
   );
 }
@@ -75,7 +73,6 @@ function FullBanner({ banner }) {
             {banner.button_text}
           </LinkComp>
         )}
-        <p className="text-white/40 text-xs mt-4">Sponsored</p>
       </div>
     </div>
   );
