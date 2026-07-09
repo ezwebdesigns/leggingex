@@ -12,6 +12,7 @@ import EditorialRow from '@/components/home/EditorialRow';
 import AdBannerSection from '@/components/home/AdBannerSection';
 import RecentArticles from '@/components/home/RecentArticles';
 import FeaturedSectionRow from '@/components/home/FeaturedSectionRow';
+import BrandLogoRow from '@/components/home/BrandLogoRow';
 import FaqAccordion from '@/components/home/FaqAccordion';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import ScrollableRow from '@/components/ui/ScrollableRow';
@@ -116,6 +117,7 @@ export default function Home() {
   const [adBanners, setAdBanners] = useState([]);
   const [articles, setArticles] = useState([]);
   const [featuredSections, setFeaturedSections] = useState([]);
+  const [brandsData, setBrandsData] = useState([]);
   const [sectionProducts, setSectionProducts] = useState({});
   const [faqColumns, setFaqColumns] = useState([]);
   const [homeMeta, setHomeMeta] = useState(null);
@@ -141,6 +143,7 @@ export default function Home() {
           { data: adData },
           { data: articleData },
           { data: featuredData },
+          { data: brandsDataRaw },
         ] = await Promise.all([
           supabase.from('hero_banners').select('*').eq('is_active', true).order('sort_order').limit(50),
           supabase.from('home_sections').select('*').eq('is_active', true).order('sort_order').limit(50),
@@ -151,6 +154,7 @@ export default function Home() {
           supabase.from('ad_banners').select('*').eq('is_active', true).order('sort_order').limit(50),
           supabase.from('pages').select('*').eq('type', 'blog_post').eq('published', true).order('published_at', { ascending: false }).limit(3),
           supabase.from('featured_sections').select('*').eq('is_active', true).order('sort_order').limit(20),
+          supabase.from('brands').select('*').eq('is_active', true).order('sort_order').limit(50),
         ]);
 
         setBanners(bannerData || []);
@@ -161,6 +165,7 @@ export default function Home() {
         setEditorialCards(editorialData || []);
         setAdBanners(adData || []);
         setArticles(articleData || []);
+        setBrandsData(brandsDataRaw || []);
 
         // Fetch products for product-format featured sections
         const featuredList = (featuredData || []).map((s) => ({ ...s, _products: [] }));
@@ -288,6 +293,9 @@ export default function Home() {
             } else if (type === 'articles') {
               const filtered = section.selected_ids?.length > 0 ? articles.filter((a) => section.selected_ids.includes(a.id)) : articles;
               rendered.push(<RecentArticles key={section.id} articles={filtered} title={section.title} description={section.description} />);
+            } else if (type === 'brand_logos') {
+              const filtered = section.selected_ids?.length > 0 ? brandsData.filter((b) => section.selected_ids.includes(b.id)) : brandsData;
+              rendered.push(<BrandLogoRow key={section.id} brands={filtered} title={section.title} description={section.description} />);
             }
             i++;
           }

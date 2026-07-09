@@ -17,6 +17,7 @@ const SECTION_TYPES = [
   { value: 'editorial', label: 'Editorial Row' },
   { value: 'ad_banner', label: 'Ad Banner' },
   { value: 'articles', label: 'Recent Articles' },
+  { value: 'brand_logos', label: 'Brand Logos' },
 ];
 
 const AD_DISPLAY_TYPES = [
@@ -46,6 +47,7 @@ const homeTabs = [
   { id: 'ad_banners', label: 'Ad Banners', table: 'ad_banners' },
   { id: 'catalogue_pages', label: 'Catalogue Page', table: 'catalogue_pages' },
   { id: 'featured_sections', label: 'Featured Sections', table: 'featured_sections' },
+  { id: 'brands', label: 'Brand Logos', table: 'brands' },
 ];
 
 function EntityForm({ entity, fields, initial, onSave, onCancel, saving, imageFolder }) {
@@ -512,6 +514,13 @@ const entityConfig = {
           return (data || []).map((s) => ({ value: s.id, label: s.title, image: s.cover_image }));
         },
       },
+      { key: 'selected_ids', label: 'Select Brands', type: 'multi-select', fullWidth: true,
+        condition: { field: 'section_type', value: 'brand_logos' },
+        options: async () => {
+          const { data } = await supabase.from('brands').select('id, name, logo_url').eq('is_active', true).order('sort_order');
+          return (data || []).map((s) => ({ value: s.id, label: s.name, image: s.logo_url }));
+        },
+      },
       { key: 'product_limit', label: 'Product Limit', type: 'number', placeholder: '8',
         condition: { field: 'section_type', value: 'products' } },
       { key: 'sort_by', label: 'Sort By', type: 'select',
@@ -626,7 +635,19 @@ const entityConfig = {
       { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
     ],
   },
+  brands: {
+    labelSingular: 'Brand',
+    defaultForm: { name: '', logo_url: '', link: '', sort_order: 0, is_active: true },
+    fields: [
+      { key: 'name', label: 'Brand Name', required: true, placeholder: 'Nike' },
+      { key: 'logo_url', label: 'Logo Image', type: 'image', fullWidth: true },
+      { key: 'link', label: 'Link (optional)', placeholder: 'https://...' },
+      { key: 'sort_order', label: 'Sort Order', type: 'number', placeholder: '0' },
+    ],
+  },
 };
+
+
 
 const entityFolders = {
   hero_banners: 'hero-banners',
@@ -638,6 +659,7 @@ const entityFolders = {
   ad_banners: 'ad-banners',
   featured_sections: 'featured-sections',
   catalogue_pages: 'catalogue-pages',
+  brands: 'brands',
 };
 
 export default function AdminHome() {
